@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+
+{% block title %}
+	Record Bin
+{% endblock %}
+
+{% block page_content %}
+<div>
+    <h1>Record Bin AUTH</h1>
+
+    	<h1>REGISTER</h1>
+    {% from 'render_field.html' import render_field %}
+    <form action method="post">
+		{{ form.csrf_token }}
+	    {{ render_field(form.email) }}
+	    {{ render_field(form.username) }}
+	    {{ render_field(form.password) }}
+	    {{ render_field(form.password2) }}
+	    {{ render_field(form.submit) }}
+    </form>
+</div>
+{% endblock %}

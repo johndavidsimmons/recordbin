@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}
+                Base
+            {% endblock %}    
+        </title>
+    {% endblock %}
+</head>
+<body>
+    {% for message in get_flashed_messages() %}
+    <div>
+        <p><strong>Flash:</strong> {{ message }}</p>
+    </div>
+    {% endfor %}
+    <ul>
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+
+        {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('main.user', username=current_user.username) }}">Profile</a></li>
+        {% endif %}
+
+        {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+        <li><a href="{{ url_for('auth.change_password') }}">Change Password</a></li>
+        {% else %}
+        <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+        {% endif %}
+    </ul>
+    {% block content %}
+        {% block page_content %}
+
+        {% endblock %}
+    {% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "_base.html" %}
+
+{% block title %}
+	Record Bin
+{% endblock %}
+
+{% block page_content %}
+<div>
+    <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
+	
+	{% if current_user.is_authenticated %}
+	<h2>Content</h2>
+    <p>HERE IS THE SECRET USER ONLY CONTENT</p>
+	
+	{% else %}
+	<p>There is content here if you are logged in</p>
+	{% endif %}
+
+</div>
+{% endblock %}
