@@ -60,6 +60,7 @@ def deploy():
     # create user roles
     Role.insert_roles()
 
+    db.session.commit()
 
 if __name__ == '__main__':
     manager.run()
