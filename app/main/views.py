@@ -1,9 +1,9 @@
-from flask import render_template, session, redirect, url_for, current_app, abort
+from flask import render_template, session, redirect, url_for, current_app, abort, flash
 from flask_login import login_required, current_user
 from .. import db
 from ..models import User, Role, Artist, Record
 from . import main
-from .forms import EditProfileForm
+from .forms import EditProfileForm, EditProfileAdminForm
 from ..decorators import admin_required
 
 @main.route('/')
@@ -63,4 +63,4 @@ def edit_profile_admin(id):
     form.name.data = user.name
     form.location.data = user.location
     form.about_me.data = user.about_me
-    return render_template('edit_profile.html', form=form, user=user)	
+    return render_template('admin_edit_profile.html', form=form, user=user)	

@@ -103,6 +103,10 @@ class User(UserMixin, db.Model):
 		db.session.add(self)
 		return True
 
+	def generate_email_change_token(self, new_email, expiration=3600):
+		s = Serializer(current_app.config['SECRET_KEY'], expiration)
+		return s.dumps({'change_email': self.id, 'new_email': new_email})	
+
 	@property
 	def password(self):
 		raise AttributeError('Password is not a readable attribute')

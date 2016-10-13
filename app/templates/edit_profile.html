@@ -1,0 +1,21 @@
+{% extends "_base.html" %}
+
+{% block title %}
+	Record Bin - Edit Profile
+{% endblock %}
+
+{% block page_content %}
+<div>
+
+        	<h1>Edit Profile</h1>
+        {% from 'render_field.html' import render_field %}
+        <form action method="post">
+    		{{ form.csrf_token }}
+    	    {{ render_field(form.name) }}
+    	    {{ render_field(form.location) }}
+    	    {{ render_field(form.about_me) }}
+    	    {{ render_field(form.submit) }}
+        </form>
+
+</div>
+{% endblock %}
