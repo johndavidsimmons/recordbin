@@ -161,28 +161,7 @@ def change_email(token):
 		flash('Invalid request.')
 	return redirect(url_for('main.index'))
 
-
-
-
-
-
-
-	# form = RegistrationForm()
-	# if form.validate_on_submit():
-	#     user = User(email=form.email.data,
-	#                 username=form.username.data,
-	#                 password=form.password.data)
-	#     db.session.add(user)
-	#     db.session.commit()
-	#     token = user.generate_confirmation_token()
-	#     send_email(user.email, 'Confirm Your Account',
-	#                'auth/email/confirm', user=user, token=token)
-	#     flash('A confirmation email has been sent to you by email.')
-	#     return redirect(url_for('auth.login'))
-	# return render_template('auth/register.html', form=form)
-
-
-
+# u = User.query.filter_by(email='johndavidsimmons@gmail.com').first()
 
 
 

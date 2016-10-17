@@ -120,7 +120,8 @@ class User(UserMixin, db.Model):
 
 	def ping(self):
 		self.last_seen = datetime.utcnow()
-		db.session.add(self)	
+		db.session.add(self)
+		db.session.commit()	
 
 	@password.setter
 	def password(self, password):
@@ -147,6 +148,7 @@ class User(UserMixin, db.Model):
 			return False
 		self.confirmed = True
 		db.session.add(self)
+		db.session.commit()
 		return True
 
 	def generate_reset_token(self, expiration=3600):
@@ -163,6 +165,7 @@ class User(UserMixin, db.Model):
 			return False
 		self.password = new_password
 		db.session.add(self)
+		db.session.commit()
 		return True	
 
 
@@ -216,11 +219,3 @@ def load_user(user_id):
 # make changes -> migrate -> upgrade
 	# python manage.py db migrate -m 'default role id'
 	# python manage.py db upgrade
-
-
-# r1 = Role(name="Admin")
-# u1 = User("johnny@gmail.com", 1)
-# a1 = Artist('Bad Religion')
-# t1 = Record('No Control', artist_id=1)
-# db.session.add_all([r1, u1, a1, t1])
-# db.session.commit()
