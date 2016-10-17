@@ -12,7 +12,7 @@ class Config:
 	MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'apikey'
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or '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'
 	FLASKY_MAIL_SUBJECT_PREFIX = '[RecordBin - SendGRID]'
-	FLASKY_MAIL_SENDER = 'Flasky Admin <flasky@example.com>'
+	FLASKY_MAIL_SENDER = 'RecordBin Team <donotreply@recordbin.herokuapp.com>'
 	FLASKY_ADMIN = 'Flasky Admin <flasky@example.com>'
 
 

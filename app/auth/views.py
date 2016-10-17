@@ -31,15 +31,15 @@ def logout():
 def register():
 	form = RegistrationForm()
 	if form.validate_on_submit():
-	    user = User(email=form.email.data,
-	                password=form.password.data, username=form.username.data)
-	    db.session.add(user)
-	    db.session.commit()
-	    token = user.generate_confirmation_token()
-	    send_email(user.email, 'Confirm Your Account',
-	               'auth/email/confirm', user=user, token=token)
-	    flash('A confirmation email has been sent to you by email.')
-	    return redirect(url_for('auth.login'))
+		user = User(email=form.email.data,
+					password=form.password.data, username=form.username.data)
+		db.session.add(user)
+		db.session.commit()
+		token = user.generate_confirmation_token()
+		send_email(user.email, 'Confirm Your Account',
+				   'auth/email/confirm', user=user, token=token)
+		flash('A confirmation email has been sent to you by email.')
+		return redirect(url_for('auth.login'))
 	return render_template('auth/register.html', form=form)
 
 @auth.route('/confirm/<token>')
@@ -53,14 +53,23 @@ def confirm(token):
 		flash('Your token is invalid or expired')
 	return redirect(url_for('main.index'))
 
+@auth.route('/confirm')
+@login_required
+def resend_confirmation():
+	token = current_user.generate_confirmation_token()
+	send_email(current_user.email, 'Confirm Your Account',
+			   'auth/email/confirm', user=current_user, token=token)
+	flash('A new confirmation email has been sent to you by email.')
+	return redirect(url_for('main.index'))
+
 
 @auth.before_app_request
 def before_request():
-    if current_user.is_authenticated \
-            and not current_user.confirmed \
-            and request.endpoint[:5] != 'auth.' \
-            and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed'))
+	if current_user.is_authenticated \
+			and not current_user.confirmed \
+			and request.endpoint[:5] != 'auth.' \
+			and request.endpoint != 'static':
+		return redirect(url_for('auth.unconfirmed'))
 
 	if current_user.is_authenticated:
 		current_user.ping()
