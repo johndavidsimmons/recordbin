@@ -2,6 +2,7 @@
 notes.txt
 tmp
 scratch.py
+.env
 
 *.py[cod]
 
