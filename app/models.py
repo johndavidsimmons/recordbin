@@ -140,15 +140,21 @@ class User(UserMixin, db.Model):
 	def confirm(self, token):
 		s = Serializer(current_app.config['SECRET_KEY'])
 
+		# http://localhost:5000/auth/confirm/eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ3Njc1MzY1NCwiaWF0IjoxNDc2NzUwMDU0fQ.eyJjb25maXJtIjoxMH0.atOw0IbKgX-E_7UhEOWUsDDlvGg-R4mnt3-_2ySq0wA
+		# u = User.query.filter_by(email='johndavidsimmons@gmail.com').first().confirm('eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ3Njc1MjU3MiwiaWF0IjoxNDc2NzQ4OTcyfQ.eyJjb25maXJtIjoxMH0.oee30szLXmSvM6luezzTpqgvKFMJUX4ltlVn2SHbjW0')
+		print 'ID: {}'.format(self.id)
 		try:
 			data = s.loads(token)
+			print data
 		except:
+			print 'false try'
 			return False
 		if data.get('confirm') != self.id:
+			print '***** problem with ID'
 			return False
 		self.confirmed = True
 		db.session.add(self)
-		db.session.commit()
+		# db.session.commit()
 		return True
 
 	def generate_reset_token(self, expiration=3600):
