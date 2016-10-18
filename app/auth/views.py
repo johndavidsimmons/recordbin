@@ -34,7 +34,7 @@ def register():
 		user = User(email=form.email.data,
 					password=form.password.data, username=form.username.data)
 		db.session.add(user)
-		db.session.commit()
+		# db.session.commit()
 		token = user.generate_confirmation_token()
 		send_email(user.email, 'Confirm Your Account',
 				   'auth/email/confirm', user=user, token=token)
@@ -62,21 +62,6 @@ def resend_confirmation():
 	flash('A new confirmation email has been sent to you by email.')
 	return redirect(url_for('main.index'))
 
-
-# @auth.before_app_request
-# def before_request():
-# 	if current_user.is_authenticated \
-# 			and not current_user.confirmed \
-# 			and request.endpoint[:5] != 'auth.' \
-# 			and request.endpoint != 'static':
-# 		return 'authenticated, not confirmed, endpoint not auth, endpoint not static'	
-# 		# return redirect(url_for('auth.unconfirmed'))
-
-# 	if current_user.is_authenticated:
-# 		current_user.ping()
-# 		if not current_user.confirmed and request.endpoint[:5] != 'auth' and request.endpoint != 'static':
-# 			return 'authenticated, not confirmed'
-# 			# return redirect(url_for('auth.unconfirmed'))
 
 @auth.before_app_request
 def before_request():
