@@ -62,7 +62,7 @@ class User(UserMixin, db.Model):
 	# User(email="johnny3@gmail.com",role_id= 1, password='yolo')
 	
 	# FK & Relationship
-	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=2)
+	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
 	def gravatar(self, size=100, default='identicon', rating='g'):
 		if request.is_secure:
