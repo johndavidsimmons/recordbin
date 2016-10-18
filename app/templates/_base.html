@@ -17,6 +17,7 @@
     </div>
     {% endfor %}
     <ul>
+        <nav>Nav</nav>
         <li><a href="{{ url_for('main.index') }}">Home</a></li>
 
         {% if current_user.is_authenticated %}
