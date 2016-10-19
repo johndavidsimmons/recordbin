@@ -59,6 +59,7 @@ class User(UserMixin, db.Model):
 	member_since = db.Column(db.DateTime(), default=datetime.utcnow)
 	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 	avatar_hash = db.Column(db.String(32))
+	migrate_test = db.Column(db.String(32))
 	# User(email="johnny3@gmail.com",role_id= 1, password='yolo')
 	
 	# FK & Relationship
