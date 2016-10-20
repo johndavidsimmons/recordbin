@@ -58,8 +58,6 @@ class ProductionConfig(Config):
 
 
 class HerokuConfig(ProductionConfig):
-	SQLALCHEMY_DATABASE_URI = 'postgres://adufwrvklwdmge:rFStE_lUotNK7BHASZDiDssGyn@ec2-23-21-102-155.compute-1.amazonaws.com:5432/d95hluneks9dgd'
-	# 
 	SSL_DISABLE = bool(os.environ.get('SSL_DISABLE'))
 
 	@classmethod
