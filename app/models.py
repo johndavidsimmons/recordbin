@@ -19,7 +19,7 @@ class Role(db.Model):
 	permissions = db.Column(db.Integer)
 	
 	# FK & Relationship
-	users = db.relationship('User', backref='role', lazy='dynamic')
+	users_fk = db.relationship('User', backref='role', lazy='dynamic')
 
 
 	@staticmethod
