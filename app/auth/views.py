@@ -34,7 +34,7 @@ def register():
 		user = User(email=form.email.data,
 					password=form.password.data, username=form.username.data)
 		db.session.add(user)
-		# db.session.commit()
+		db.session.commit()
 		token = user.generate_confirmation_token()
 		send_email(user.email, 'Confirm Your Account',
 				   'auth/email/confirm', user=user, token=token)
