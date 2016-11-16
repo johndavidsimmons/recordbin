@@ -5,6 +5,7 @@ from config import config
 from flask_script import Manager
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask.ext.scss import Scss
 
 manager = Manager()
 moment = Moment()
@@ -23,6 +24,7 @@ def create_app(config_name):
 	db.init_app(app)
 	login_manager.init_app(app)
 	mail.init_app(app)
+	Scss(app, static_dir='app/static/css', asset_dir='app/static/assets')
 
 	from main import main as main_blueprint
 	app.register_blueprint(main_blueprint)

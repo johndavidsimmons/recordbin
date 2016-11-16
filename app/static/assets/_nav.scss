@@ -1,0 +1,25 @@
+/*ul*/
+.navigation {
+	list-style-type: none;
+
+}
+
+/*li*/
+.navigation__item {
+
+	display: inline;
+	
+	a {
+		color: $black;
+		font-weight: bold;
+		text-decoration: none;
+
+		&:hover {
+			color: $gray;
+		}
+
+		&.active {
+			border-bottom: 1px solid $black;
+		}
+	}
+}
