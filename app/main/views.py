@@ -1,10 +1,20 @@
-from flask import render_template, session, redirect, url_for, current_app, abort, flash
+from flask import render_template, session, redirect, url_for, current_app, abort, flash, request
 from flask_login import login_required, current_user
 from .. import db
-from ..models import User, Role, Artist, Record
+from ..models import User, Role, Artist, Record, AnonymousUser
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm
 from ..decorators import admin_required
+
+@main.route('/shutdown')
+def server_shutdown():
+	if not current_app.testing:
+		abort(404)
+	shutdown = request.environ.get('werkzeug.server.shutdown')
+	if not shutdown:
+		abort(500)
+	shutdown()
+	return 'Shutting down...'
 
 @main.route('/')
 def index():
@@ -18,8 +28,9 @@ def dataview():
 
 @main.route('/user/<username>')
 def user(username):
+	all_users = User.query.all()
 	user = User.query.filter_by(username=username).first_or_404()
-	return render_template('user.html', user=user)
+	return render_template('user.html', user=user, all_users=all_users)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])

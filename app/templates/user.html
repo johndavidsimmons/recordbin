@@ -1,40 +1,49 @@
 {% extends "_base.html" %}
 
 {% block title %}
-	Record Bin - {{ user.username }}
+    {{ super() }}
+	{{ user.username }}
 {% endblock %}
 
 {% block page_content %}
+<h1>User Profile</h1>
 <div>
-    <h1>Username: {{ user.username }}</h1>
+    <h2>User Model Columns:</h2>
+    <p><strong>email:</strong> {{ user.email }}</p>
+    <p><strong>username:</strong> {{ user.username }}</p>
+    <p><strong>password_hash:</strong> {{ user.password_hash }}</p>
+    <p><strong>confirmed:</strong> {{ user.confirmed }}</p>
+    <p><strong>name:</strong> {{ user.name }}</p>
+    <p><strong>location:</strong> {{ user.location }}</p>
+    <p><strong>about_me:</strong> {{ user.about_me }}</p>
+    <p><strong>member_since:</strong> {{ user.member_since }}</p>
+    <p><strong>last_seen:</strong> {{ user.last_seen }}</p>
+    <p><strong>avatar_hash:</strong> {{ user.avatar_hash }}</p>
+    
+    <h2>Gravatar</h2>
     <img src="{{ user.gravatar(size=256) }}" alt="">
 
-    {% if user.name or user.location %}
-	<p>{% if user.name %} Name: {{ user.name }} {% endif %}</p>
-
-	{% if user.location %}
-	From <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
-	{% endif %}
-
-    {% endif %}
-
-    {% if current_user.is_administrator() %}
-    <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
-    {% endif %}
-    {% if user.about_me %}
-    	<h2>About me</h2>
-	    <p>{{ user.about_me }}</p>
-    {% endif %}
-    <p>Member since {{ moment(user.member_since).format('L') }}. Last seen {{ moment(user.last_seen).fromNow() }}.</p>
-
-    <p>
+    
         {% if user == current_user %}
-        <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a>
+            <p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
         {% endif %}
+
         {% if current_user.is_administrator() %}
-        <a href="{{ url_for('.edit_profile_admin', id=user.id) }}">Edit Profile [Admin]</a>
+            <h2>Admin Section</h2>
+            <a href="{{ url_for('.edit_profile_admin', id=user.id) }}">Edit Profile [Admin]</a>
+
+            <p><strong>User List</strong></p>
+            <ul>
+            {% for u in all_users %}
+                <li>{{ u }}</li>
+            {% endfor %}
+            </ul>
+             <p><strong>Stats</strong></p> 
+             <ul>
+                 <li>Total Users: {{ all_users|length }}</li>
+             </ul>  
+
         {% endif %}
-    </p>
-	
+    
 </div>
 {% endblock %}

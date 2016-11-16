@@ -82,7 +82,7 @@ class User(UserMixin, db.Model):
 			if self.email == current_app.config['FLASKY_ADMIN']:
 				self.role = Role.query.filter_by(name='admin').first()
 			if self.role is None:
-				self.role = Role.query.filter_by(default=True).first()
+				self.role = Role.query.filter_by(name='user').first()
 		if self.email is not None and self.avatar_hash is None:
 			self.avatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
 	 
