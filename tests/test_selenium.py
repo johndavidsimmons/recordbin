@@ -332,12 +332,32 @@ class SeleniumTestCase(unittest.TestCase):
 		
 		# Navigate to the change token page
 		self.client.get('http://localhost:5000/auth/change-email/{token}'.format(token=token))
-		time.sleep(10)
 		self.assertTrue(re.search('Hello, {new_email}!'.format(new_email=new_email), self.client.page_source))
 
 		# logout
 		self.client.find_element_by_link_text('Log Out').click()
 		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
 
+	def test_active_navigation_selectors(self):
 
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue('''<li class="navigation__item">
+            <a class="active" href="/">Home</a>
+        </li>''' in self.client.page_source)
 
+		# navigate to login
+		self.client.get('http://localhost:5000/auth/login')
+		self.assertTrue('''<li class="navigation__item">
+            <a class="active" href="/auth/login">Log In</a>
+        </li>''' in self.client.page_source)
+
+        # navigate to register
+		self.client.get('http://localhost:5000/auth/register')
+		self.assertTrue('''<li class="navigation__item">
+            <a class="active" href="/auth/register">Register</a>
+        </li>''' in self.client.page_source)
+
+        
+		
+		

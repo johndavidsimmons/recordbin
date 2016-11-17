@@ -1,13 +1,20 @@
+/*Element*/
+nav {
+	
+}
+
 /*ul*/
 .navigation {
 	list-style-type: none;
-
+	margin: 0px;
+	padding: 0px;
 }
 
 /*li*/
 .navigation__item {
 
 	display: inline;
+	margin-right: 1em;
 	
 	a {
 		color: $black;

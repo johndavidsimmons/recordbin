@@ -7,11 +7,11 @@ class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
     submit = SubmitField('Submit')
 
-class LoginForm(Form):
-	email = StringField('Email', validators=[Required(), Email()])
-	password = PasswordField('Password', validators=[Required()])
-	remember_me = BooleanField('Remember Me')
-	submit = SubmitField('Log In')
+# class LoginForm(Form):
+# 	email = StringField('Email MAIN', validators=[Required(), Email()])
+# 	password = PasswordField('Password', validators=[Required()])
+# 	remember_me = BooleanField('Remember Me')
+# 	submit = SubmitField('Log In')
 
 class EditProfileForm(Form):
 	name = StringField('Real name', validators=[Length(0, 64)])
