@@ -18,7 +18,10 @@ def login():
 			return redirect(request.args.get('next') or url_for('main.index'))
 		flash('invalid username or password')
 	
-	return render_template('auth/login.html', form = form)
+	if current_user.is_anonymous:
+		return render_template('auth/login.html', form = form)
+	else:
+		return redirect(url_for('main.index'))	
 
 @auth.route('/logout')
 @login_required
@@ -40,8 +43,12 @@ def register():
 				   'auth/email/confirm', user=user, token=token)
 		flash('A confirmation email has been sent to you by email.')
 		return redirect(url_for('auth.login'))
-	return render_template('auth/register.html', form=form)
 
+	if current_user.is_anonymous:
+		return render_template('auth/register.html', form = form)
+	else:
+		return redirect(url_for('main.index'))	
+	
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):

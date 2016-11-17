@@ -342,22 +342,68 @@ class SeleniumTestCase(unittest.TestCase):
 
 		# navigate to home page
 		self.client.get('http://localhost:5000/')
-		self.assertTrue('''<li class="navigation__item">
-            <a class="active" href="/">Home</a>
-        </li>''' in self.client.page_source)
+		self.assertTrue('''<a class="active" href="/">Home</a>''' in self.client.page_source)
 
 		# navigate to login
 		self.client.get('http://localhost:5000/auth/login')
-		self.assertTrue('''<li class="navigation__item">
-            <a class="active" href="/auth/login">Log In</a>
-        </li>''' in self.client.page_source)
+		self.assertTrue('<a class="active" href="/auth/login">Log In</a>' in self.client.page_source)
 
-        # navigate to register
+		# navigate to register
 		self.client.get('http://localhost:5000/auth/register')
-		self.assertTrue('''<li class="navigation__item">
-            <a class="active" href="/auth/register">Register</a>
-        </li>''' in self.client.page_source)
+		self.assertTrue('<a class="active" href="/auth/register">Register</a>' in self.client.page_source)
+	
+	def test_login_redirect(self):
+		"""
+		A logged in user trying to access the login page
+		will be redirected to the index page
+		"""	
 
-        
-		
-		
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+		# navigate to login page
+		self.client.find_element_by_link_text('Log In').click()
+		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
+
+		# login
+		self.client.find_element_by_name('email').\
+			send_keys('admin_john@example.com')
+		self.client.find_element_by_name('password').send_keys('yolo')
+		self.client.find_element_by_name('submit').click()
+		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
+
+		self.client.get('http://localhost:5000/auth/login')
+		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
+
+		# logout
+		self.client.find_element_by_link_text('Log Out').click()
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+	def test_register_redirect(self):
+		"""
+		A logged in user trying to access the register page
+		will be redirected to the index page
+		"""	
+
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+		# navigate to login page
+		self.client.find_element_by_link_text('Log In').click()
+		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
+
+		# login
+		self.client.find_element_by_name('email').\
+			send_keys('admin_john@example.com')
+		self.client.find_element_by_name('password').send_keys('yolo')
+		self.client.find_element_by_name('submit').click()
+		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
+
+		self.client.get('http://localhost:5000/auth/register')
+		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
+
+		# logout
+		self.client.find_element_by_link_text('Log Out').click()
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))	
