@@ -16,30 +16,21 @@
 
     {% include "include/_nav.html" %}
 
-
-    {% for message in get_flashed_messages() %}
-    <div>
-        <p><strong>Flash:</strong> {{ message }}</p>
-    </div>
-    {% endfor %}
-    
-
-    
-    <p><strong>Current User: </strong>{{ current_user.email }}</p> 
-    <p><strong>Using database:</strong> {{ db }}</p>
-    
     {% block content %}
-        {% block page_content %}
+        <div class="container">
 
-        {% endblock %}
+            {% for message in get_flashed_messages() %}
+            <div>
+                <p><strong>Flash:</strong> {{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% block page_content %}
+            {% endblock %}
+        </div>
     {% endblock %}
 </body>
 </html>
-
-
-
-
-
 
 
 {% block scripts %}

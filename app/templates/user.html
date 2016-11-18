@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "/extend/_base.html" %}
 
 {% block title %}
     {{ super() }}
@@ -20,8 +20,10 @@
     <p><strong>last_seen:</strong> {{ user.last_seen }}</p>
     <p><strong>avatar_hash:</strong> {{ user.avatar_hash }}</p>
     
-    <h2>Gravatar</h2>
-    <img src="{{ user.gravatar(size=256) }}" alt="">
+    <div class=".profile">
+        <img class="gravatar" src="{{ user.gravatar(size=256) }}" alt="">
+    </div>
+    
 
     
         {% if user == current_user %}

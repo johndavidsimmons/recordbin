@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "/extend/_base.html" %}
 
 {% block title %}
 	{{ super() }}
@@ -7,9 +7,8 @@
 
 {% block page_content %}
 <div>
-    <h1>Record Bin AUTH</h1>
 
-    	<h1>REGISTER</h1>
+	<h1>REGISTER</h1>
     {% from 'render_field.html' import render_field %}
     <form action method="post">
 		{{ form.csrf_token }}

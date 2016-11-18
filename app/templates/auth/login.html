@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "/extend/_base.html" %}
 
 {% block title %}
 	{{ super() }}
@@ -6,12 +6,7 @@
 {% endblock %}
 
 {% block page_content %}
-<div>
-    <h1>Record Bin AUTH</h1>
-	<p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Click here to reset it</a>.</p>
-
-	<p>New user? <a href="{{ url_for('auth.register') }}">Click here to register</a>.</p>
-	
+<div>	
     <h1>Login</h1>
     {% from 'render_field.html' import render_field %}
     <form action method="post">
@@ -21,5 +16,9 @@
 	    {{ render_field(form.remember_me) }}
 	    <button class="btn" type="submit" name="submit">Log In</button>
     </form>
+
+    <p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Click here to reset it</a></p>
+
+    <p>New user? <a href="{{ url_for('auth.register') }}">Click here to register</a></p>
 </div>
 {% endblock %}

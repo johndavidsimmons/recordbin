@@ -1,13 +1,18 @@
-.btn {
-  background-color: transparent;
-  border: 1px solid #000;
-  color: #000;
-  padding: 1em;
-  border-radius: 5px; }
-  .btn:hover {
-    background-color: #000;
-    color: white;
-    cursor: pointer; }
+.container {
+  margin: 0 auto;
+  max-width: 960px; }
+
+  .btn {
+    background-color: transparent;
+    border: 1px solid #000;
+    border-radius: 5px;
+    color: #000;
+    padding: 1em;
+    min-width: 125px; }
+    .btn:hover {
+      background-color: #000;
+      color: white;
+      cursor: pointer; }
 
 * {
   font-family: sans-serif; }
@@ -28,3 +33,6 @@
           color: #777; }
           .navigation__item a.active {
             border-bottom: 1px solid #000; }
+
+.gravatar {
+  border-radius: 5px; }
