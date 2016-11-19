@@ -407,3 +407,7 @@ class SeleniumTestCase(unittest.TestCase):
 		# logout
 		self.client.find_element_by_link_text('Log Out').click()
 		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))	
+
+	def test_404_page(self):
+		self.client.get('http://localhost:5000/dude')
+		self.assertTrue(re.search('404: Not Found', self.client.page_source))

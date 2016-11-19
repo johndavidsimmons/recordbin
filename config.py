@@ -13,7 +13,7 @@ class Config:
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 	FLASKY_MAIL_SUBJECT_PREFIX = '[RecordBin - SendGRID]'
 	FLASKY_MAIL_SENDER = os.environ.get('FLASKY_MAIL_SENDER')
-	FLASKY_ADMIN = 'Flasky Admin <flasky@example.com>'
+	FLASKY_ADMIN = 'RecordBin Admin <app57807167@heroku.com>'
 
 
 	@staticmethod

@@ -1,0 +1,12 @@
+{% extends "/extend/_base.html" %}
+
+{% block title %}
+	Record Bin
+{% endblock %}
+
+{% block page_content %}
+<div>
+    <h1>{{ error }}</h1>
+    <p>The page you were looking for: <strong>{{ request.url }}</strong> was not found.</p>
+</div>
+{% endblock %}
