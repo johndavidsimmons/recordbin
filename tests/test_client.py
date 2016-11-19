@@ -12,6 +12,13 @@ class FlaskClientTestCase(unittest.TestCase):
 		Role.insert_roles()
 		self.client = self.app.test_client(use_cookies=True)
 
+		user_role = Role.query.filter_by(name='user').first()
+		user = User(email='profile_john@example.com',
+					username='profile_john', password='yolo',
+					role=user_role, confirmed=True)
+		db.session.add(user)
+		db.session.commit()
+
 	def tearDown(self):
 		db.session.remove()
 		db.drop_all()
@@ -40,6 +47,10 @@ class FlaskClientTestCase(unittest.TestCase):
 	def test_404(self):
 		response = self.client.get('/yolo')
 		self.assertTrue(response.status_code == 404)
+
+	def test_public_profile_page(self):
+		response = self.client.get('/user/profile_john')
+		self.assertTrue(response.status_code == 200)
 
 	# Redirects
 	def test_unconfirmed_redirect(self):

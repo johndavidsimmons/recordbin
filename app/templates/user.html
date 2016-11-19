@@ -6,46 +6,55 @@
 {% endblock %}
 
 {% block page_content %}
-<h1>User Profile</h1>
+<h1>{{ user.username }}'s Profile</h1>
 <div>
-    <h2>User Model Columns:</h2>
-    <p><strong>email:</strong> {{ user.email }}</p>
-    <p><strong>username:</strong> {{ user.username }}</p>
-    <p><strong>password_hash:</strong> {{ user.password_hash }}</p>
-    <p><strong>confirmed:</strong> {{ user.confirmed }}</p>
-    <p><strong>name:</strong> {{ user.name }}</p>
-    <p><strong>location:</strong> {{ user.location }}</p>
-    <p><strong>about_me:</strong> {{ user.about_me }}</p>
-    <p><strong>member_since:</strong> {{ user.member_since }}</p>
-    <p><strong>last_seen:</strong> {{ user.last_seen }}</p>
-    <p><strong>avatar_hash:</strong> {{ user.avatar_hash }}</p>
-    
+
     <div class=".profile">
         <img class="gravatar" src="{{ user.gravatar(size=256) }}" alt="">
     </div>
-    
 
+    {% if current_user.is_anonymous %}
+       
+        <h2>PUBLIC PROFILE</h2>
+        <p><strong>email:</strong> {{ user.email }}</p>
+        <p><strong>username:</strong> {{ user.username }}</p>
     
+    {% else %}
+
+        <h2>User Model Columns:</h2>
+        <p><strong>email:</strong> {{ user.email }}</p>
+        <p><strong>username:</strong> {{ user.username }}</p>
+        <p><strong>password_hash:</strong> {{ user.password_hash }}</p>
+        <p><strong>confirmed:</strong> {{ user.confirmed }}</p>
+        <p><strong>name:</strong> {{ user.name }}</p>
+        <p><strong>location:</strong> {{ user.location }}</p>
+        <p><strong>about_me:</strong> {{ user.about_me }}</p>
+        <p><strong>member_since:</strong> {{ user.member_since }}</p>
+        <p><strong>last_seen:</strong> {{ user.last_seen }}</p>
+        <p><strong>avatar_hash:</strong> {{ user.avatar_hash }}</p>
+        
         {% if user == current_user %}
             <p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
         {% endif %}
 
         {% if current_user.is_administrator() %}
+            
             <h2>Admin Section</h2>
             <a href="{{ url_for('.edit_profile_admin', id=user.id) }}">Edit Profile [Admin]</a>
-
             <p><strong>User List</strong></p>
             <ul>
+            
             {% for u in all_users %}
                 <li>{{ u }}</li>
             {% endfor %}
+            
             </ul>
              <p><strong>Stats</strong></p> 
              <ul>
                  <li>Total Users: {{ all_users|length }}</li>
              </ul>  
-
         {% endif %}
-    
+    {% endif %}
+      
 </div>
 {% endblock %}

@@ -411,3 +411,11 @@ class SeleniumTestCase(unittest.TestCase):
 	def test_404_page(self):
 		self.client.get('http://localhost:5000/dude')
 		self.assertTrue(re.search('404: Not Found', self.client.page_source))
+
+	def test_public_profile(self):
+		self.client.get('http://localhost:5000/user/user_john')
+		self.assertTrue(re.search('PUBLIC PROFILE', self.client.page_source))
+
+	def test_public_profile_not_admin(self):
+		self.client.get('http://localhost:5000/user/user_john')
+		self.assertFalse(re.search('Admin Section', self.client.page_source))		
