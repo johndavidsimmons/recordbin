@@ -52,7 +52,31 @@ class FlaskClientTestCase(unittest.TestCase):
 		response = self.client.get('/user/profile_john')
 		self.assertTrue(response.status_code == 200)
 
-	# Redirects
+	# Redirects for anon users
 	def test_unconfirmed_redirect(self):
 		response = self.client.get(url_for('auth.unconfirmed'))
 		self.assertTrue(response.status_code == 302)
+
+	def test_admin_settings_redirect(self):
+		response = self.client.get(url_for('auth.admin_settings'))
+		self.assertTrue(response.status_code == 302)
+
+	def test_change_email_redirect(self):
+		response = self.client.get(url_for('auth.change_email_request'))
+		self.assertTrue(response.status_code == 302)
+
+	def test_change_password_redirect(self):
+		response = self.client.get(url_for('auth.change_password'))
+		self.assertTrue(response.status_code == 302)
+
+	def test_logout_redirect(self):
+		response = self.client.get(url_for('auth.logout'))
+		self.assertTrue(response.status_code == 302)
+
+	def test_confirm_resend_redirect(self):
+		response = self.client.get(url_for('auth.resend_confirmation'))
+		self.assertTrue(response.status_code == 302)
+
+	def test_confirm_redirect(self):
+		response = self.client.get(url_for('auth.confirm', token='xyz'))
+		self.assertTrue(response.status_code == 302)			

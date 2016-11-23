@@ -28,9 +28,8 @@ def dataview():
 
 @main.route('/user/<username>')
 def user(username):
-	all_users = User.query.all()
 	user = User.query.filter_by(username=username).first_or_404()
-	return render_template('user.html', user=user, all_users=all_users)
+	return render_template('user.html', user=user)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])

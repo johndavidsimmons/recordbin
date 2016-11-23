@@ -40,19 +40,7 @@
         {% if current_user.is_administrator() %}
             
             <h2>Admin Section</h2>
-            <a href="{{ url_for('.edit_profile_admin', id=user.id) }}">Edit Profile [Admin]</a>
-            <p><strong>User List</strong></p>
-            <ul>
-            
-            {% for u in all_users %}
-                <li>{{ u }}</li>
-            {% endfor %}
-            
-            </ul>
-             <p><strong>Stats</strong></p> 
-             <ul>
-                 <li>Total Users: {{ all_users|length }}</li>
-             </ul>  
+            <a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a>          
         {% endif %}
     {% endif %}
       

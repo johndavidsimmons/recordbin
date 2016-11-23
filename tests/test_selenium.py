@@ -110,7 +110,8 @@ class SeleniumTestCase(unittest.TestCase):
 		self.client.find_element_by_name('password').send_keys('yolo')
 		self.client.find_element_by_name('submit').click()
 		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
-
+		self.assertTrue('<a class="active" href="/">Home</a>' in self.client.page_source)
+		
 		# logout
 		self.client.find_element_by_link_text('Log Out').click()
 		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
@@ -134,6 +135,8 @@ class SeleniumTestCase(unittest.TestCase):
 		# navigate to the user's profile page
 		self.client.find_element_by_link_text('View Profile').click()
 		self.assertTrue('<p><strong>username:</strong> admin_john</p>' in self.client.page_source)
+		self.assertTrue('<a class="active" href="/user/admin_john">View Profile</a>' in self.client.page_source)
+		
 
 		# logout
 		self.client.find_element_by_link_text('Log Out').click()
@@ -161,7 +164,7 @@ class SeleniumTestCase(unittest.TestCase):
 		self.assertTrue('<p><strong>username:</strong> admin_john</p>' in self.client.page_source)
 
 		# navigate to the edit profile page
-		self.client.find_element_by_link_text('Edit Profile [Admin]').click()
+		self.client.find_element_by_link_text('[Admin] Edit Profile').click()
 		self.assertTrue('<h1>Edit Profile</h1>' in self.client.page_source)
 
 		# Fill out profile and save
@@ -418,4 +421,143 @@ class SeleniumTestCase(unittest.TestCase):
 
 	def test_public_profile_not_admin(self):
 		self.client.get('http://localhost:5000/user/user_john')
-		self.assertFalse(re.search('Admin Section', self.client.page_source))		
+		self.assertFalse(re.search('Admin Section', self.client.page_source))
+
+	def test_admin_edit_user_profile(self):
+		"""
+		An admin can edit a random user's profile
+		"""
+
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+		# navigate to login page
+		self.client.find_element_by_link_text('Log In').click()
+		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
+
+		# login
+		self.client.find_element_by_name('email').\
+			send_keys('admin_john@example.com')
+		self.client.find_element_by_name('password').send_keys('yolo')
+		self.client.find_element_by_name('submit').click()
+		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
+
+		# Go another users
+		self.client.get('http://localhost:5000/user/user_john')
+		self.client.find_element_by_name('admin-edit').click()
+
+		# Profile page
+		self.client.find_element_by_name('about_me').send_keys('I am admin editing a user profile')
+		self.client.find_element_by_name('submit').click()
+		self.assertTrue(re.search('I am admin editing a user profile', self.client.page_source))
+		
+
+		# logout
+		self.client.find_element_by_link_text('Log Out').click()
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+	def test_admin_settings_nav_viewable(self):
+		"""
+		Test that the admin page is viewable 
+		in the navigation for an admin user
+		"""
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+		# navigate to login page
+		self.client.find_element_by_link_text('Log In').click()
+		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
+
+		# login
+		self.client.find_element_by_name('email').\
+			send_keys('admin_john@example.com')
+		self.client.find_element_by_name('password').send_keys('yolo')
+		self.client.find_element_by_name('submit').click()
+		self.assertTrue('<a href="/auth/admin-settings">Admin</a>' in self.client.page_source)
+
+		# logout
+		self.client.find_element_by_link_text('Log Out').click()
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+	def test_admin_settings_nav_not_viewable(self):
+		"""
+		Test that the admin page is not viewable 
+		in the navigation for a regular user
+		"""
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+		# navigate to login page
+		self.client.find_element_by_link_text('Log In').click()
+		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
+
+		# login
+		self.client.find_element_by_name('email').\
+			send_keys('user_john@example.com')
+		self.client.find_element_by_name('password').send_keys('yolo')
+		self.client.find_element_by_name('submit').click()
+		self.assertFalse('<a href="/auth/admin-settings">Admin</a>' in self.client.page_source)
+
+		# logout
+		self.client.find_element_by_link_text('Log Out').click()
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+	def test_admin_settings_accessible(self):
+		"""
+		Test that the admin page is accessible for
+		an admin user
+		"""
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+		# navigate to login page
+		self.client.find_element_by_link_text('Log In').click()
+		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
+
+		# login
+		self.client.find_element_by_name('email').\
+			send_keys('admin_john@example.com')
+		self.client.find_element_by_name('password').send_keys('yolo')
+		self.client.find_element_by_name('submit').click()
+		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
+		
+		# Go to admin settings page
+		self.client.find_element_by_link_text('Admin').click()
+		self.assertTrue('<h1>Admin</h1>' in self.client.page_source)
+		self.assertTrue('<a class="active" href="/auth/admin-settings">Admin</a>' in self.client.page_source)
+
+		# logout
+		self.client.find_element_by_link_text('Log Out').click()
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))	
+
+	def test_admin_settings_not_accessible(self):
+		"""
+		Test that the admin page is not accessible for
+		a regular user
+		"""
+		# navigate to home page
+		self.client.get('http://localhost:5000/')
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+		# navigate to login page
+		self.client.find_element_by_link_text('Log In').click()
+		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
+
+		# login
+		self.client.find_element_by_name('email').\
+			send_keys('user_john@example.com')
+		self.client.find_element_by_name('password').send_keys('yolo')
+		self.client.find_element_by_name('submit').click()
+		self.assertTrue(re.search('Hello, user_john@example.com!', self.client.page_source))
+		
+		# Go to admin settings page
+		self.client.get('http://localhost:5000/auth/admin-settings')
+		self.assertTrue('<h1>403: Forbidden</h1>' in self.client.page_source)
+
+		# logout
+		self.client.find_element_by_link_text('Log Out').click()
+		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))		

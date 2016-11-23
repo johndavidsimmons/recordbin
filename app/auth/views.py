@@ -5,6 +5,7 @@ from .. import db
 from ..models import User
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
 from ..email import send_email
+from ..decorators import admin_required
 
 @auth.route('/login', methods=["GET", "POST"])
 def login():
@@ -165,6 +166,14 @@ def change_email(token):
 	else:
 		flash('Invalid request.')
 	return redirect(url_for('main.index'))
+
+@auth.route('/admin-settings')
+@login_required
+@admin_required
+def admin_settings():
+	all_users = User.query.all()
+	return render_template('auth/admin-settings.html', all_users=all_users)
+
 
 # u = User.query.filter_by(email='johndavidsimmons@gmail.com').first()
 
