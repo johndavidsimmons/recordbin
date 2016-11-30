@@ -16,6 +16,7 @@ Flask-Scss==0.5
 Flask-SendGrid==0.1.0
 Flask-SQLAlchemy==1.0
 Flask-WTF==0.9.4
+ForgeryPy==0.1
 gunicorn==19.6.0
 ipython-genutils==0.1.0
 itsdangerous==0.23

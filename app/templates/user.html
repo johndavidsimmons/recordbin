@@ -1,7 +1,7 @@
 {% extends "/extend/_base.html" %}
 
 {% block title %}
-    {{ super() }}
+	{{ super() }}
 	{{ user.username }}
 {% endblock %}
 
@@ -9,40 +9,77 @@
 <h1>{{ user.username }}'s Profile</h1>
 <div>
 
-    <div class=".profile">
-        <img class="gravatar" src="{{ user.gravatar(size=256) }}" alt="">
-    </div>
+	<div class=".profile">
+		<img class="gravatar" src="{{ user.gravatar(size=256) }}" alt="">
+	</div>
 
-    {% if current_user.is_anonymous %}
-       
-        <h2>PUBLIC PROFILE</h2>
-        <p><strong>email:</strong> {{ user.email }}</p>
-        <p><strong>username:</strong> {{ user.username }}</p>
-    
-    {% else %}
+	{% if current_user.is_anonymous %}
+	   
+		<h2>PUBLIC PROFILE</h2>
+		<p><strong>email:</strong> {{ user.email }}</p>
+		<p><strong>username:</strong> {{ user.username }}</p>
+	
+	{% else %}
 
-        <h2>User Model Columns:</h2>
-        <p><strong>email:</strong> {{ user.email }}</p>
-        <p><strong>username:</strong> {{ user.username }}</p>
-        <p><strong>password_hash:</strong> {{ user.password_hash }}</p>
-        <p><strong>confirmed:</strong> {{ user.confirmed }}</p>
-        <p><strong>name:</strong> {{ user.name }}</p>
-        <p><strong>location:</strong> {{ user.location }}</p>
-        <p><strong>about_me:</strong> {{ user.about_me }}</p>
-        <p><strong>member_since:</strong> {{ user.member_since }}</p>
-        <p><strong>last_seen:</strong> {{ user.last_seen }}</p>
-        <p><strong>avatar_hash:</strong> {{ user.avatar_hash }}</p>
-        
-        {% if user == current_user %}
-            <p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
-        {% endif %}
+		<h1>Followers</h1>
 
-        {% if current_user.is_administrator() %}
-            
-            <h2>Admin Section</h2>
-            <a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a>          
-        {% endif %}
-    {% endif %}
-      
+		<p>
+		{% if user != current_user %}
+			{% if not current_user.is_following(user) %}
+				<form action="{{ url_for('.follow', username=user.username) }}">
+				    <button class="btn" type="submit">Follow</button>
+				</form>
+			{% else %}
+				<form action="{{ url_for('.unfollow', username=user.username) }}">
+				    <button class="btn" type="submit">Unfollow</button>
+				</form>
+			{% endif %}
+		{% endif %}
+
+		<p><strong>Following: </strong>{{followed_count}}</p>
+		<ul>
+		{% for f in followed %}
+			<li><a href="/user/{{f.followed.username}}">{{f.followed.username}}</a></li>
+		{% endfor %}
+		</ul>
+
+		<p><strong>Followers: </strong>{{followers_count}}</p>
+		<ul>
+		{% for f in followers %}
+			<li><a href="/user/{{f.follower.username}}">{{f.follower.username}}</a></li>
+		{% endfor %}
+		</ul>
+					
+					
+		{% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+			<p><strong>FOLLOWS YOU</strong></p>
+		{% endif %}
+				</p>
+
+
+
+		<h2>User Model Columns:</h2>
+		<p><strong>email:</strong> {{ user.email }}</p>
+		<p><strong>username:</strong> {{ user.username }}</p>
+		<p><strong>password_hash:</strong> {{ user.password_hash }}</p>
+		<p><strong>confirmed:</strong> {{ user.confirmed }}</p>
+		<p><strong>name:</strong> {{ user.name }}</p>
+		<p><strong>location:</strong> {{ user.location }}</p>
+		<p><strong>about_me:</strong> {{ user.about_me }}</p>
+		<p><strong>member_since:</strong> {{ user.member_since }}</p>
+		<p><strong>last_seen:</strong> {{ user.last_seen }}</p>
+		<p><strong>avatar_hash:</strong> {{ user.avatar_hash }}</p>
+		
+		{% if user == current_user %}
+			<p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
+		{% endif %}
+
+		{% if current_user.is_administrator() %}
+			
+			<h2>Admin Section</h2>
+			<a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a>          
+		{% endif %}
+	{% endif %}
+	  
 </div>
 {% endblock %}

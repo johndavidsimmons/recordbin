@@ -164,7 +164,7 @@ def change_email(token):
 
 		flash('Your email address has been updated.')
 	else:
-		flash('Invalid request.')
+		flash('Invalid request. Bad Token')
 	return redirect(url_for('main.index'))
 
 @auth.route('/admin-settings')

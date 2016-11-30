@@ -45,6 +45,11 @@ class Role(db.Model):
 	def __repr__(self):
 		return '<Role {}>'.format(self.name)
 
+class Follow(db.Model):
+	__tablename__ = 'follows'
+	follower_id = db.Column(db.Integer, db.ForeignKey('users_table.id'), primary_key=True)
+	followed_id = db.Column(db.Integer, db.ForeignKey('users_table.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 class User(UserMixin, db.Model):
 	__tablename__ = 'users_table'
@@ -64,6 +69,16 @@ class User(UserMixin, db.Model):
 	
 	# FK & Relationship
 	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+	followed = db.relationship('Follow',
+							   foreign_keys=[Follow.follower_id],
+							   backref=db.backref('follower', lazy='joined'),
+							   lazy='dynamic',
+							   cascade='all, delete-orphan')
+	followers = db.relationship('Follow',
+								foreign_keys=[Follow.followed_id],
+								backref=db.backref('followed', lazy='joined'),
+								lazy='dynamic',
+								cascade='all, delete-orphan')
 
 	def gravatar(self, size=100, default='identicon', rating='g'):
 		if request.is_secure:
@@ -75,6 +90,23 @@ class User(UserMixin, db.Model):
 
 		return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
 					url=url, hash=hash, size=size, default=default, rating=rating)	
+	def follow(self, user):
+		if not self.is_following(user):
+			f = Follow(follower=self, followed=user)
+			db.session.add(f)
+
+	def unfollow(self, user):
+		f = self.followed.filter_by(followed_id=user.id).first()
+		if f:
+			db.session.delete(f)
+
+	def is_following(self, user):
+		return self.followed.filter_by(
+			followed_id=user.id).first() is not None
+
+	def is_followed_by(self, user):
+		return self.followers.filter_by(
+			follower_id=user.id).first() is not None		
 
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
@@ -167,6 +199,29 @@ class User(UserMixin, db.Model):
 		db.session.add(self)
 		db.session.commit()
 		return True	
+
+	@staticmethod
+	def generate_fake(count=100):
+		from sqlalchemy.exc import IntegrityError
+		from random import seed
+		import forgery_py
+
+		seed()
+		for i in range(count):
+			u = User(email=forgery_py.internet.email_address(), username=forgery_py.internet.user_name(True), password=forgery_py.lorem_ipsum.word(), confirmed=True, name=forgery_py.name.full_name(), location=forgery_py.address.city(), about_me=forgery_py.lorem_ipsum.sentence(), member_since=forgery_py.date.date(True))
+			db.session.add(u)
+			try:
+				db.session.commit()
+			except IntegrityError:
+				db.session.rollback()
+
+	@staticmethod
+	def add_self_follows():
+		for user in User.query.all():
+			if not user.is_following(user):
+				user.follow(user)
+				db.session.add(user)
+				db.session.commit()
 
 
 
