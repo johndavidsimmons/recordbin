@@ -36,19 +36,19 @@
 			{% endif %}
 		{% endif %}
 
-		<p><strong>Following: </strong>{{followed_count - 1}}</p>
+		<p><strong>Following:</strong></p>
 		<ul>
 		{% for f in followed %}
-			{% if f.followed != current_user %}
+			{% if f.followed != current_user and f.followed.username != user.username%}
 			<li><a href="/user/{{f.followed.username}}">{{f.followed.username}}</a></li>
 			{% endif %}
 		{% endfor %}
 		</ul>
 
-		<p><strong>Followers: </strong>{{followers_count - 1}}</p>
+		<p><strong>Followers:</strong></p>
 		<ul>
 		{% for f in followers %}
-			{% if f.follower != current_user %}
+			{% if f.follower != current_user and f.follower.username != user.username%}
 			<li><a href="/user/{{f.follower.username}}">{{f.follower.username}}</a></li>
 			{% endif %}
 		{% endfor %}
