@@ -236,24 +236,61 @@ class User(UserMixin, db.Model):
 
 
 
-class Record(db.Model):
-	__tablename__ = 'records'
+class Title(db.Model):
+	__tablename__ = 'titles'
 	id = db.Column(db.Integer, primary_key=True)
-	title = db.Column(db.String(64), unique=True, index=True)
-
-
-	# FK & Relationship
+	name = db.Column(db.String(64), index=True)
 	artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'))
-
+	size_id = db.Column(db.Integer, db.ForeignKey('sizes.id'))
+	color = db.Column(db.String(64))
+	year = db.Column(db.Integer)
+	format_id = db.Column(db.Integer, db.ForeignKey('formats.id'))
+	notes = db.Column(db.String(128))
 
 	# Methods
-	def __init__(self, title, artist_id):
-		self.title = title
+	def __init__(self, name, artist_id, year, format_id, size_id=None, color=None, notes=None):
+		self.name = name
 		self.artist_id = artist_id
+		self.year = year
+		self.format_id = format_id
+		self.size_id = size_id
+		self.color = color
+		self.notes = notes
+
+	def add_to_collection(self):
+		db.session.add(self)
+		db.session.commit()
+
+	def remove_from_collection(self):
+		db.session.delete(self)
+		db.session.commit()			
 
 	def __repr__(self):
-		return '<Record %r>' % self.title
+		return '<Title: {}>'.format(self.name) 
 
+class Size(db.Model):
+	__tablename__ = 'sizes'
+	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.Integer, unique=True)
+
+	# Methods
+	def __init__(self, name):
+		self.name = name
+
+	def __repr__(self):
+		return '<Size %r>' % self.name	
+
+class Format(db.Model):
+	__tablename__ = 'formats'
+	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(64), unique=True)
+
+	# Methods
+	def __init__(self, name):
+		self.name = name
+
+	def __repr__(self):
+		return '<Format %r>' % self.name	
 
 
 class Artist(db.Model):
@@ -271,6 +308,10 @@ class Artist(db.Model):
 	def __repr__(self):
 		return '<Artist %r>' % self.name
 
+	def add_to_table(self):
+		db.session.add(self)
+		db.session.commit()	
+
 class AnonymousUser(AnonymousUserMixin):
 	def can(self, permissions):
 		return False
@@ -284,3 +325,8 @@ def load_user(user_id):
 # make changes -> migrate -> upgrade
 	# python manage.py db migrate -m 'default role id'
 	# python manage.py db upgrade
+
+# Title.query.join(Artist).filter(Artist.id==Title.artist_id).all()
+
+
+ 

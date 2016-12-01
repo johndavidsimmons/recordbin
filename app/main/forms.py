@@ -1,17 +1,11 @@
 from flask_wtf import Form
-from wtforms import StringField, SubmitField, BooleanField, PasswordField, TextAreaField, SelectField
+from wtforms import StringField, SubmitField, BooleanField, PasswordField, TextAreaField, SelectField, IntegerField
 from wtforms.validators import Required, Email, Length, Regexp
-from ..models import Role, User
+from ..models import Role, User, Format, Size
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
     submit = SubmitField('Submit')
-
-# class LoginForm(Form):
-# 	email = StringField('Email MAIN', validators=[Required(), Email()])
-# 	password = PasswordField('Password', validators=[Required()])
-# 	remember_me = BooleanField('Remember Me')
-# 	submit = SubmitField('Log In')
 
 class EditProfileForm(Form):
 	name = StringField('Real name', validators=[Length(0, 64)])
@@ -48,3 +42,17 @@ class EditProfileAdminForm(Form):
         if field.data != self.user.username and \
                 User.query.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
+
+class AddRecordForm(Form):
+    artist = StringField('Artist', validators=[Required()])
+    title = StringField('Title', validators=[Required()])
+    year = IntegerField('Year', validators=[Required()])
+    format = SelectField('Format', coerce=int)
+    notes = TextAreaField('Notes', validators=[Required()])
+    color = StringField('Color', validators=[Required()])
+    size = SelectField('Size', coerce=int)
+
+    def __init__(self, *args, **kwargs):
+        super(AddRecordForm, self).__init__(*args, **kwargs)
+        self.format.choices = [(format.id, format.name) for format in Format.query.order_by(Format.id).all()]
+        self.size.choices = [(size.id, size.name) for size in Size.query.order_by(Size.id).all()]

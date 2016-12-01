@@ -1,9 +1,9 @@
 from flask import render_template, session, redirect, url_for, current_app, abort, flash, request
 from flask_login import login_required, current_user
 from .. import db
-from ..models import User, Role, Artist, Record, AnonymousUser, Permission
+from ..models import User, Role	, AnonymousUser, Permission, Artist, Title, Size, Format
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm
+from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
 from ..decorators import admin_required, permission_required
 
 @main.route('/shutdown')
@@ -16,9 +16,37 @@ def server_shutdown():
 	shutdown()
 	return 'Shutting down...'
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 def index():
-	return render_template('index.html', db=db)
+	form = AddRecordForm()
+	records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Format, Title.format_id==Format.id).join(Size, Title.size_id==Size.id).add_columns(Artist.name, Format.name, Size.name).filter(Title.artist_id==Artist.id).all()
+
+	if form.validate_on_submit():
+
+		# Form data
+		artist = form.artist.data
+		title = form.title.data
+		format_id = form.format.data
+		color = form.color.data
+		size_id = form.size.data
+		
+		# Check if artist in artists table
+		# If not, add it, then get id
+		try:
+			artist_id = Artist.query.filter_by(name=artist).first().id
+		except AttributeError:
+			Artist(name=form.artist.data).add_to_table()
+			artist_id = Artist.query.filter_by(name=artist).first().id
+
+		# Build object and add to collection
+		record = Title(name=title, artist_id=artist_id, year=2012, format_id=format_id, size_id=size_id, color=color, notes="lorem ipsum")
+		
+		record.add_to_collection()
+
+		flash('{} - {} added'.format(artist, title))
+		return redirect(url_for('main.index'))
+
+	return render_template('index.html', db=db, records=records, form=form)
 
 @main.route('/dataview')
 def dataview():
@@ -111,37 +139,3 @@ def unfollow(username):
 	current_user.unfollow(user)
 	flash('You are not following %s anymore.' % username)
 	return redirect(url_for('.user', username=username))
-
-
-# @main.route('/followers/<username>')
-# def followers(username):
-# 	user = User.query.filter_by(username=username).first()
-# 	if user is None:
-# 		flash('Invalid user.')
-# 		return redirect(url_for('.index'))
-# 	page = request.args.get('page', 1, type=int)
-# 	pagination = user.followers.paginate(
-# 		page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
-# 		error_out=False)
-# 	follows = [{'user': item.follower, 'timestamp': item.timestamp}
-# 			   for item in pagination.items]
-# 	return render_template('followers.html', user=user, title="Followers of",
-# 						   endpoint='.followers', pagination=pagination,
-# 						   follows=follows)
-
-
-# @main.route('/followed-by/<username>')
-# def followed_by(username):
-# 	user = User.query.filter_by(username=username).first()
-# 	if user is None:
-# 		flash('Invalid user.')
-# 		return redirect(url_for('.index'))
-# 	page = request.args.get('page', 1, type=int)
-# 	pagination = user.followed.paginate(
-# 		page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
-# 		error_out=False)
-# 	follows = [{'user': item.followed, 'timestamp': item.timestamp}
-# 			   for item in pagination.items]
-# 	return render_template('followers.html', user=user, title="Followed by",
-# 						   endpoint='.followed_by', pagination=pagination,
-# 						   follows=follows)	

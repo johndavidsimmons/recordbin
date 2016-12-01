@@ -11,6 +11,44 @@
 	{% if current_user.is_authenticated %}
 	<h2>Content</h2>
     <p>HERE IS THE SECRET USER ONLY CONTENT</p>
+
+
+        {% from 'render_field.html' import render_field %}
+        <form action method="post">
+            {{ form.csrf_token }}
+            {{ render_field(form.artist) }}
+            {{ render_field(form.title) }}
+            {{ render_field(form.format) }}
+            {{ render_field(form.year) }}
+            {{ render_field(form.notes) }}
+            {{ render_field(form.color) }}
+            {{ render_field(form.size) }}
+            <button class="btn" type="submit" name="submit">Add</button>
+        </form>
+    
+    <h2>Records</h2>
+
+    <p><strong>Records</strong></p>
+    <table border="1" cellpadding="5" cellspacing="5">
+    <tr>
+    <th>Artist</th>
+    <th>Title</th>
+    <th>Color</th>
+    <th>Year</th>
+    <th>Notes</th>
+    <th>Size</th>
+    </tr>
+    {% for r in records %}
+        <tr>
+        <td>{{r[1]}}</td>
+        <td>{{r[0].name}}</td>
+        <td>{{r[0].year}}</td>
+        <td>{{r[2]}}</td>
+        <td>{{r[0].notes}}</td>
+        <td>{{r[3]}}</td>
+        </tr>
+    {% endfor %}
+
 	
 	{% else %}
 	<p>There is content here if you are logged in</p>
