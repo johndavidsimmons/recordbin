@@ -5,6 +5,7 @@ from ..models import User, Role	, AnonymousUser, Permission, Artist, Title, Size
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
 from ..decorators import admin_required, permission_required
+from werkzeug.local import LocalProxy
 
 @main.route('/shutdown')
 def server_shutdown():
@@ -19,7 +20,6 @@ def server_shutdown():
 @main.route('/', methods=['GET', 'POST'])
 def index():
 	form = AddRecordForm()
-	records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Format, Title.format_id==Format.id).join(Size, Title.size_id==Size.id).add_columns(Artist.name, Format.name, Size.name).filter(Title.artist_id==Artist.id).all()
 
 	if form.validate_on_submit():
 
@@ -29,24 +29,44 @@ def index():
 		format_id = form.format.data
 		color = form.color.data
 		size_id = form.size.data
-		
-		# Check if artist in artists table
-		# If not, add it, then get id
-		try:
-			artist_id = Artist.query.filter_by(name=artist).first().id
-		except AttributeError:
-			Artist(name=form.artist.data).add_to_table()
-			artist_id = Artist.query.filter_by(name=artist).first().id
+		year = form.year.data
+		notes = form.notes.data
 
-		# Build object and add to collection
-		record = Title(name=title, artist_id=artist_id, year=2012, format_id=format_id, size_id=size_id, color=color, notes="lorem ipsum")
+		if current_user.is_authenticated:
+			
+			a = Artist.query.filter_by(name=artist).first()
+			if a is None:
+				Artist(name=form.artist.data).add_to_table()
+				artist_id = Artist.query.filter_by(name=artist).first().id
+			else:
+				artist_id = a.id
+
+
+			t = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes).first()
+			if t is None:
+				Title(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, owners=[], notes=notes).add_to_table()
+				title_id = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes).first().id
+			else:
+				title_id = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes).first().id
+
+		record = Title.query.filter_by(id=title_id).first()
+
+		if current_user in record.owners:
+			flash('You already own this')
+			return redirect(url_for('main.index'))
+
+		record.add_owner(current_user)
 		
-		record.add_to_collection()
 
 		flash('{} - {} added'.format(artist, title))
 		return redirect(url_for('main.index'))
 
-	return render_template('index.html', db=db, records=records, form=form)
+	if current_user.is_authenticated:
+		owned_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Format, Title.format_id==Format.id).join(Size, Title.size_id==Size.id).add_columns(Artist.name, Format.name, Size.name).filter(Title.artist_id==Artist.id).filter(Title.owners.contains(current_user)).order_by(Size.id, Artist.name, Title.name).all()
+	else:
+		owned_records = None
+
+	return render_template('index.html', db=db, form=form, owned_records=owned_records)
 
 @main.route('/dataview')
 def dataview():
@@ -61,7 +81,10 @@ def user(username):
 	followers_count = user.followers.count()
 	followed = user.followed.all()
 	followed_count = user.followed.count()
-	return render_template('user.html', user=user, followers=followers, followers_count = followers_count, followed=followed, followed_count=followed_count)
+
+	user_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Format, Title.format_id==Format.id).join(Size, Title.size_id==Size.id).add_columns(Artist.name, Format.name, Size.name).filter(Title.artist_id==Artist.id).filter(Title.owners.contains(user)).order_by(Size.id, Artist.name, Title.name).all()
+
+	return render_template('user.html', user=user, followers=followers, followers_count = followers_count, followed=followed, followed_count=followed_count, user_records=user_records)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -139,3 +162,11 @@ def unfollow(username):
 	current_user.unfollow(user)
 	flash('You are not following %s anymore.' % username)
 	return redirect(url_for('.user', username=username))
+
+@main.route('/delete-record/<id>')
+@login_required
+def delete_record(id):
+	record = Title.query.filter_by(id=id).first_or_404()
+	record.remove_owner(current_user)	
+	flash("DELETED")
+	return redirect(url_for('.index'))

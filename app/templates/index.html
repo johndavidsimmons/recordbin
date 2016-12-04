@@ -13,8 +13,8 @@
     <p>HERE IS THE SECRET USER ONLY CONTENT</p>
 
 
+        <form name="add-record" action method="post">
         {% from 'render_field.html' import render_field %}
-        <form action method="post">
             {{ form.csrf_token }}
             {{ render_field(form.artist) }}
             {{ render_field(form.title) }}
@@ -25,29 +25,11 @@
             {{ render_field(form.size) }}
             <button class="btn" type="submit" name="submit">Add</button>
         </form>
-    
-    <h2>Records</h2>
 
-    <p><strong>Records</strong></p>
-    <table border="1" cellpadding="5" cellspacing="5">
-    <tr>
-    <th>Artist</th>
-    <th>Title</th>
-    <th>Color</th>
-    <th>Year</th>
-    <th>Notes</th>
-    <th>Size</th>
-    </tr>
-    {% for r in records %}
-        <tr>
-        <td>{{r[1]}}</td>
-        <td>{{r[0].name}}</td>
-        <td>{{r[0].year}}</td>
-        <td>{{r[2]}}</td>
-        <td>{{r[0].notes}}</td>
-        <td>{{r[3]}}</td>
-        </tr>
-    {% endfor %}
+
+    <h2>Owned Records</h2>
+    {% from 'macro/record_table.html' import record_table %}
+        {{ record_table(owned_records, current_user, user=current_user) }}
 
 	
 	{% else %}

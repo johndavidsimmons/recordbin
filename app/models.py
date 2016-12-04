@@ -6,6 +6,11 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request
 import hashlib
 from datetime import datetime
+from werkzeug.local import LocalProxy
+
+relationship_table = db.Table('relationship_table',
+		db.Column('owner_id', db.Integer, db.ForeignKey('users_table.id'), nullable=False),
+		db.Column('title_id', db.Integer, db.ForeignKey('titles.id'), nullable=False)		)
 
 class Permission:
 	ADMINISTER = 0x80
@@ -233,9 +238,6 @@ class User(UserMixin, db.Model):
 				db.session.add(user)
 				db.session.commit()
 
-
-
-
 class Title(db.Model):
 	__tablename__ = 'titles'
 	id = db.Column(db.Integer, primary_key=True)
@@ -246,24 +248,40 @@ class Title(db.Model):
 	year = db.Column(db.Integer)
 	format_id = db.Column(db.Integer, db.ForeignKey('formats.id'))
 	notes = db.Column(db.String(128))
+	owners = db.relationship('User', secondary=relationship_table, backref='titles')
+
 
 	# Methods
-	def __init__(self, name, artist_id, year, format_id, size_id=None, color=None, notes=None):
+	def __init__(self, name, artist_id, year, format_id, owners, size_id=None, color=None, notes=None):
 		self.name = name
 		self.artist_id = artist_id
 		self.year = year
 		self.format_id = format_id
+		self.owners = []
 		self.size_id = size_id
 		self.color = color
 		self.notes = notes
 
-	def add_to_collection(self):
+	def add_to_table(self):
 		db.session.add(self)
 		db.session.commit()
 
-	def remove_from_collection(self):
+	def delete_from_table(self):
 		db.session.delete(self)
-		db.session.commit()			
+		db.session.commit()
+
+	def add_owner(self, user):
+		if isinstance(user, User) or isinstance(user, LocalProxy):
+			if user not in self.owners:
+				self.owners += [user]
+				db.session.commit()
+
+	def remove_owner(self, user):
+		if isinstance(user, User) or isinstance(user, LocalProxy):
+			if user in self.owners:
+				self.owners.remove(user)
+				db.session.commit()	
+
 
 	def __repr__(self):
 		return '<Title: {}>'.format(self.name) 
@@ -278,7 +296,31 @@ class Size(db.Model):
 		self.name = name
 
 	def __repr__(self):
-		return '<Size %r>' % self.name	
+		return '<Size {}>'.format(self.name)
+
+	@staticmethod
+	def insert_sizes():
+		sizes = [7,10,12]
+
+		for s in sizes:
+			db.session.add(Size(name=s))
+			db.session.commit()		
+
+	# @staticmethod
+	# def insert_roles():
+	# 	roles = {
+	# 		'user' : (Permission.USE, True),
+	# 		'admin' : (Permission.ADMINISTER, False)
+	# 	}
+
+	# 	for r in roles:
+	# 		role = Role.query.filter_by(name=r).first()
+	# 		if role is None:
+	# 			role = Role(name=r)
+	# 		role.permissions = roles[r][0]
+	# 		role.default = roles[r][1]
+	# 		db.session.add(role)
+	# 		db.session.commit()		
 
 class Format(db.Model):
 	__tablename__ = 'formats'
@@ -290,8 +332,15 @@ class Format(db.Model):
 		self.name = name
 
 	def __repr__(self):
-		return '<Format %r>' % self.name	
+		return '<Format {}>'.format(self.name) 	
 
+	@staticmethod
+	def insert_formats():
+		formats = ['vinyl']
+
+		for f in formats:
+			db.session.add(Format(name=f))
+			db.session.commit()	
 
 class Artist(db.Model):
 	__tablename__ = 'artists'
@@ -306,12 +355,16 @@ class Artist(db.Model):
 		self.name = name
 
 	def __repr__(self):
-		return '<Artist %r>' % self.name
+		return '<Artist {}>'.format(self.name)
 
 	def add_to_table(self):
 		db.session.add(self)
 		db.session.commit()	
 
+	def delete_from_table(self):
+		db.session.delete(self)
+		db.session.commit()
+		
 class AnonymousUser(AnonymousUserMixin):
 	def can(self, permissions):
 		return False

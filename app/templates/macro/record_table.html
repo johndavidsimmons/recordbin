@@ -1,0 +1,46 @@
+{% macro record_table(list, current_user, user=None) %}
+<table border="1" cellpadding="5" cellspacing="5">
+<tr>
+    <th>Artist</th>
+    <th>Title</th>
+    <th>Size</th>
+    <th>Color</th>
+    <th>Year</th>
+    <th>Notes</th>
+    {% if user == current_user %}
+        <th>Delete</th>
+    {% endif %}
+</tr>
+{% for r in list %}
+    <tr>
+
+    <!-- Artist -->
+    <td>{{ r[1] }}</td>
+
+    <!-- Title -->
+    <td>{{ r[0].name }}</td>
+
+    <!-- Format -->
+    <!-- <td>{{ r[2] }}</td> -->
+
+    <!-- Size -->
+    <td>{{ r[3] }}</td>
+
+    <!-- Color -->
+    <td>{{ r[0].color }}</td>
+
+    <!-- Year -->
+    <td>{{ r[0].year }}</td>
+
+    <!-- Notes -->
+    <td>{{ r[0].notes }}</td>
+
+    {% if user == current_user %}
+        <!-- Delete -->
+        <td><a href="/delete-record/{{r[0].id}}">delete</a></td>
+    {% endif %}
+
+    </tr>
+{% endfor %}
+</table>
+{% endmacro %}

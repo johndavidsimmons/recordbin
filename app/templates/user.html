@@ -13,17 +13,47 @@
 		<img class="gravatar" src="{{ user.gravatar(size=256) }}" alt="">
 	</div>
 
-	{% if current_user.is_anonymous %}
-	   
-		<h2>PUBLIC PROFILE</h2>
-		<p><strong>email:</strong> {{ user.email }}</p>
-		<p><strong>username:</strong> {{ user.username }}</p>
-	
-	{% else %}
+	<p><strong>email:</strong> {{ user.email }}</p>
+	<p><strong>username:</strong> {{ user.username }}</p>
+	<p><strong>about me:</strong> {{ user.about_me }}</p>
 
-		<h1>Followers</h1>
+	<!-- Edit Profile -->
+	{% if user == current_user %}
+		<p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
+	{% endif %}
 
-		<p>
+	<!-- Records -->
+	<h2>{{ user.username }}'s Records</h2>
+	{% from 'macro/record_table.html' import record_table %}
+	    {{ record_table(user_records, current_user, user=user) }}
+
+    <!-- Followers  -->
+    <h1>Followers</h1>
+
+    <p><strong>Following:</strong></p>
+    <ul>
+    {% for f in followed %}
+    	{% if f.followed.username != user.username%}
+    	<li><a href="/user/{{f.followed.username}}">{{f.followed.username}}</a></li>
+    	{% endif %}
+    {% endfor %}
+    </ul>
+
+    <p><strong>Followers:</strong></p>
+    <ul>
+    {% for f in followers %}
+    	{% if f.follower.username != user.username%}
+    	<li><a href="/user/{{f.follower.username}}">{{f.follower.username}}</a></li>
+    	{% endif %}
+    {% endfor %}
+    </ul>
+
+    {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+    	<h3 style="text-decoration:underline;">FOLLOWS YOU</h3>
+    {% endif %}
+
+	<!-- Follow Button -->
+	{% if current_user.is_authenticated %}
 		{% if user != current_user %}
 			{% if not current_user.is_following(user) %}
 				<form action="{{ url_for('.follow', username=user.username) }}">
@@ -35,54 +65,12 @@
 				</form>
 			{% endif %}
 		{% endif %}
+	{% endif %}		
 
-		<p><strong>Following:</strong></p>
-		<ul>
-		{% for f in followed %}
-			{% if f.followed != current_user and f.followed.username != user.username%}
-			<li><a href="/user/{{f.followed.username}}">{{f.followed.username}}</a></li>
-			{% endif %}
-		{% endfor %}
-		</ul>
-
-		<p><strong>Followers:</strong></p>
-		<ul>
-		{% for f in followers %}
-			{% if f.follower != current_user and f.follower.username != user.username%}
-			<li><a href="/user/{{f.follower.username}}">{{f.follower.username}}</a></li>
-			{% endif %}
-		{% endfor %}
-		</ul>
-					
-					
-		{% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-			<p><strong>FOLLOWS YOU</strong></p>
-		{% endif %}
-				</p>
-
-
-
-		<h2>User Model Columns:</h2>
-		<p><strong>email:</strong> {{ user.email }}</p>
-		<p><strong>username:</strong> {{ user.username }}</p>
-		<p><strong>password_hash:</strong> {{ user.password_hash }}</p>
-		<p><strong>confirmed:</strong> {{ user.confirmed }}</p>
-		<p><strong>name:</strong> {{ user.name }}</p>
-		<p><strong>location:</strong> {{ user.location }}</p>
-		<p><strong>about_me:</strong> {{ user.about_me }}</p>
-		<p><strong>member_since:</strong> {{ user.member_since }}</p>
-		<p><strong>last_seen:</strong> {{ user.last_seen }}</p>
-		<p><strong>avatar_hash:</strong> {{ user.avatar_hash }}</p>
-		
-		{% if user == current_user %}
-			<p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
-		{% endif %}
-
-		{% if current_user.is_administrator() %}
-			
-			<h2>Admin Section</h2>
-			<a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a>          
-		{% endif %}
+	<!-- Admin Edit profile -->
+	{% if current_user.is_authenticated and current_user.is_administrator() %}
+		<h2>Admin Section</h2>
+		<a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a>          
 	{% endif %}
 	  
 </div>
