@@ -58,7 +58,7 @@ def test(coverage=False):
 def deploy():
 	'''Run Deployment tasks'''
 	from flask_migrate import upgrade
-	from app.models import Role, User
+	from app.models import Role, User, Size, Format
 
 	# migrate database to latest revision
 	upgrade()
@@ -68,6 +68,10 @@ def deploy():
 
 	# create self-follows for all users
 	User.add_self_follows()
+
+	Format.insert_formats()
+
+	Size.insert_sizes()
 
 	db.session.commit()
 
