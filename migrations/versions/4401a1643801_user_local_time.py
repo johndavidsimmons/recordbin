@@ -1,14 +1,14 @@
-"""drop owned
+"""user local time
 
-Revision ID: face58d015d
-Revises: 1b4796c78793
-Create Date: 2016-12-04 17:25:48.723491
+Revision ID: 4401a1643801
+Revises: 2e2cebf05ce9
+Create Date: 2016-12-07 22:43:50.884047
 
 """
 
 # revision identifiers, used by Alembic.
-revision = 'face58d015d'
-down_revision = '1b4796c78793'
+revision = '4401a1643801'
+down_revision = '2e2cebf05ce9'
 
 from alembic import op
 import sqlalchemy as sa

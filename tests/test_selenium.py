@@ -19,8 +19,8 @@ class SeleniumTestCase(unittest.TestCase):
 		# start Firefox
 		try:
 			cls.client = webdriver.Chrome('/Users/jsimmons/recordbin/venv/selenium/webdriver/chrome/chromedriver')
-		except:
-			pass
+		except Exception as e:
+			print e
 
 		# skip these tests if the browser could not be started
 		if cls.client:
@@ -154,7 +154,7 @@ class SeleniumTestCase(unittest.TestCase):
 		# navigate to the user's profile page
 		self.client.find_element_by_link_text('View Profile').click()
 		self.assertTrue('<p><strong>username:</strong> admin_john</p>' in self.client.page_source)
-		self.assertTrue('<a class="active" href="/user/admin_john">View Profile</a>' in self.client.page_source)
+		self.assertTrue('<a class="active" href="/admin_john">View Profile</a>' in self.client.page_source)
 		
 
 		# logout
@@ -215,7 +215,7 @@ class SeleniumTestCase(unittest.TestCase):
 		self.assertTrue(re.search('Hello, admin_john@example.com!', self.client.page_source))
 
 		# Go another users
-		self.client.get('http://localhost:5000/user/user_john')
+		self.client.get('http://localhost:5000/user_john')
 		self.client.find_element_by_name('admin-edit').click()
 
 		# Profile page
@@ -633,19 +633,19 @@ class SeleniumTestCase(unittest.TestCase):
 	########################## 	
 
 	def test_public_profile(self):
-		self.client.get('http://localhost:5000/user/user_john')
+		self.client.get('http://localhost:5000/user_john')
 		self.assertTrue(re.search("user_john's Profile", self.client.page_source))
 
 	def test_public_profile_not_admin(self):
-		self.client.get('http://localhost:5000/user/user_john')
+		self.client.get('http://localhost:5000/user_john')
 		self.assertFalse(re.search('Admin Section', self.client.page_source))
 
 	def test_edit_profile_buttons_not_public(self):
-		self.client.get('http://localhost:5000/user/user_john')
+		self.client.get('http://localhost:5000/user_john')
 		self.assertTrue('<a class="btn btn-default" href="/edit-profile">Edit Profile</a>' not in self.client.page_source)
 
 	def test_admin_edit_profile_buttons_not_public(self):
-		self.client.get('http://localhost:5000/user/user_john')
+		self.client.get('http://localhost:5000/user_john')
 		self.assertTrue('<a name="admin-edit" href="/edit-profile/1">[Admin] Edit Profile</a>' not in self.client.page_source)	 
 
 	##########################
@@ -752,7 +752,7 @@ class SeleniumTestCase(unittest.TestCase):
 
 		# navigate to the user's profile page
 		# and click the follow button
-		self.client.get('http://localhost:5000/user/admin_john')
+		self.client.get('http://localhost:5000/admin_john')
 		self.client.find_elements_by_class_name("btn")[0].click()
 		self.assertTrue(re.search('You are now following admin_john', self.client.page_source))
 
@@ -783,7 +783,7 @@ class SeleniumTestCase(unittest.TestCase):
 
 		# navigate to the user's profile page
 		# and click the unfollow button
-		self.client.get('http://localhost:5000/user/admin_john')
+		self.client.get('http://localhost:5000/admin_john')
 		self.client.find_elements_by_class_name("btn")[0].click()
 		self.assertTrue(re.search('You are not following admin_john anymore.', self.client.page_source))
 
@@ -814,8 +814,8 @@ class SeleniumTestCase(unittest.TestCase):
 		self.assertTrue(re.search('Hello, user_john@example.com!', self.client.page_source))
 
 		# Go to profile
-		self.client.get('http://localhost:5000/user/user_john')
-		self.assertTrue('<a href="/user/user_john">user_john</a>' not in self.client.page_source)
+		self.client.get('http://localhost:5000/user_john')
+		self.assertTrue('<a href="/user_john">user_john</a>' not in self.client.page_source)
 
 		# logout
 		self.client.find_element_by_link_text('Log Out').click()
@@ -833,8 +833,8 @@ class SeleniumTestCase(unittest.TestCase):
 		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
 
 		# Go to profile
-		self.client.get('http://localhost:5000/user/user_john')
-		self.assertTrue('<a href="/user/user_john">user_john</a>' not in self.client.page_source)
+		self.client.get('http://localhost:5000/user_john')
+		self.assertTrue('<a href="/user_john">user_john</a>' not in self.client.page_source)
 
 
 	##########################
@@ -855,6 +855,7 @@ class SeleniumTestCase(unittest.TestCase):
 			send_keys('user_john@example.com')
 		self.client.find_element_by_name('password').send_keys('yolo')
 		self.client.find_element_by_name('submit').click()
+		self.client.find_element_by_link_text('View Profile').click()
 		self.assertTrue('name=\"add-record\"' in self.client.page_source)
 
 		# logout
@@ -876,6 +877,9 @@ class SeleniumTestCase(unittest.TestCase):
 			send_keys('user_john@example.com')
 		self.client.find_element_by_name('password').send_keys('yolo')
 		self.client.find_element_by_name('submit').click()
+
+		# Profile
+		self.client.find_element_by_link_text('View Profile').click()
 		self.assertTrue('name=\"add-record\"' in self.client.page_source)
 
 		# Fill out form and submit
@@ -909,6 +913,9 @@ class SeleniumTestCase(unittest.TestCase):
 			send_keys('user_john@example.com')
 		self.client.find_element_by_name('password').send_keys('yolo')
 		self.client.find_element_by_name('submit').click()
+
+		# Profile
+		self.client.find_element_by_link_text('View Profile').click()
 		self.assertTrue('name=\"add-record\"' in self.client.page_source)
 
 		# Fill out form and submit
@@ -927,7 +934,7 @@ class SeleniumTestCase(unittest.TestCase):
 		self.assertTrue("<td>Jailbreak</td>" in self.client.page_source)
 
 		# Remove
-		self.client.find_element_by_xpath('//a[@href="/delete-record/4"]').click()
+		self.client.find_element_by_xpath('//a[@href="/delete-record/3"]').click()
 		self.assertTrue("DELETED" in self.client.page_source)
 		self.assertTrue("<td>Jailbreak</td>" not in self.client.page_source)
 
@@ -935,41 +942,9 @@ class SeleniumTestCase(unittest.TestCase):
 		self.client.find_element_by_link_text('Log Out').click()
 		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
 
-	def test_add_multiple_owners(self):
-		"""
-		The same record can have multiple owners
-		"""
-
+	def test_follower_records_exists(self):
 		# navigate to home page
 		self.client.get('http://localhost:5000/')
-		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
-
-		# navigate to login page
-		self.client.find_element_by_link_text('Log In').click()
-		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
-
-		# login
-		self.client.find_element_by_name('email').\
-			send_keys('user_john@example.com')
-		self.client.find_element_by_name('password').send_keys('yolo')
-		self.client.find_element_by_name('submit').click()
-		self.assertTrue('name=\"add-record\"' in self.client.page_source)
-
-		# Fill out form and submit
-		self.client.find_element_by_name('artist').send_keys("Black Sabbath")
-		self.client.find_element_by_name('title').send_keys("Sabbath Bloody Sabbath")
-		self.client.find_element_by_name('year').send_keys('1970')
-		self.client.find_element_by_name('notes').send_keys('First pressing')
-		self.client.find_element_by_name('color').send_keys('black')
-		self.client.find_element_by_xpath('//*[@id="size"]/option[3]').click()
-		self.client.find_element_by_name('submit').click()
-
-		# Assert record in collection
-		self.assertTrue("Black Sabbath - Sabbath Bloody Sabbath added" in self.client.page_source)
-		self.assertTrue("<td>Sabbath Bloody Sabbath</td>" in self.client.page_source)
-
-		# logout
-		self.client.find_element_by_link_text('Log Out').click()
 		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
 
 		# navigate to login page
@@ -981,11 +956,14 @@ class SeleniumTestCase(unittest.TestCase):
 			send_keys('admin_john@example.com')
 		self.client.find_element_by_name('password').send_keys('yolo')
 		self.client.find_element_by_name('submit').click()
+
+		# Profile
+		self.client.find_element_by_link_text('View Profile').click()
 		self.assertTrue('name=\"add-record\"' in self.client.page_source)
 
 		# Fill out form and submit
 		self.client.find_element_by_name('artist').send_keys("Black Sabbath")
-		self.client.find_element_by_name('title').send_keys("Sabbath Bloody Sabbath")
+		self.client.find_element_by_name('title').send_keys("Master of Reality")
 		self.client.find_element_by_name('year').send_keys('1970')
 		self.client.find_element_by_name('notes').send_keys('First pressing')
 		self.client.find_element_by_name('color').send_keys('black')
@@ -993,79 +971,7 @@ class SeleniumTestCase(unittest.TestCase):
 		self.client.find_element_by_name('submit').click()
 
 		# Assert record in collection
-		self.assertTrue("Black Sabbath - Sabbath Bloody Sabbath added" in self.client.page_source)
-		self.assertTrue("<td>Sabbath Bloody Sabbath</td>" in self.client.page_source)
-
-		# logout
-		self.client.find_element_by_link_text('Log Out').click()
-		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
-		
-	def test_remove_one_owner(self):
-		"""
-		Two owners add same record, one removes it
-		the other still owns it
-		"""
-
-		# navigate to home page
-		self.client.get('http://localhost:5000/')
-		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
-
-		# navigate to login page
-		self.client.find_element_by_link_text('Log In').click()
-		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
-
-		# login
-		self.client.find_element_by_name('email').\
-			send_keys('user_john@example.com')
-		self.client.find_element_by_name('password').send_keys('yolo')
-		self.client.find_element_by_name('submit').click()
-		self.assertTrue('name=\"add-record\"' in self.client.page_source)
-
-		# Fill out form and submit
-		self.client.find_element_by_name('artist').send_keys("Black Sabbath")
-		self.client.find_element_by_name('title').send_keys("Self Titled")
-		self.client.find_element_by_name('year').send_keys('1970')
-		self.client.find_element_by_name('notes').send_keys('First pressing')
-		self.client.find_element_by_name('color').send_keys('black')
-		self.client.find_element_by_xpath('//*[@id="size"]/option[3]').click()
-		self.client.find_element_by_name('submit').click()
-
-		# Assert record in collection
-		self.assertTrue("Black Sabbath - Self Titled added" in self.client.page_source)
-		self.assertTrue("<td>Self Titled</td>" in self.client.page_source)
-
-		# logout
-		self.client.find_element_by_link_text('Log Out').click()
-		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
-
-		# navigate to login page
-		self.client.find_element_by_link_text('Log In').click()
-		self.assertTrue('<h1>Login</h1>' in self.client.page_source)
-
-		# login
-		self.client.find_element_by_name('email').\
-			send_keys('admin_john@example.com')
-		self.client.find_element_by_name('password').send_keys('yolo')
-		self.client.find_element_by_name('submit').click()
-		self.assertTrue('name=\"add-record\"' in self.client.page_source)
-
-		# Fill out form and submit
-		self.client.find_element_by_name('artist').send_keys("Black Sabbath")
-		self.client.find_element_by_name('title').send_keys("Self Titled")
-		self.client.find_element_by_name('year').send_keys('1970')
-		self.client.find_element_by_name('notes').send_keys('First pressing')
-		self.client.find_element_by_name('color').send_keys('black')
-		self.client.find_element_by_xpath('//*[@id="size"]/option[3]').click()
-		self.client.find_element_by_name('submit').click()
-
-		# Assert record in collection
-		self.assertTrue("Black Sabbath - Self Titled added" in self.client.page_source)
-		self.assertTrue("<td>Self Titled</td>" in self.client.page_source)
-
-		# Remove
-		self.client.find_element_by_xpath('//a[@href="/delete-record/3"]').click()
-		self.assertTrue("DELETED" in self.client.page_source)
-		self.assertTrue("<td>Self Titled</td>" not in self.client.page_source)
+		self.assertTrue("<td>Black Sabbath</td>" in self.client.page_source)
 
 		# logout
 		self.client.find_element_by_link_text('Log Out').click()
@@ -1084,11 +990,10 @@ class SeleniumTestCase(unittest.TestCase):
 			send_keys('user_john@example.com')
 		self.client.find_element_by_name('password').send_keys('yolo')
 		self.client.find_element_by_name('submit').click()
-		self.assertTrue('name=\"add-record\"' in self.client.page_source)
-
-		# Assert deleted record still there
-		self.assertTrue("<td>Self Titled</td>" in self.client.page_source)
+		self.assertTrue('<strong>User:</strong>admin_john <strong>added:</strong> Black Sabbath - Master of Reality - <strong>' in self.client.page_source)
 
 		# logout
 		self.client.find_element_by_link_text('Log Out').click()
 		self.assertTrue(re.search('Hello, Stranger!', self.client.page_source))
+
+

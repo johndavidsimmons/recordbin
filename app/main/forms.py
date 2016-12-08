@@ -48,7 +48,7 @@ class AddRecordForm(Form):
     title = StringField('Title', validators=[Required()])
     year = IntegerField('Year', validators=[Required()])
     format = SelectField('Format', coerce=int)
-    notes = TextAreaField('Notes', validators=[Required()])
+    notes = TextAreaField('Notes')
     color = StringField('Color', validators=[Required()])
     size = SelectField('Size', coerce=int)
 

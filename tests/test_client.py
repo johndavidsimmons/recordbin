@@ -49,7 +49,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		self.assertTrue(response.status_code == 404)
 
 	def test_public_profile_page(self):
-		response = self.client.get('/user/profile_john')
+		response = self.client.get('/profile_john')
 		self.assertTrue(response.status_code == 200)
 
 	# Redirects for anon users

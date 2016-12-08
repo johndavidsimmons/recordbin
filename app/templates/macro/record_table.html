@@ -10,6 +10,7 @@
     {% if user == current_user %}
         <th>Delete</th>
     {% endif %}
+    <th>Timestamp</th>
 </tr>
 {% for r in list %}
     <tr>
@@ -39,6 +40,9 @@
         <!-- Delete -->
         <td><a href="/delete-record/{{r[0].id}}">delete</a></td>
     {% endif %}
+
+    <!-- Timestamp -->
+    <td>{{ r[0].timestamp.strftime('%-m/%-d/%y') }}</td>
 
     </tr>
 {% endfor %}

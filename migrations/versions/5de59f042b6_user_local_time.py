@@ -1,14 +1,14 @@
-"""fake data
+"""user local time
 
-Revision ID: 38ce97f49edf
-Revises: 30e5e063430f
-Create Date: 2016-11-25 23:13:08.400072
+Revision ID: 5de59f042b6
+Revises: 4401a1643801
+Create Date: 2016-12-07 22:48:38.500992
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '38ce97f49edf'
-down_revision = '30e5e063430f'
+revision = '5de59f042b6'
+down_revision = '4401a1643801'
 
 from alembic import op
 import sqlalchemy as sa

@@ -1,0 +1,7 @@
+{% macro follower_records_list(list, gravatar=None, moment=None, now=None) %}
+	<ul>
+	{% for r in list %}
+	    <li><a href="/{{ r[3] }}"><img class="gravatar" src="{{ gravatar(r[1], size=50) }}" alt=""></a><strong>User:</strong>{{r[3]}} <strong>added:</strong> {{r[2]}} - {{r[0].name}} - <strong>{{ moment(r[0].timestamp).fromTime(now) }}</strong></li>
+	{% endfor %}
+	</ul>
+{% endmacro %}

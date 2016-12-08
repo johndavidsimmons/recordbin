@@ -20,7 +20,21 @@
 	<!-- Edit Profile -->
 	{% if user == current_user %}
 		<p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
+
+		<form name="add-record" action method="post">
+		{% from 'render_field.html' import render_field %}
+		    {{ form.csrf_token }}
+		    {{ render_field(form.artist) }}
+		    {{ render_field(form.title) }}
+		    {{ render_field(form.format) }}
+		    {{ render_field(form.year) }}
+		    {{ render_field(form.notes) }}
+		    {{ render_field(form.color) }}
+		    {{ render_field(form.size) }}
+		    <button class="btn" type="submit" name="submit">Add</button>
+		</form>
 	{% endif %}
+
 
 	<!-- Records -->
 	<h2>{{ user.username }}'s Records</h2>
@@ -34,7 +48,7 @@
     <ul>
     {% for f in followed %}
     	{% if f.followed.username != user.username%}
-    	<li><a href="/user/{{f.followed.username}}">{{f.followed.username}}</a></li>
+    	<li><a href="/{{f.followed.username}}">{{f.followed.username}}</a></li>
     	{% endif %}
     {% endfor %}
     </ul>
@@ -43,7 +57,7 @@
     <ul>
     {% for f in followers %}
     	{% if f.follower.username != user.username%}
-    	<li><a href="/user/{{f.follower.username}}">{{f.follower.username}}</a></li>
+    	<li><a href="/{{f.follower.username}}">{{f.follower.username}}</a></li>
     	{% endif %}
     {% endfor %}
     </ul>

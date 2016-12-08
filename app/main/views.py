@@ -1,11 +1,12 @@
-from flask import render_template, session, redirect, url_for, current_app, abort, flash, request
+from flask import render_template, session, redirect, url_for, current_app, abort, flash, request, jsonify
 from flask_login import login_required, current_user
 from .. import db
-from ..models import User, Role	, AnonymousUser, Permission, Artist, Title, Size, Format
+from ..models import User, Role	, AnonymousUser, Permission, Artist, Title, Size, Format, Follow, gravatar, user_local_time
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
 from ..decorators import admin_required, permission_required
 from werkzeug.local import LocalProxy
+from datetime import datetime
 
 @main.route('/shutdown')
 def server_shutdown():
@@ -19,62 +20,18 @@ def server_shutdown():
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-	form = AddRecordForm()
-
-	if form.validate_on_submit():
-
-		# Form data
-		artist = form.artist.data
-		title = form.title.data
-		format_id = form.format.data
-		color = form.color.data
-		size_id = form.size.data
-		year = form.year.data
-		notes = form.notes.data
-
-		if current_user.is_authenticated:
-			
-			a = Artist.query.filter_by(name=artist).first()
-			if a is None:
-				Artist(name=form.artist.data).add_to_table()
-				artist_id = Artist.query.filter_by(name=artist).first().id
-			else:
-				artist_id = a.id
-
-
-			t = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes).first()
-			if t is None:
-				Title(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, owners=[], notes=notes).add_to_table()
-				title_id = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes).first().id
-			else:
-				title_id = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes).first().id
-
-		record = Title.query.filter_by(id=title_id).first()
-
-		if current_user in record.owners:
-			flash('You already own this')
-			return redirect(url_for('main.index'))
-
-		record.add_owner(current_user)
-		
-
-		flash('{} - {} added'.format(artist, title))
-		return redirect(url_for('main.index'))
 
 	if current_user.is_authenticated:
-		owned_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Format, Title.format_id==Format.id).join(Size, Title.size_id==Size.id).add_columns(Artist.name, Format.name, Size.name).filter(Title.artist_id==Artist.id).filter(Title.owners.contains(current_user)).order_by(Size.id, Artist.name, Title.name).all()
+		follower_records = current_user.follower_records()
+
 	else:
-		owned_records = None
+		follower_records = None
 
-	return render_template('index.html', db=db, form=form, owned_records=owned_records)
-
-@main.route('/dataview')
-def dataview():
-	records = Record.query.all()
-	return render_template('dataview.html', records = records)
+	return render_template('index.html', db=db, follower_records=follower_records, gravatar=gravatar, now = user_local_time(datetime.utcnow))
+	
 
 
-@main.route('/user/<username>')
+@main.route('/<username>', methods=["GET", "POST"])
 def user(username):
 	user = User.query.filter_by(username=username).first_or_404()
 	followers = user.followers.all()
@@ -82,9 +39,52 @@ def user(username):
 	followed = user.followed.all()
 	followed_count = user.followed.count()
 
-	user_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Format, Title.format_id==Format.id).join(Size, Title.size_id==Size.id).add_columns(Artist.name, Format.name, Size.name).filter(Title.artist_id==Artist.id).filter(Title.owners.contains(user)).order_by(Size.id, Artist.name, Title.name).all()
+	if current_user.is_authenticated and user == current_user:
+		form = AddRecordForm()
 
-	return render_template('user.html', user=user, followers=followers, followers_count = followers_count, followed=followed, followed_count=followed_count, user_records=user_records)
+		if form.validate_on_submit():
+
+			# Form data
+			artist = form.artist.data
+			title = form.title.data
+			format_id = form.format.data
+			color = form.color.data
+			size_id = form.size.data
+			year = form.year.data
+			notes = form.notes.data
+
+			
+				
+			a = Artist.query.filter_by(name=artist).first()
+			if a is None:
+				Artist(name=form.artist.data).add_to_table()
+				artist_id = Artist.query.filter_by(name=artist).first().id
+			else:
+				artist_id = a.id
+
+			# See if you already have this
+			t = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes, owner_id=current_user.id).first()
+					
+			if t is None:
+				Title(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes, owner_id=current_user.id).add_to_table()
+			else:
+				flash('You already own this')
+				return redirect(url_for('.user', username=current_user.username))
+				
+
+			flash('{} - {} added'.format(artist, title))
+			return redirect(url_for('.user', username=current_user.username))
+
+	else:
+		form = None
+
+	if user != current_user:
+		user_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name).filter(Title.owner_id==user.id).all()
+	else:
+		user_records = current_user.owned_records()
+
+
+	return render_template('user.html', form=form, user=user, followers=followers, followers_count = followers_count, followed=followed, followed_count=followed_count, user_records=user_records)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -167,6 +167,8 @@ def unfollow(username):
 @login_required
 def delete_record(id):
 	record = Title.query.filter_by(id=id).first_or_404()
-	record.remove_owner(current_user)	
+	record.delete_from_table()
 	flash("DELETED")
-	return redirect(url_for('.index'))
+	return redirect(url_for('.user', username=current_user.username))
+
+

@@ -1,7 +1,8 @@
 {% extends "/extend/_base.html" %}
 
 {% block title %}
-	Record Bin
+	{{ super() }}
+	{{ current_user.username }}
 {% endblock %}
 
 {% block page_content %}
@@ -9,31 +10,12 @@
     <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
 	
 	{% if current_user.is_authenticated %}
-	<h2>Content</h2>
-    <p>HERE IS THE SECRET USER ONLY CONTENT</p>
-
-
-        <form name="add-record" action method="post">
-        {% from 'render_field.html' import render_field %}
-            {{ form.csrf_token }}
-            {{ render_field(form.artist) }}
-            {{ render_field(form.title) }}
-            {{ render_field(form.format) }}
-            {{ render_field(form.year) }}
-            {{ render_field(form.notes) }}
-            {{ render_field(form.color) }}
-            {{ render_field(form.size) }}
-            <button class="btn" type="submit" name="submit">Add</button>
-        </form>
-
-
-    <h2>Owned Records</h2>
-    {% from 'macro/record_table.html' import record_table %}
-        {{ record_table(owned_records, current_user, user=current_user) }}
-
 	
+    <h2>Follower Records</h2>
+	{% from 'macro/follower_records_list.html' import follower_records_list %}
+	    {{ follower_records_list(follower_records, gravatar=gravatar, moment=moment, now=now) }}
 	{% else %}
-	<p>There is content here if you are logged in</p>
+		<p>There is content here if you are logged in</p>
 	{% endif %}
 
 </div>

@@ -6,11 +6,29 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request
 import hashlib
 from datetime import datetime
+from dateutil import tz
 from werkzeug.local import LocalProxy
 
-relationship_table = db.Table('relationship_table',
-		db.Column('owner_id', db.Integer, db.ForeignKey('users_table.id'), nullable=False),
-		db.Column('title_id', db.Integer, db.ForeignKey('titles.id'), nullable=False)		)
+def gravatar(email, size=100, default='identicon', rating='g'):
+	if request.is_secure:
+		url = 'https://secure.gravatar.com/avatar'
+	else:
+		url = 'http://www.gravatar.com/avatar'
+
+	hash = hashlib.md5(email.encode('utf-8')).hexdigest()
+
+	return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+				url=url, hash=hash, size=size, default=default, rating=rating)
+
+def user_local_time(utctime):
+	from_zone = tz.tzutc()
+	to_zone = tz.tzlocal()
+	utc_string = str(datetime.utcnow()).split('.').pop(0)
+	utc = datetime.strptime(utc_string, '%Y-%m-%d %H:%M:%S')
+	utc = utc.replace(tzinfo=from_zone)
+	user_time = utc.astimezone(to_zone)
+	return user_time
+
 
 class Permission:
 	ADMINISTER = 0x80
@@ -70,7 +88,6 @@ class User(UserMixin, db.Model):
 	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 	avatar_hash = db.Column(db.String(32))
 	migrate_test = db.Column(db.String(32))
-	# User(email="johnny3@gmail.com",role_id= 1, password='yolo')
 	
 	# FK & Relationship
 	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
@@ -84,6 +101,7 @@ class User(UserMixin, db.Model):
 								backref=db.backref('followed', lazy='joined'),
 								lazy='dynamic',
 								cascade='all, delete-orphan')
+
 
 	def gravatar(self, size=100, default='identicon', rating='g'):
 		if request.is_secure:
@@ -113,7 +131,14 @@ class User(UserMixin, db.Model):
 
 	def is_followed_by(self, user):
 		return self.followers.filter_by(
-			follower_id=user.id).first() is not None		
+			follower_id=user.id).first() is not None
+
+	def owned_records(self):
+		return Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name).filter(Title.owner_id==self.id).all()
+
+	def follower_records(self):
+		return Title.query.join(Follow, Follow.followed_id == Title.owner_id).join(User, Follow.followed_id==User.id).join(Artist, Title.artist_id==Artist.id).add_columns(User.email, Artist.name, User.username).filter(Follow.follower_id==self.id).order_by(Title.timestamp.desc()).limit(5)	
+		
 
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
@@ -248,16 +273,18 @@ class Title(db.Model):
 	year = db.Column(db.Integer)
 	format_id = db.Column(db.Integer, db.ForeignKey('formats.id'))
 	notes = db.Column(db.String(128))
-	owners = db.relationship('User', secondary=relationship_table, backref='titles')
+	timestamp = db.Column(db.DateTime, default=user_local_time(datetime.utcnow))
+	owner_id = db.Column(db.Integer, db.ForeignKey('users_table.id'))
+
 
 
 	# Methods
-	def __init__(self, name, artist_id, year, format_id, owners, size_id=None, color=None, notes=None):
+	def __init__(self, name, artist_id, year, format_id, owner_id, size_id=None, color=None, notes=None):
 		self.name = name
 		self.artist_id = artist_id
 		self.year = year
 		self.format_id = format_id
-		self.owners = []
+		self.owner_id = owner_id
 		self.size_id = size_id
 		self.color = color
 		self.notes = notes
@@ -269,19 +296,6 @@ class Title(db.Model):
 	def delete_from_table(self):
 		db.session.delete(self)
 		db.session.commit()
-
-	def add_owner(self, user):
-		if isinstance(user, User) or isinstance(user, LocalProxy):
-			if user not in self.owners:
-				self.owners += [user]
-				db.session.commit()
-
-	def remove_owner(self, user):
-		if isinstance(user, User) or isinstance(user, LocalProxy):
-			if user in self.owners:
-				self.owners.remove(user)
-				db.session.commit()	
-
 
 	def __repr__(self):
 		return '<Title: {}>'.format(self.name) 
@@ -304,23 +318,7 @@ class Size(db.Model):
 
 		for s in sizes:
 			db.session.add(Size(name=s))
-			db.session.commit()		
-
-	# @staticmethod
-	# def insert_roles():
-	# 	roles = {
-	# 		'user' : (Permission.USE, True),
-	# 		'admin' : (Permission.ADMINISTER, False)
-	# 	}
-
-	# 	for r in roles:
-	# 		role = Role.query.filter_by(name=r).first()
-	# 		if role is None:
-	# 			role = Role(name=r)
-	# 		role.permissions = roles[r][0]
-	# 		role.default = roles[r][1]
-	# 		db.session.add(role)
-	# 		db.session.commit()		
+			db.session.commit()			
 
 class Format(db.Model):
 	__tablename__ = 'formats'
