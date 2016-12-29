@@ -2,7 +2,7 @@ var check;
 
 function getNewRecords() {
     $.ajax({
-        url: "/user_john/follower_records",
+        url: "/" + username + "/follower_records",
         dataType: "json",
         type: "GET",
 
