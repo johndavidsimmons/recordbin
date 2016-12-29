@@ -92,6 +92,9 @@ def user_fr(username):
 
 	fr = User.query.filter_by(username=username).first_or_404().follower_records().limit(10).all()
 
+	# Sort by ID descending
+	fr.sort(key=lambda x: x[0].id, reverse=True)
+
 	json_records = {
 		
 	}
