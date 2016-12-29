@@ -2,21 +2,26 @@
 
 {% block title %}
 	{{ super() }}
-	{{ current_user.username }}
 {% endblock %}
 
 {% block page_content %}
 <div>
-    <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
+	<h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
 	
 	{% if current_user.is_authenticated %}
 	
-    <h2>Follower Records</h2>
-	{% from 'macro/follower_records_list.html' import follower_records_list %}
-	    {{ follower_records_list(follower_records, gravatar=gravatar, moment=moment, now=now) }}
+	<h2>Follower Records</h2>
+	<div >
+		<ul id="follower_records"></ul>
+	</div>
+
+	<script src="/static/js/follower_records.js"></script>
+
 	{% else %}
 		<p>There is content here if you are logged in</p>
 	{% endif %}
+
+
 
 </div>
 {% endblock %}

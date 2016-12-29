@@ -86,6 +86,27 @@ def user(username):
 
 	return render_template('user.html', form=form, user=user, followers=followers, followers_count = followers_count, followed=followed, followed_count=followed_count, user_records=user_records)
 
+@main.route('/<username>/follower_records', methods=["GET", "POST"])
+@login_required
+def user_fr(username):
+
+	fr = User.query.filter_by(username=username).first_or_404().follower_records().limit(10).all()
+
+	json_records = {
+		
+	}
+
+	for i in range(len(fr)):
+		json_records[i] = { 
+			"artist" : fr[i][2], 
+			"title" : fr[i][0].name, 
+			"user" : "you" if fr[i][-1] == username else fr[i][-1], 
+			"timestamp": fr[i][0].timestamp, 
+			"gravatar" : gravatar(fr[i][1]), 
+			"id" : fr[i][0].id 
+		}
+
+	return  jsonify(json_records)
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
@@ -170,5 +191,3 @@ def delete_record(id):
 	record.delete_from_table()
 	flash("DELETED")
 	return redirect(url_for('.user', username=current_user.username))
-
-

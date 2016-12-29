@@ -137,7 +137,7 @@ class User(UserMixin, db.Model):
 		return Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name).filter(Title.owner_id==self.id).all()
 
 	def follower_records(self):
-		return Title.query.join(Follow, Follow.followed_id == Title.owner_id).join(User, Follow.followed_id==User.id).join(Artist, Title.artist_id==Artist.id).add_columns(User.email, Artist.name, User.username).filter(Follow.follower_id==self.id).order_by(Title.timestamp.desc()).limit(5)	
+		return Title.query.join(Follow, Follow.followed_id == Title.owner_id).join(User, Follow.followed_id==User.id).join(Artist, Title.artist_id==Artist.id).add_columns(User.email, Artist.name, User.username).filter(Follow.follower_id==self.id).order_by(Title.timestamp.desc()).limit(5)		
 		
 
 	def __init__(self, **kwargs):
@@ -263,6 +263,25 @@ class User(UserMixin, db.Model):
 				db.session.add(user)
 				db.session.commit()
 
+	@staticmethod
+	def to_json(self):
+		json_user = {
+			"ID" : self.id,
+			'username' : self.username,
+			"email" : self.email,
+			'member_since': self.member_since,
+			'last_seen':self.last_seen,
+			"owned_record_count": len(self.owned_records()),
+			"users_following:": len(self.followed.all()),
+			"users_followed_by" : len(self.followers.all()),
+			"name" : self.name,
+			"about_me" : self.about_me
+		}
+
+		return json_user
+
+
+
 class Title(db.Model):
 	__tablename__ = 'titles'
 	id = db.Column(db.Integer, primary_key=True)
@@ -296,6 +315,20 @@ class Title(db.Model):
 	def delete_from_table(self):
 		db.session.delete(self)
 		db.session.commit()
+
+	def to_json(self):
+		json_title = {
+			"name" : self.name,
+			"artist_id" : self.artist_id,
+			"year" : self.year,
+			"format_id" : self.format_id,
+			"owner_id" : self.owner_id, 
+			"size_id" : self.size_id,
+			"color" : self.color,
+			"notes" : self.notes 
+		}	
+
+		return json_title
 
 	def __repr__(self):
 		return '<Title: {}>'.format(self.name) 
