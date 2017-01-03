@@ -1,0 +1,12 @@
+<form id="add-record" name="add-record" action method="post">
+{% from 'render_field.html' import render_field %}
+    {{ form.csrf_token }}
+    <dl>{{ render_field(form.artist) }}</dl>
+    <dl>{{ render_field(form.title) }}</dl>
+    <dl>{{ render_field(form.format) }}</dl>
+    <dl>{{ render_field(form.year) }}</dl>
+    <dl>{{ render_field(form.notes) }}</dl>
+    <dl>{{ render_field(form.color) }}</dl>
+    <dl>{{ render_field(form.size) }}</dl>
+    <button class="btn" type="submit" name="submit">Add</button>
+</form>

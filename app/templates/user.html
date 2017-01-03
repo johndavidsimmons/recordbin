@@ -7,85 +7,118 @@
 
 {% block page_content %}
 <h1>{{ user.username }}'s Profile</h1>
-<div>
 
-	<div class=".profile">
-		<img class="gravatar" src="{{ user.gravatar(size=256) }}" alt="">
-	</div>
-
-	<p><strong>email:</strong> {{ user.email }}</p>
-	<p><strong>username:</strong> {{ user.username }}</p>
-	<p><strong>about me:</strong> {{ user.about_me }}</p>
-
-	<!-- Edit Profile -->
-	{% if user == current_user %}
-		<p><a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
-
-		<form name="add-record" action method="post">
-		{% from 'render_field.html' import render_field %}
-		    {{ form.csrf_token }}
-		    {{ render_field(form.artist) }}
-		    {{ render_field(form.title) }}
-		    {{ render_field(form.format) }}
-		    {{ render_field(form.year) }}
-		    {{ render_field(form.notes) }}
-		    {{ render_field(form.color) }}
-		    {{ render_field(form.size) }}
-		    <button class="btn" type="submit" name="submit">Add</button>
-		</form>
-	{% endif %}
-
-
-	<!-- Records -->
-	<h2>{{ user.username }}'s Records</h2>
-	{% from 'macro/record_table.html' import record_table %}
-	    {{ record_table(user_records, current_user, user=user) }}
-
-    <!-- Followers  -->
-    <h1>Followers</h1>
-
-    <p><strong>Following:</strong></p>
-    <ul>
-    {% for f in followed %}
-    	{% if f.followed.username != user.username%}
-    	<li><a href="/{{f.followed.username}}">{{f.followed.username}}</a></li>
-    	{% endif %}
-    {% endfor %}
-    </ul>
-
-    <p><strong>Followers:</strong></p>
-    <ul>
-    {% for f in followers %}
-    	{% if f.follower.username != user.username%}
-    	<li><a href="/{{f.follower.username}}">{{f.follower.username}}</a></li>
-    	{% endif %}
-    {% endfor %}
-    </ul>
-
-    {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-    	<h3 style="text-decoration:underline;">FOLLOWS YOU</h3>
-    {% endif %}
-
-	<!-- Follow Button -->
-	{% if current_user.is_authenticated %}
-		{% if user != current_user %}
-			{% if not current_user.is_following(user) %}
-				<form action="{{ url_for('.follow', username=user.username) }}">
-				    <button class="btn" type="submit">Follow</button>
-				</form>
-			{% else %}
-				<form action="{{ url_for('.unfollow', username=user.username) }}">
-				    <button class="btn" type="submit">Unfollow</button>
-				</form>
-			{% endif %}
+<!-- Profile Section -->
+<div class="row profile">
+	<div class="col-sm-2">
+		<img class="gravatar" src="{{ user.gravatar(size=150) }}" alt="">
+		<!-- User Edit Profile -->
+		{% if user == current_user %}
+			<p><a href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
 		{% endif %}
-	{% endif %}		
+		<!-- Admin Edit profile -->
+		{% if current_user.is_authenticated and current_user.is_administrator() %}
+			<p><a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a></p>
+		{% endif %}
+	</div>
+	<div class="col-sm-6 bio">
+		<ul>
+			<li><strong>Email:</strong> {{ user.email }}</li>
+			<li><strong>Username:</strong> {{ user.username }}</li>
+			<li><strong>Location:</strong> {{ user.location }}</li>
+			<li><strong>Records:</strong> {{ user_records_count }} </li>
+		</ul>
+	</div>
+	<div class="col-sm-4 followers">
 
-	<!-- Admin Edit profile -->
-	{% if current_user.is_authenticated and current_user.is_administrator() %}
-		<h2>Admin Section</h2>
-		<a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a>          
-	{% endif %}
-	  
+		<!-- Followers  -->
+		<p><strong>Following ( {{ followed_count - 1 }} ):</strong></p>
+		<ul>
+		{% for f in followed %}
+			{% if f.followed.username != user.username%}
+			<li><a href="/{{f.followed.username}}">{{f.followed.username}}</a></li>
+			{% endif %}
+		{% endfor %}
+		</ul>
+
+		<p><strong>Followers({{ followers_count - 1 }}):</strong></p>
+		<ul>
+		{% for f in followers %}
+			{% if f.follower.username != user.username%}
+			<li><a href="/{{f.follower.username}}">{{f.follower.username}}</a></li>
+			{% endif %}
+		{% endfor %}
+		</ul>
+
+		<!-- {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+			<h3 style="text-decoration:underline;">FOLLOWS YOU</h3>
+		{% endif %} -->
+
+		<!-- Follow Button -->
+		{% if current_user.is_authenticated %}
+			{% if user != current_user %}
+				{% if not current_user.is_following(user) %}
+					<form style="padding-top:1em;"action="{{ url_for('.follow', username=user.username) }}">
+					    <button class="btn" type="submit">Follow</button>
+					</form>
+				{% else %}
+					<form style="padding-top:1em;"action="{{ url_for('.unfollow', username=user.username) }}">
+					    <button class="btn" type="submit">Unfollow</button>
+					</form>
+				{% endif %}
+			{% endif %}
+		{% endif %}	
+	</div>
 </div>
+
+
+
+
+<!-- Add Record Form -->
+<div class="row">
+
+	{% if user == current_user %}
+		<div class="pull-right" id="plus"><p>+</p></div>
+		{% include "/include/_addrecordform.html" %}
+	{% endif %}	
+</div>
+
+<!-- Records -->
+<div class="row">
+	<div class="col-sm-12">
+
+    	<!-- 7 INCH  -->
+    	{% if seven_inches %}
+	    	{% from 'macro/record_table.html' import record_table %}
+	    	    {{ record_table('7', seven_inches, current_user, user=user) }}
+		{% endif %}
+    	    
+		<!-- 10 INCH -->
+		{% if ten_inches %}
+	    	{% from 'macro/record_table.html' import record_table %}
+	    	    {{ record_table('10', ten_inches, current_user, user=user) }}
+    	{% endif %}
+    	
+        <!-- 12 Inch  -->
+        {% if twelve_inches %}
+	    	{% from 'macro/record_table.html' import record_table %}
+	    	    {{ record_table('12', twelve_inches, current_user, user=user) }}
+    	{% endif %}              
+	</div>
+</div>
+
+<script>
+	$('#plus').on('click', function(){
+		$("#add-record").toggle();
+
+		if ( $('#add-record').attr('style') != 'display: none;' ) {
+			$("#plus p").addClass('rotate');
+		} else {
+			$("#plus p").removeClass('rotate');
+		}
+	})		
+
+
+</script>
+	  
 {% endblock %}

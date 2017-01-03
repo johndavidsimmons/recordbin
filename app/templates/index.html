@@ -6,10 +6,10 @@
 
 {% block page_content %}
 <div>
-	<h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
+	
 	
 	{% if current_user.is_authenticated %}
-	
+	<h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
 	<h2>Timeline</h2>
 	<div >
 		<ul id="follower_records"></ul>
@@ -18,7 +18,7 @@
 	<script src="/static/js/follower_records.js"></script>
 
 	{% else %}
-		<p>There is content here if you are logged in</p>
+		{% include "/include/_splash.html" %}
 	{% endif %}
 
 

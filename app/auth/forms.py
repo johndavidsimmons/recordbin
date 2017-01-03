@@ -6,20 +6,20 @@ from ..models import User
 
 
 class LoginForm(Form):
-	email = StringField('Email', validators=[Required(), Email()])
-	password = PasswordField('Password', validators=[Required()])
+	email = StringField('Email', validators=[Required(message="Email is required"), Email(message="Invalid email address")])
+	password = PasswordField('Password', validators=[Required(message="Password is required")])
 	remember_me = BooleanField('Remember Me')
 
 class RegistrationForm(Form):
 	username = StringField('Username', validators=[
-		Required(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+		Required(message="Username is required"), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
 										  'Usernames must have only letters, '
 										  'numbers, dots or underscores')])
-	email = StringField('Email', validators=[Required(), Length(1, 64),
-										   Email()])
+	email = StringField('Email', validators=[Required(message="Email is required"), Length(1, 64),
+										   Email(message="Invalid email address")])
 	password = PasswordField('Password', validators=[
-		Required(), EqualTo('password2', message='Passwords must match.')])
-	password2 = PasswordField('Confirm password', validators=[Required()])
+		Required(message="Password is required"), EqualTo('password2', message='Passwords must match.')])
+	password2 = PasswordField('Confirm password', validators=[Required(message="Password match is required")])
 
 	def validate_email(self, field):
 		if User.query.filter_by(email=field.data).first():

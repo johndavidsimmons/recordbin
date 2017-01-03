@@ -1,50 +1,45 @@
-{% macro record_table(list, current_user, user=None) %}
-<table border="1" cellpadding="5" cellspacing="5">
-<tr>
-    <th>Artist</th>
-    <th>Title</th>
-    <th>Size</th>
-    <th>Color</th>
-    <th>Year</th>
-    <th>Notes</th>
-    {% if user == current_user %}
-        <th>Delete</th>
-    {% endif %}
-    <th>Timestamp</th>
-</tr>
-{% for r in list %}
-    <tr>
+{% macro record_table(size, list, current_user, user=None) %}
+<table>
+    <thead>
+        <tr>
+            <th class="left" >{{ size }} Inch ({{ list|length }})</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            {% if current_user == user %}
+                <th></th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in list %}
+            <tr  {% if loop.index % 2 == 0 %} class="gray" {%  endif %} >
+                <!-- Artist -->
+                <td class="artist">{{ r[1] }}</td>
 
-    <!-- Artist -->
-    <td>{{ r[1] }}</td>
+                <!-- Title -->
+                <td class="title" >{{ r[0].name }}</td>
 
-    <!-- Title -->
-    <td>{{ r[0].name }}</td>
+                <!-- Color -->
+                <td class="color" >{{ r[0].color }}</td>
 
-    <!-- Format -->
-    <!-- <td>{{ r[2] }}</td> -->
+                <!-- Year -->
+                <td class="year" >{{ r[0].year }}</td>
 
-    <!-- Size -->
-    <td>{{ r[3] }}</td>
+                <!-- Notes -->
+                <td class="notes" >{{ r[0].notes }}</td>
 
-    <!-- Color -->
-    <td>{{ r[0].color }}</td>
+                <!-- Timestamp -->
+                <td class="timestamp" >{{ r[0].timestamp.strftime('%-m/%-d/%y') }}</td>
 
-    <!-- Year -->
-    <td>{{ r[0].year }}</td>
-
-    <!-- Notes -->
-    <td>{{ r[0].notes }}</td>
-
-    {% if user == current_user %}
-        <!-- Delete -->
-        <td><a href="/delete-record/{{r[0].id}}">delete</a></td>
-    {% endif %}
-
-    <!-- Timestamp -->
-    <td>{{ r[0].timestamp.strftime('%-m/%-d/%y') }}</td>
-
-    </tr>
-{% endfor %}
+                <!-- Delete -->
+                {% if current_user == user %}
+                    <td class="delete" ><a href="/delete-record/{{r[0].id}}">delete</a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endmacro %}

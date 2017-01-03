@@ -83,8 +83,18 @@ def user(username):
 	else:
 		user_records = current_user.owned_records()
 
+	# Sort by artist name, then title year
+	user_records = sorted(user_records, key=lambda x: (x[1].lower(), x[0].year))
 
-	return render_template('user.html', form=form, user=user, followers=followers, followers_count = followers_count, followed=followed, followed_count=followed_count, user_records=user_records)
+
+
+	return render_template('user.html', 
+		form=form, user=user, followers=followers, 
+		followers_count = followers_count, followed=followed, followed_count=followed_count, 
+		seven_inches=[record for record in user_records if record[2] == 7],
+		ten_inches=[record for record in user_records if record[2] == 10],
+		twelve_inches=[record for record in user_records if record[2] == 12],
+		user_records_count=len(user_records))
 
 @main.route('/<username>/follower_records', methods=["GET", "POST"])
 @login_required

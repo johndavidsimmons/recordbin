@@ -1,0 +1,27 @@
+label {
+	font-weight: bold;
+}
+
+dd {
+	margin: 0;
+
+	input {
+		border-top: none;
+		border-left: none;
+		border-right: none; 
+		border-bottom: 1px solid $gray;
+		margin-bottom: 2em;
+		outline: none;
+	}
+}
+
+.error {
+	color: red;
+	font-weight: bold;
+	padding-left: 1em;
+	vertical-align: -webkit-baseline-middle;
+}
+
+.push {
+	margin-bottom: 1em;
+}

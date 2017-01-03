@@ -1,3 +1,108 @@
 .gravatar {
 	border-radius: 5px;
 }
+
+.profile ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	li {
+		/*display: inline;	*/
+	}
+}
+
+
+.bio,
+.followers {
+	min-height: 150px;
+	float: left;
+}
+
+
+
+/*Record Table*/
+table {
+	width: 100%;
+	margin-bottom: 1em; 
+}
+
+.gray {
+	background-color: $lightgray;
+}
+
+.left {
+	float: left;
+}
+
+.artist {
+	width: 20%;
+}
+
+.title {
+	width: 30%;
+}
+
+.color {
+	width: 10%;
+}
+
+.year {
+	width: 10%;
+}
+
+.notes {
+	width: 20%;
+}
+
+.timestamp {
+	width: 10%;
+}
+
+.delete {
+	width: 10%;
+}
+
+tr > td {
+	padding: 0.5em 1em 0.5em 0.5em;
+
+}
+
+thead {
+	border-bottom: 1px solid black !important;
+}
+
+th {
+	padding-bottom: 0.5em !important;
+	/*border: 1px dotted red;*/
+}
+
+#plus p{
+	
+	/*float: right;*/
+	position: relative;
+	display: inline-block;
+	color: transparent;
+	-webkit-text-stroke: 1px black;
+	font-size: 2em;
+	font-weight: bold;
+	transition: transform 0.35s ease-out;
+	margin:0;
+	padding: 0;
+	text-align: center;
+
+	&:hover {
+		cursor: pointer;
+		color: black;
+	}
+}
+
+#add-record {
+	display: none;
+}
+
+.rotate {
+  transform-origin: 50% 50%;
+	transform: rotate(45deg);
+}
+

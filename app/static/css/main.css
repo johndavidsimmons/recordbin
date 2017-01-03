@@ -2,37 +2,141 @@
   margin: 0 auto;
   max-width: 960px; }
 
-  .btn {
-    background-color: transparent;
-    border: 1px solid #000;
-    border-radius: 5px;
-    color: #000;
-    padding: 1em;
-    min-width: 125px; }
-    .btn:hover {
-      background-color: #000;
-      color: white;
-      cursor: pointer; }
+  footer p {
+    color: #777;
+    font-size: 0.75em;
+    text-align: center; }
+
+    .btn {
+      background-color: transparent;
+      border: 1px solid #000;
+      border-radius: 5px;
+      color: #000;
+      padding: 1em;
+      min-width: 125px; }
+      .btn:hover {
+        background-color: #000;
+        color: white;
+        cursor: pointer; }
 
 * {
   font-family: sans-serif; }
 
-  .navigation {
-    list-style-type: none;
-    margin: 0px;
-    padding: 0px; }
+  nav {
+    margin: 1em 0 0 1em; }
 
-    .navigation__item {
-      display: inline;
-      margin-right: 1em; }
-      .navigation__item a {
-        color: #000;
-        font-weight: bold;
-        text-decoration: none; }
-        .navigation__item a:hover {
-          color: #777; }
-          .navigation__item a.active {
-            border-bottom: 1px solid #000; }
+    .navigation {
+      list-style-type: none;
+      margin: 0px;
+      padding: 0px; }
+
+      .navigation__item {
+        display: inline;
+        margin-right: 1em; }
+        .navigation__item a {
+          color: #000;
+          font-weight: bold;
+          text-decoration: none; }
+          .navigation__item a:hover {
+            color: #777; }
+            .navigation__item a.active {
+              border-bottom: 1px solid #000; }
 
 .gravatar {
   border-radius: 5px; }
+
+  .profile ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; }
+
+.bio, .followers {
+  min-height: 150px;
+  float: left; }
+
+  table {
+    width: 100%;
+    margin-bottom: 1em; }
+
+    .gray {
+      background-color: #f0f0f0; }
+
+      .left {
+        float: left; }
+
+        .artist {
+          width: 20%; }
+
+          .title {
+            width: 30%; }
+
+            .color {
+              width: 10%; }
+
+              .year {
+                width: 10%; }
+
+                .notes {
+                  width: 20%; }
+
+                  .timestamp {
+                    width: 10%; }
+
+                    .delete {
+                      width: 10%; }
+
+                      tr > td {
+                        padding: 0.5em 1em 0.5em 0.5em; }
+
+                        thead {
+                          border-bottom: 1px solid black !important; }
+
+                          th {
+                            padding-bottom: 0.5em !important; }
+
+                            #plus p {
+                              position: relative;
+                              display: inline-block;
+                              color: transparent;
+                              -webkit-text-stroke: 1px black;
+                              font-size: 2em;
+                              font-weight: bold;
+                              transition: transform 0.35s ease-out;
+                              margin: 0;
+                              padding: 0;
+                              text-align: center; }
+                              #plus p:hover {
+                                cursor: pointer;
+                                color: black; }
+
+#add-record {
+  display: none; }
+
+  .rotate {
+    transform-origin: 50% 50%;
+    transform: rotate(45deg); }
+
+    #follower_records ul {
+      list-style-type: none; }
+
+      label {
+        font-weight: bold; }
+
+        dd {
+          margin: 0; }
+          dd input {
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom: 1px solid #777;
+            margin-bottom: 2em;
+            outline: none; }
+
+.error {
+  color: red;
+  font-weight: bold;
+  padding-left: 1em;
+  vertical-align: -webkit-baseline-middle; }
+
+  .push {
+    margin-bottom: 1em; }
