@@ -32,7 +32,7 @@
 	<div class="col-sm-4 followers">
 
 		<!-- Followers  -->
-		<p><strong>Following ( {{ followed_count - 1 }} ):</strong></p>
+		<p><strong>Following ({{ followed_count - 1 }}):</strong></p>
 		<ul>
 		{% for f in followed %}
 			{% if f.followed.username != user.username%}
@@ -41,7 +41,7 @@
 		{% endfor %}
 		</ul>
 
-		<p><strong>Followers({{ followers_count - 1 }}):</strong></p>
+		<p><strong>Followers ({{ followers_count - 1}}):</strong></p>
 		<ul>
 		{% for f in followers %}
 			{% if f.follower.username != user.username%}
