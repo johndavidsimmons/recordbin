@@ -15,6 +15,8 @@
 		<!-- User Edit Profile -->
 		{% if user == current_user %}
 			<p><a href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
+			<p><a href="{{ url_for('auth.change_password') }}">Change Password</a></p>
+			<p><a href="{{ url_for('auth.change_email_request') }}">Change Email</a></p>
 		{% endif %}
 		<!-- Admin Edit profile -->
 		{% if current_user.is_authenticated and current_user.is_administrator() %}
@@ -23,7 +25,6 @@
 	</div>
 	<div class="col-sm-6 bio">
 		<ul>
-			<li><strong>Email:</strong> {{ user.email }}</li>
 			<li><strong>Username:</strong> {{ user.username }}</li>
 			<li><strong>Location:</strong> {{ user.location }}</li>
 			<li><strong>Records:</strong> {{ user_records_count }} </li>
@@ -72,6 +73,17 @@
 </div>
 
 
+<!-- Size Navigation -->
+<div class="row">
+	<div class="col-sm-8 col-sm-offset-2">
+		<ul id="sizes">
+			<li class="active">All</li>
+			<li>7</li>
+			<li>10</li>
+			<li>12</li>
+		</ul>
+	</div> 
+</div>
 
 
 <!-- Add Record Form -->
@@ -121,4 +133,5 @@
 
 </script>
 	  
+<script src="static/js/size_nav.js" ></script>
 {% endblock %}

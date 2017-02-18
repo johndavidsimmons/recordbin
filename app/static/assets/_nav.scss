@@ -30,3 +30,29 @@ nav {
 		}
 	}
 }
+
+#sizes {
+
+	list-style: none;
+
+	li {
+		border: 1px solid black;
+		border-radius: 5px;
+		color: black;
+		cursor: pointer;
+		display: inline-block;
+		padding: 1em 2em 1em 2em;
+		margin: 1em;
+		width: 100px;
+		text-align: center;
+
+		&.active {
+			background-color: black;
+			border: 1px solid black;
+			border-radius: 5px;
+			color: white;
+		}
+	}
+
+
+}

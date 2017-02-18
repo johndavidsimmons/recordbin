@@ -10,7 +10,7 @@
 	
 	{% if current_user.is_authenticated %}
 	<h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
-	<h2>Timeline</h2>
+	<h2>Timeline (Last 10 Activity) </h2>
 	<div >
 		<ul id="follower_records"></ul>
 	</div>

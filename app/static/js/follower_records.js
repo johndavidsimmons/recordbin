@@ -8,7 +8,10 @@ function getNewRecords() {
 
         success: function(data) {
             for (var key in data) {
-                var html_string = "<li id=" + data[key]["id"] + "><img src=" + data[key]['gravatar'] + " class='gravatar'>" + data[key]['user'] + " added " + data[key]['artist'] + " - " + data[key]['title'] + " - " + moment(data[key]["timestamp"]).fromNow() + "</li>";
+                var html_string = "<li id=" + data[key]["id"] + "><a href='#'><img src=" +
+                    data[key]['gravatar'] + " class='gravatar'></a>" + data[key]['user'] + " added " +
+                    data[key]['artist'] + " - " + data[key]['title'] + " - " +
+                    moment(data[key]["timestamp"]).fromNow() + "</li>";
                 $("#follower_records").append(html_string)
             }
         }

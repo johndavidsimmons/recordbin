@@ -10,11 +10,6 @@
         <li class="navigation__item">
             <a {% if current_user.username in request.path %} class="active" {% endif %}  href="{{ url_for('main.user', username=current_user.username) }}">View Profile</a>
         </li>
-        <li class="navigation__item">
-            <a href="{{ url_for('auth.change_password') }}">Change Password</a></li>
-        <li class="navigation__item">
-            <a href="{{ url_for('auth.change_email_request') }}">Change Email</a>
-        </li>
         {% if current_user.is_administrator()  %}
             <li class="navigation__item">
                 <a {% if request.path =='/auth/admin-settings' %} class="active" {% endif %} href="{{ url_for('auth.admin_settings') }}">Admin</a>

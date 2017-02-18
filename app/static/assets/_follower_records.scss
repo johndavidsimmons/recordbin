@@ -1,3 +1,14 @@
-#follower_records ul {
-	list-style-type: none;
+#follower_records {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	
+	li {
+		padding-bottom: 1em;
+	} 
+
+	li img {
+		height: 50px;
+		margin-right: 1em;
+	}
 }

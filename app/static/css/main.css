@@ -42,6 +42,24 @@
             .navigation__item a.active {
               border-bottom: 1px solid #000; }
 
+#sizes {
+  list-style: none; }
+  #sizes li {
+    border: 1px solid black;
+    border-radius: 5px;
+    color: black;
+    cursor: pointer;
+    display: inline-block;
+    padding: 1em 2em 1em 2em;
+    margin: 1em;
+    width: 100px;
+    text-align: center; }
+    #sizes li.active {
+      background-color: black;
+      border: 1px solid black;
+      border-radius: 5px;
+      color: white; }
+
 .gravatar {
   border-radius: 5px; }
 
@@ -116,21 +134,28 @@
     transform-origin: 50% 50%;
     transform: rotate(45deg); }
 
-    #follower_records ul {
-      list-style-type: none; }
+    #follower_records {
+      list-style: none;
+      margin: 0;
+      padding: 0; }
+      #follower_records li {
+        padding-bottom: 1em; }
+        #follower_records li img {
+          height: 50px;
+          margin-right: 1em; }
 
-      label {
-        font-weight: bold; }
+label {
+  font-weight: bold; }
 
-        dd {
-          margin: 0; }
-          dd input {
-            border-top: none;
-            border-left: none;
-            border-right: none;
-            border-bottom: 1px solid #777;
-            margin-bottom: 2em;
-            outline: none; }
+  dd {
+    margin: 0; }
+    dd input {
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-bottom: 1px solid #777;
+      margin-bottom: 2em;
+      outline: none; }
 
 .error {
   color: red;
