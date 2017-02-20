@@ -43,7 +43,8 @@
               border-bottom: 1px solid #000; }
 
 #sizes {
-  list-style: none; }
+  list-style: none;
+  padding-left: 0px; }
   #sizes li {
     border: 1px solid black;
     border-radius: 5px;
@@ -112,37 +113,18 @@
                           th {
                             padding-bottom: 0.5em !important; }
 
-                            #plus p {
-                              position: relative;
-                              display: inline-block;
-                              color: transparent;
-                              -webkit-text-stroke: 1px black;
-                              font-size: 2em;
-                              font-weight: bold;
-                              transition: transform 0.35s ease-out;
-                              margin: 0;
-                              padding: 0;
-                              text-align: center; }
-                              #plus p:hover {
-                                cursor: pointer;
-                                color: black; }
+                            #add-record {
+                              display: none; }
 
-#add-record {
-  display: none; }
-
-  .rotate {
-    transform-origin: 50% 50%;
-    transform: rotate(45deg); }
-
-    #follower_records {
-      list-style: none;
-      margin: 0;
-      padding: 0; }
-      #follower_records li {
-        padding-bottom: 1em; }
-        #follower_records li img {
-          height: 50px;
-          margin-right: 1em; }
+                              #follower_records {
+                                list-style: none;
+                                margin: 0;
+                                padding: 0; }
+                                #follower_records li {
+                                  padding-bottom: 1em; }
+                                  #follower_records li img {
+                                    height: 50px;
+                                    margin-right: 1em; }
 
 label {
   font-weight: bold; }
@@ -165,3 +147,10 @@ label {
 
   .push {
     margin-bottom: 1em; }
+
+    .nopadding {
+      padding: 0 !important;
+      margin: 0 !important; }
+
+      .push {
+        padding-top: 2em; }

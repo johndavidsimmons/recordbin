@@ -170,15 +170,6 @@ def change_email(token):
 		flash('Invalid request. Bad Token')
 	return redirect(url_for('main.index'))
 
-@auth.route('/admin-settings')
-@login_required
-@admin_required
-def admin_settings():
-	all_users = User.query.all()
-	return render_template('auth/admin-settings.html', all_users=all_users)
-
-
-# u = User.query.filter_by(email='johndavidsimmons@gmail.com').first()
 
 
 

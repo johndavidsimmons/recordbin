@@ -6,3 +6,12 @@
 @import "_profile";
 @import "_follower_records";
 @import "_forms";
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.push {
+	padding-top: 2em;
+}

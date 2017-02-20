@@ -6,31 +6,28 @@
 {% endblock %}
 
 {% block page_content %}
-<h1>{{ user.username }}'s Profile</h1>
-
 <!-- Profile Section -->
-<div class="row profile">
+<div class="row profile push">
 	<div class="col-sm-2">
-		<img class="gravatar" src="{{ user.gravatar(size=150) }}" alt="">
+		<img class="gravatar" src="{{ user.gravatar(size=100) }}" alt="">
 		<!-- User Edit Profile -->
 		{% if user == current_user %}
-			<p><a href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
-			<p><a href="{{ url_for('auth.change_password') }}">Change Password</a></p>
-			<p><a href="{{ url_for('auth.change_email_request') }}">Change Email</a></p>
-		{% endif %}
-		<!-- Admin Edit profile -->
-		{% if current_user.is_authenticated and current_user.is_administrator() %}
-			<p><a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a></p>
+			{% if current_user.is_authenticated and current_user.is_administrator() %}
+				<p><a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a></p>
+			{% else %}
+				<p><a href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
+			{% endif %}
 		{% endif %}
 	</div>
-	<div class="col-sm-6 bio">
+	<div class="col-sm-4">
 		<ul>
 			<li><strong>Username:</strong> {{ user.username }}</li>
 			<li><strong>Location:</strong> {{ user.location }}</li>
 			<li><strong>Records:</strong> {{ user_records_count }} </li>
+			<li><strong>About:</strong> {{ user.about_me }} </li>
 		</ul>
 	</div>
-	<div class="col-sm-4 followers">
+	<div class="col-sm-2 followers">
 
 		<!-- Followers  -->
 		<p><strong>Following ({{ followed_count - 1 }}):</strong></p>
@@ -75,25 +72,21 @@
 
 <!-- Size Navigation -->
 <div class="row">
-	<div class="col-sm-8 col-sm-offset-2">
+	<div class="col-sm-12 nopadding">
 		<ul id="sizes">
 			<li class="active">All</li>
 			<li>7</li>
 			<li>10</li>
 			<li>12</li>
+			{% if current_user.is_authenticated %}
+				{% if user == current_user %}
+					<li id="plus">+</li>
+				{% endif %}
+			{% endif %}
 		</ul>
 	</div> 
 </div>
 
-
-<!-- Add Record Form -->
-<div class="row">
-
-	{% if user == current_user %}
-		<div class="pull-right" id="plus"><p>+</p></div>
-		{% include "/include/_addrecordform.html" %}
-	{% endif %}	
-</div>
 
 <!-- Records -->
 <div class="row">
@@ -115,7 +108,13 @@
         {% if twelve_inches %}
 	    	{% from 'macro/record_table.html' import record_table %}
 	    	    {{ record_table('12', twelve_inches, current_user, user=user) }}
-    	{% endif %}              
+    	{% endif %}
+
+		{% if current_user.is_authenticated %}
+			{% if user == current_user %}
+		    	{% include "include/_addrecordform.html" %}
+		    {% endif %}
+		{% endif %} 
 	</div>
 </div>
 

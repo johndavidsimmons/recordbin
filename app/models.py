@@ -280,6 +280,9 @@ class User(UserMixin, db.Model):
 
 		return json_user
 
+	@staticmethod
+	def record_count(self):
+		return len(self.owned_records())
 
 
 class Title(db.Model):

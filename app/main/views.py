@@ -8,6 +8,11 @@ from ..decorators import admin_required, permission_required
 from werkzeug.local import LocalProxy
 from datetime import datetime
 
+@main.route('/users', methods=['GET', 'POST'])
+def all_users():
+	all_users = User.query.all()
+	return render_template('users.html', all_users=all_users)
+
 @main.route('/shutdown')
 def server_shutdown():
 	if not current_app.testing:

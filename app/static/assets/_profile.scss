@@ -74,35 +74,8 @@ thead {
 
 th {
 	padding-bottom: 0.5em !important;
-	/*border: 1px dotted red;*/
-}
-
-#plus p{
-	
-	/*float: right;*/
-	position: relative;
-	display: inline-block;
-	color: transparent;
-	-webkit-text-stroke: 1px black;
-	font-size: 2em;
-	font-weight: bold;
-	transition: transform 0.35s ease-out;
-	margin:0;
-	padding: 0;
-	text-align: center;
-
-	&:hover {
-		cursor: pointer;
-		color: black;
-	}
 }
 
 #add-record {
 	display: none;
 }
-
-.rotate {
-  transform-origin: 50% 50%;
-	transform: rotate(45deg);
-}
-
