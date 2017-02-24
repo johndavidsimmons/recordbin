@@ -57,10 +57,8 @@ def user(username):
 			size_id = form.size.data
 			year = form.year.data
 			notes = form.notes.data
-			mail = form.incoming.data
-
+			mail = 1 if form.incoming.data else 0
 			
-				
 			a = Artist.query.filter_by(name=artist).first()
 			if a is None:
 				Artist(name=form.artist.data).add_to_table()
