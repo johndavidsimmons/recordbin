@@ -134,7 +134,7 @@ class User(UserMixin, db.Model):
 			follower_id=user.id).first() is not None
 
 	def owned_records(self):
-		return Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name).filter(Title.owner_id==self.id).all()
+		return Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name, Title.mail).filter(Title.owner_id==self.id).all()
 
 	def follower_records(self):
 		return Title.query.join(Follow, Follow.followed_id == Title.owner_id).join(User, Follow.followed_id==User.id).join(Artist, Title.artist_id==Artist.id).add_columns(User.email, Artist.name, User.username).filter(Follow.follower_id==self.id).order_by(Title.timestamp.desc()).limit(5)		
@@ -297,11 +297,12 @@ class Title(db.Model):
 	notes = db.Column(db.String(128))
 	timestamp = db.Column(db.DateTime, default=user_local_time(datetime.utcnow))
 	owner_id = db.Column(db.Integer, db.ForeignKey('users_table.id'))
+	mail = db.Column(db.Integer, default=0)
 
 
 
 	# Methods
-	def __init__(self, name, artist_id, year, format_id, owner_id, size_id=None, color=None, notes=None):
+	def __init__(self, name, artist_id, year, format_id, owner_id, mail, size_id=None, color=None, notes=None):
 		self.name = name
 		self.artist_id = artist_id
 		self.year = year
@@ -310,6 +311,7 @@ class Title(db.Model):
 		self.size_id = size_id
 		self.color = color
 		self.notes = notes
+		self.mail = mail
 
 	def add_to_table(self):
 		db.session.add(self)
@@ -328,7 +330,8 @@ class Title(db.Model):
 			"owner_id" : self.owner_id, 
 			"size_id" : self.size_id,
 			"color" : self.color,
-			"notes" : self.notes 
+			"notes" : self.notes,
+			"mail" : self.mail 
 		}	
 
 		return json_title

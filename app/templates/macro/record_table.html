@@ -1,5 +1,5 @@
 {% macro record_table(size, list, current_user, user=None) %}
-<table>
+<table id="{{ kwargs['id'] }}">
     <thead>
         <tr>
             <th class="left" >{{ size }} Inch ({{ list|length }})</th>

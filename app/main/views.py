@@ -57,6 +57,7 @@ def user(username):
 			size_id = form.size.data
 			year = form.year.data
 			notes = form.notes.data
+			mail = form.incoming.data
 
 			
 				
@@ -71,7 +72,7 @@ def user(username):
 			t = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes, owner_id=current_user.id).first()
 					
 			if t is None:
-				Title(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes, owner_id=current_user.id).add_to_table()
+				Title(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes, owner_id=current_user.id, mail=mail).add_to_table()
 			else:
 				flash('You already own this')
 				return redirect(url_for('.user', username=current_user.username))
@@ -96,9 +97,12 @@ def user(username):
 	return render_template('user.html', 
 		form=form, user=user, followers=followers, 
 		followers_count = followers_count, followed=followed, followed_count=followed_count, 
-		seven_inches=[record for record in user_records if record[2] == 7],
-		ten_inches=[record for record in user_records if record[2] == 10],
-		twelve_inches=[record for record in user_records if record[2] == 12],
+		seven_inches=[record for record in user_records if record[2] == 7 and record[4] == 0],
+		ten_inches=[record for record in user_records if record[2] == 10 and record[4] == 0],
+		twelve_inches=[record for record in user_records if record[2] == 12 and record[4] == 0],
+		seven_inches_mail = [record for record in user_records if record[2] == 7 and record[4] == 1],
+		ten_inches_mail=[record for record in user_records if record[2] == 10 and record[4] == 1],
+		twelve_inches_mail=[record for record in user_records if record[2] == 12 and record[4] == 1],
 		user_records_count=len(user_records))
 
 @main.route('/<username>/follower_records', methods=["GET", "POST"])

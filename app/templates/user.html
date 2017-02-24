@@ -78,6 +78,7 @@
 			<li>7</li>
 			<li>10</li>
 			<li>12</li>
+			<li>Mail</li>
 			{% if current_user.is_authenticated %}
 				{% if user == current_user %}
 					<li id="plus">+</li>
@@ -95,42 +96,52 @@
     	<!-- 7 INCH  -->
     	{% if seven_inches %}
 	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('7', seven_inches, current_user, user=user) }}
+	    	    {{ record_table('7', seven_inches, current_user, user=user, id='seven_inches') }}
 		{% endif %}
     	    
 		<!-- 10 INCH -->
 		{% if ten_inches %}
 	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('10', ten_inches, current_user, user=user) }}
+	    	    {{ record_table('10', ten_inches, current_user, user=user, id="ten_inches") }}
     	{% endif %}
     	
-        <!-- 12 Inch  -->
+        <!-- 12 INCH  -->
         {% if twelve_inches %}
 	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('12', twelve_inches, current_user, user=user) }}
+	    	    {{ record_table('12', twelve_inches, current_user, user=user, id="twelve_inches") }}
     	{% endif %}
+
+		<div id="mail">
+	    	<!-- 7 INCH MAIL -->
+			{% if seven_inches_mail %}
+		    	{% from 'macro/record_table.html' import record_table %}
+		    	    {{ record_table('7', seven_inches_mail, current_user, user=user, id="seven_inches_mail") }}
+			{% endif %}
+
+			<!-- 10 INCH MAIL -->
+			{% if ten_inches_mail %}
+		    	{% from 'macro/record_table.html' import record_table %}
+		    	    {{ record_table('10', ten_inches_mail, current_user, user=user, id="ten_inches_mail") }}
+			{% endif %}
+
+			<!-- 12 INCH MAIL -->
+			{% if twelve_inches_mail %}
+		    	{% from 'macro/record_table.html' import record_table %}
+		    	    {{ record_table('12', twelve_inches_mail, current_user, user=user, id="twelve_inches_mail") }}
+			{% endif %}
+
+
+		</div> 
 
 		{% if current_user.is_authenticated %}
 			{% if user == current_user %}
 		    	{% include "include/_addrecordform.html" %}
 		    {% endif %}
-		{% endif %} 
+		{% endif %}
 	</div>
 </div>
 
-<script>
-	$('#plus').on('click', function(){
-		$("#add-record").toggle();
 
-		if ( $('#add-record').attr('style') != 'display: none;' ) {
-			$("#plus p").addClass('rotate');
-		} else {
-			$("#plus p").removeClass('rotate');
-		}
-	})		
-
-
-</script>
 	  
 <script src="static/js/size_nav.js" ></script>
 {% endblock %}

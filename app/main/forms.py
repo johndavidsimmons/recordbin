@@ -51,6 +51,7 @@ class AddRecordForm(Form):
     notes = TextAreaField('Notes')
     color = StringField('Color', validators=[Required()])
     size = SelectField('Size', coerce=int)
+    incoming = BooleanField('Mail')
 
     def __init__(self, *args, **kwargs):
         super(AddRecordForm, self).__init__(*args, **kwargs)
