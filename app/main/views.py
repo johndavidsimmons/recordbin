@@ -83,18 +83,18 @@ def user(username):
 		form = None
 
 	if user != current_user:
-		user_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name).filter(Title.owner_id==user.id).all()
+		user_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name, Title.mail).filter(Title.owner_id==user.id).all()
 	else:
 		user_records = current_user.owned_records()
 
 	# Sort by artist name, then title year
 	user_records = sorted(user_records, key=lambda x: (x[1].lower(), x[0].year))
-
+	print user_records[0] 
 
 
 	return render_template('user.html', 
 		form=form, user=user, followers=followers, 
-		followers_count = followers_count, followed=followed, followed_count=followed_count, 
+		followers_count = followers_count, followed=followed, followed_count=followed_count,
 		seven_inches=[record for record in user_records if record[2] == 7 and record[4] == 0],
 		ten_inches=[record for record in user_records if record[2] == 10 and record[4] == 0],
 		twelve_inches=[record for record in user_records if record[2] == 12 and record[4] == 0],
