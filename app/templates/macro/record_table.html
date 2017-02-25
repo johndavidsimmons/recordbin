@@ -8,9 +8,6 @@
             <th></th>
             <th></th>
             <th></th>
-            {% if current_user == user %}
-                <th></th>
-            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -36,6 +33,9 @@
 
                 <!-- Delete -->
                 {% if current_user == user %}
+                    {% if r[0].mail == 1%}
+                        <td><a href="/update-record/{{r[0].id}}">update</a></td>
+                    {% endif %}
                     <td class="delete" ><a href="/delete-record/{{r[0].id}}">delete</a></td>
                 {% endif %}
             </tr>

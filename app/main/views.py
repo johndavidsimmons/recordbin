@@ -210,3 +210,11 @@ def delete_record(id):
 	record.delete_from_table()
 	flash("DELETED")
 	return redirect(url_for('.user', username=current_user.username))
+
+@main.route('/update-record/<id>')
+@login_required
+def update_record(id):
+	record = Title.query.filter_by(id=id).first_or_404()
+	record.update_from_mail()
+	flash("{} Arrived!".format(record.name))
+	return redirect(url_for('.user', username=current_user.username))

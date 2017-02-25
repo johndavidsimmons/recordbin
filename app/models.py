@@ -321,6 +321,14 @@ class Title(db.Model):
 		db.session.delete(self)
 		db.session.commit()
 
+	def update_from_mail(self):
+		print self.mail
+		if self.mail == 1:
+			self.mail = 0
+			db.session.add(self)
+			db.session.commit()
+			print self.mail
+
 	def to_json(self):
 		json_title = {
 			"name" : self.name,
