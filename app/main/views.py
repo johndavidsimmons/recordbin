@@ -89,7 +89,6 @@ def user(username):
 
 	# Sort by artist name, then title year
 	user_records = sorted(user_records, key=lambda x: (x[1].lower(), x[0].year))
-	print user_records[0] 
 
 
 	return render_template('user.html', 
