@@ -42,6 +42,14 @@ $('#sizes li').on('click', function(){
 			$twelve.show();
 			break;
 
+		case "Mail":
+			$seven.hide();
+	  		$ten.hide();
+	  		$twelve.hide();
+	 		$addrecord.hide();
+	 		$mail.show();
+			break;	
+
 		case "+":
 			$seven.hide();
 			$ten.hide();
