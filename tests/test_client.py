@@ -25,6 +25,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		db.drop_all()
 		self.app_context.pop()
 
+	# 200
 	def test_home_page_status(self):
 		response = self.client.get(url_for('main.index'))
 		assert response.status_code == 200
@@ -43,56 +44,47 @@ class FlaskClientTestCase(unittest.TestCase):
 
 	def test_public_profile_page_status(self):
 		response = self.client.get('/profile_john')
-		assert response.status_code == 200			
+		assert response.status_code == 200
 
-	# def test_login_page(self):
-	# 	response = self.client.get(url_for('auth.login'))
-	# 	self.assertTrue('Login' in response.get_data(as_text=True))
-	# 	self.assertTrue(response.status_code == 200)	
+	def test_all_users_page_status(self):
+		response = self.client.get(url_for('main.all_users'))	
+		assert response.status_code == 200	
 
-	# def test_register_page(self):
-	# 	response = self.client.get(url_for('auth.register'))
-	# 	self.assertTrue('Register' in response.get_data(as_text=True))
-	# 	self.assertTrue(response.status_code == 200)		
+	# 404
+	def test_404_status(self):
+		response = self.client.get("/yolo")
+		assert response.status_code == 404
 
-	# def test_password_reset_page(self):
-	# 	response = self.client.get(url_for('auth.password_reset_request'))
-	# 	self.assertTrue('Reset' in response.get_data(as_text=True))
-	# 	self.assertTrue(response.status_code == 200)
+	#302 
+	# Anonymous Users
+	def test_unconfirmed_redirect(self):
+		response = self.client.get(url_for('auth.unconfirmed'))
+		assert response.status_code == 302
 
-	# def test_404(self):
-	# 	response = self.client.get('/yolo')
-	# 	self.assertTrue(response.status_code == 404)
+	def test_change_email_redirect(self):
+		response = self.client.get(url_for('auth.change_email_request'))
+		assert response.status_code == 302
 
-	# def test_public_profile_page(self):
-	# 	response = self.client.get('/profile_john')
-	# 	self.assertTrue(response.status_code == 200)
+	def test_change_password_redirect(self):
+		response = self.client.get(url_for('auth.change_password'))
+		assert response.status_code == 302
 
-	# Redirects for anon users
-	# def test_unconfirmed_redirect(self):
-	# 	response = self.client.get(url_for('auth.unconfirmed'))
-	# 	self.assertTrue(response.status_code == 302)
+	def test_logout_redirect(self):
+		response = self.client.get(url_for('auth.logout'))
+		assert response.status_code == 302
 
-	# def test_admin_settings_redirect(self):
-	# 	response = self.client.get(url_for('auth.admin_settings'))
-	# 	self.assertTrue(response.status_code == 302)
+	def test_confirm_resend_redirect(self):
+		response = self.client.get(url_for('auth.resend_confirmation'))
+		assert response.status_code == 302
 
-	# def test_change_email_redirect(self):
-	# 	response = self.client.get(url_for('auth.change_email_request'))
-	# 	self.assertTrue(response.status_code == 302)
+	def test_confirm_redirect(self):
+		response = self.client.get(url_for('auth.confirm', token='xyz'))
+		assert response.status_code == 302	
 
-	# def test_change_password_redirect(self):
-	# 	response = self.client.get(url_for('auth.change_password'))
-	# 	self.assertTrue(response.status_code == 302)
+	def test_edit_profile_redirect(self):
+		response = self.client.get("/edit-profile")	
+		assert response.status_code == 302
 
-	# def test_logout_redirect(self):
-	# 	response = self.client.get(url_for('auth.logout'))
-	# 	self.assertTrue(response.status_code == 302)
-
-	# def test_confirm_resend_redirect(self):
-	# 	response = self.client.get(url_for('auth.resend_confirmation'))
-	# 	self.assertTrue(response.status_code == 302)
-
-	# def test_confirm_redirect(self):
-	# 	response = self.client.get(url_for('auth.confirm', token='xyz'))
-	# 	self.assertTrue(response.status_code == 302)			
+	def test_admin_edit_profile_redirect(self):
+		response = self.client.get("/edit-profile/1")	
+		assert response.status_code == 302
