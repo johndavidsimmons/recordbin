@@ -3,7 +3,7 @@ import os
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-	SECRET_KEY = os.environ.get('SECRET_KEY')
+	SECRET_KEY = os.environ.get('SECRET_KEY') or "abcd"
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	SQLALCHEMY_RECORD_QUERIES = True
 	MAIL_SERVER = os.environ.get('MAIL_SERVER')
