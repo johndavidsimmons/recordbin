@@ -207,9 +207,14 @@ def unfollow(username):
 @login_required
 def delete_record(id):
 	record = Title.query.filter_by(id=id).first_or_404()
-	record.delete_from_table()
-	flash("DELETED")
-	return redirect(url_for('.user', username=current_user.username))
+
+	if record.owner_id == current_user.id:
+		record.delete_from_table()
+		flash("DELETED")
+		return redirect(url_for('.user', username=current_user.username))
+	else:
+		flash("You dont own that")
+		return redirect(url_for('.user', username=current_user.username))
 
 @main.route('/update-record/<id>')
 @login_required

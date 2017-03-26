@@ -10,11 +10,13 @@
 <div class="row profile push">
 	<div class="col-sm-2">
 		<img class="gravatar" src="{{ user.gravatar(size=100) }}" alt="">
-		<!-- User Edit Profile -->
-		{% if user == current_user %}
-			{% if current_user.is_authenticated and current_user.is_administrator() %}
+
+		<!-- Edit Profile -->
+		{% if current_user.is_authenticated %}
+			{% if current_user.is_administrator()  %}
 				<p><a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Edit Profile</a></p>
-			{% else %}
+			{% endif %}	
+			{% if user == current_user %}	
 				<p><a href="{{ url_for('.edit_profile') }}">Edit Profile</a></p>
 			{% endif %}
 		{% endif %}
