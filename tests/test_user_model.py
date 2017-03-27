@@ -7,6 +7,7 @@ from datetime import datetime
 class UserModelTestCase(unittest.TestCase):
 	def setUp(self):
 		self.app = create_app('testing')
+		self.app.secret_key = "testing"
 		self.app_context = self.app.app_context()
 		self.app_context.push()
 		db.create_all()
