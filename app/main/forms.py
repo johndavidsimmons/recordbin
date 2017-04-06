@@ -2,6 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, SubmitField, BooleanField, PasswordField, TextAreaField, SelectField, IntegerField
 from wtforms.validators import Required, Email, Length, Regexp
 from ..models import Role, User, Format, Size
+import datetime
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
@@ -46,7 +47,7 @@ class EditProfileAdminForm(Form):
 class AddRecordForm(Form):
     artist = StringField('Artist', validators=[Required()])
     title = StringField('Title', validators=[Required()])
-    year = IntegerField('Year', validators=[Required()])
+    year = SelectField("Year", coerce=int, validators=[Required()])
     format = SelectField('Format', coerce=int)
     notes = TextAreaField('Notes')
     color = StringField('Color', validators=[Required()])
@@ -57,3 +58,6 @@ class AddRecordForm(Form):
         super(AddRecordForm, self).__init__(*args, **kwargs)
         self.format.choices = [(format.id, format.name) for format in Format.query.order_by(Format.id).all()]
         self.size.choices = [(size.id, size.name) for size in Size.query.order_by(Size.id).all()]
+        years = list(xrange(1950, datetime.datetime.now().year +1))
+        years.sort(reverse=True)
+        self.year.choices = [(value, value) for value in years]
