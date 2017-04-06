@@ -9,24 +9,10 @@
 {% block page_content %}
 <div class="push">
 <p><strong>Users ({{ all_users|length }})</strong></p>
-<table border="1" cellpadding="5" cellspacing="5">
-<tr>
-<th>Username</th>
-<th>Records</th>
-<th>Member Since</th>
-<th>Last Seen</th>
-<th>View</th>
-</tr>
-{% for u in all_users %}
-    <tr>
-    <td>{{u.username}}</td>
-    <td>{{u.record_count(u)}}</td>
-    <td>{{u.member_since}}</td>
-    <td>{{u.last_seen}}</td>
-    <td><a href="/{{ u.username }}">Profile</a></td>
-    </tr>
-{% endfor %}
-</table>    
+
+	{% from 'macro/users_table.html' import users_table %}
+		{{ users_table(all_users) }}
+   
 </div>
 
 {% endblock %}

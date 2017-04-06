@@ -14,7 +14,7 @@
 	    {{ render_field(form.email) }}
 	    {{ render_field(form.password) }}
 	    {{ render_field(form.remember_me) }}
-	    <button class="btn" type="submit" name="submit">Log In</button>
+	    <button class="btn margin-push" type="submit" name="submit">Log In</button>
     </form>
 
     <p><a href="{{ url_for('auth.password_reset_request') }}">Forgot your password?</a></p>

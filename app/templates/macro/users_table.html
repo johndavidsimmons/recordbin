@@ -1,0 +1,20 @@
+{% macro users_table(list) %}
+	<table>
+	<thead>
+		<tr>
+			<th>Username</th>
+			<th>Records</th>
+			<th>Member Since</th>
+			<th>Last Seen</th>
+		</tr>
+	</thead>
+	{% for user in list %}
+		<tr {% if loop.index % 2 == 0 %} class="gray" {%  endif %} >
+			<td><a href="/{{ user.username }}">{{user.username}}</a></td>
+			<td>{{user.record_count(user)}}</td>
+			<td>{{user.member_since.strftime('%m/%d/%y')}}</td>
+			<td>{{user.last_seen.strftime('%m/%d/%y')}}</td>
+		</tr>
+	{% endfor %}
+	</table>
+{% endmacro %}

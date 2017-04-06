@@ -148,12 +148,12 @@ label {
   padding-left: 1em;
   vertical-align: -webkit-baseline-middle; }
 
-  .push {
-    margin-bottom: 1em; }
+  .nopadding {
+    padding: 0 !important;
+    margin: 0 !important; }
 
-    .nopadding {
-      padding: 0 !important;
-      margin: 0 !important; }
+    .push {
+      padding-top: 2em; }
 
-      .push {
-        padding-top: 2em; }
+      .margin-push {
+        margin-top: 1em; }
