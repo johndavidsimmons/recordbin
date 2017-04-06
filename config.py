@@ -2,6 +2,7 @@ import os
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
+
 class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY')
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
@@ -15,19 +16,21 @@ class Config:
 	FLASKY_MAIL_SENDER = os.environ.get('FLASKY_MAIL_SENDER')
 	FLASKY_ADMIN = 'RecordBin Admin <app57807167@heroku.com>'
 
-
 	@staticmethod
 	def init_app(app):
 		pass
 
+
 class DevelopmentConfig(Config):
 	DEBUG = True
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-	        'sqlite:///' + os.path.join(base_dir, 'data-dev.sqlite')
+		'sqlite:///' + os.path.join(base_dir, 'data-dev.sqlite')
+
 
 class TestingConfig(Config):
 	TESTING = True
-	SQLALCHEMY_DATABASE_URI ='sqlite:///' + os.path.join(base_dir, 'data-test.sqlite')
+	SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(base_dir, 'data-test.sqlite')
+
 
 class ProductionConfig(Config):
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \

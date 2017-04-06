@@ -1,23 +1,24 @@
 import unittest
-import time
 from app import create_app, db
-from app.models import User, AnonymousUser, Title, Size, Format, Artist, Role
-from datetime import datetime
+from app.models import Title, Size, Format, Artist, Role
+
 
 def _artist():
 	return Artist(name="Black Sabbath")
 
+
 def _title():
 	return Title(
-			name="Master of Reality", 
-			artist_id=1, 
-			year=1970, 
-			format_id=1, 
-			owner_id=1,
-			mail=0, 
-			size_id=3, 
-			color="black", 
-			notes="lorem")
+		name="Master of Reality",
+		artist_id=1,
+		year=1970,
+		format_id=1,
+		owner_id=1,
+		mail=0,
+		size_id=3,
+		color="black",
+		notes="lorem")
+
 
 class UserModelTestCase(unittest.TestCase):
 	def setUp(self):
@@ -39,7 +40,7 @@ class UserModelTestCase(unittest.TestCase):
 
 		b = Artist(name="Thin Lizzy")
 		b.add_to_table()
-		self.assertEquals(len(Artist.query.all()), 2) 		
+		self.assertEquals(len(Artist.query.all()), 2)
 
 	def test_delete_artist_from_table(self):
 		a = _artist()
@@ -76,9 +77,9 @@ class UserModelTestCase(unittest.TestCase):
 		self.assertTrue(Format.query.filter_by(name=a.name).first() is None)
 
 	def test_create_all_formats(self):
-		self.assertTrue(len(Format.query.all()) == 0) 
-		Format.insert_formats()	
-		self.assertTrue(len(Format.query.all()) == 1)		
+		self.assertTrue(len(Format.query.all()) == 0)
+		Format.insert_formats()
+		self.assertTrue(len(Format.query.all()) == 1)
 
 	def test_size_create(self):
 		a = Size(name=7)
@@ -97,35 +98,35 @@ class UserModelTestCase(unittest.TestCase):
 
 	def create_all_sizes(self):
 		self.assertTrue(len(Size.query.all()) == 0)
-		Size.insert_sizes()	
+		Size.insert_sizes()
 		self.assertTrue(len(Size.query.all()) == 1)
 
 	def test_title_create_method(self):
 		t = _title()
 		t.add_to_table()
 		self.assertTrue(Title.query.filter_by(
-			name=t.name, 
-			artist_id=t.artist_id, 
-			year=t.year, 
+			name=t.name,
+			artist_id=t.artist_id,
+			year=t.year,
 			format_id=t.format_id,
-			mail=t.mail, 
-			size_id=t.size_id, 
-			color=t.color, 
-			notes=t.notes, 
+			mail=t.mail,
+			size_id=t.size_id,
+			color=t.color,
+			notes=t.notes,
 			owner_id=t.owner_id).first())
 
 	def test_title_delete_method(self):
 		t = _title()
 		t.add_to_table()
 		d = Title.query.filter_by(
-			name=t.name, 
-			artist_id=t.artist_id, 
-			year=t.year, 
+			name=t.name,
+			artist_id=t.artist_id,
+			year=t.year,
 			format_id=t.format_id,
-			mail=t.mail, 
-			size_id=t.size_id, 
-			color=t.color, 
-			notes=t.notes, 
+			mail=t.mail,
+			size_id=t.size_id,
+			color=t.color,
+			notes=t.notes,
 			owner_id=t.owner_id).first()
 		self.assertTrue(d)
 		d.delete_from_table()
@@ -135,5 +136,7 @@ class UserModelTestCase(unittest.TestCase):
 		import datetime
 		t = _title()
 		t.add_to_table()
-		self.assertTrue((t.timestamp.year, t.timestamp.month, t.timestamp.day) == (datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day))
-			
+		self.assertTrue(
+			(t.timestamp.year, t.timestamp.month, t.timestamp.day) ==
+			(datetime.datetime.now().year, datetime.datetime.now().month,
+				datetime.datetime.now().day))

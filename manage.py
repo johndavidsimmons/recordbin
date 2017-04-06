@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 import os
+from app import create_app, db
+from app.models import User, Follow, Role, Title, Artist, Permission, Size, Format, user_local_time
+from flask_script import Manager
+from flask_script import Shell
+from flask.ext.migrate import Migrate, MigrateCommand
+
 COV = None
 
 if os.environ.get('FLASK_COVERAGE'):
@@ -14,22 +20,21 @@ if os.path.exists('.env'):
 		if len(var) == 2:
 			os.environ[var[0]] = var[1]
 
-from app import create_app, db
-from app.models import User, Follow, Role, Title, Artist, Permission, Size, Format, user_local_time
-from flask_script import Manager
-from flask_script import Shell
-from flask.ext.migrate import Migrate, MigrateCommand
-
- 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
-def make_shell_context():
-	return dict(app=app, db=db, User=User, Role=Role, Artist=Artist, Title=Title, Permission=Permission, Follow=Follow, Size=Size, Format=Format, user_local_time=user_local_time)
 
-manager.add_command('shell', Shell(make_context = make_shell_context))
-manager.add_command('db', MigrateCommand)	
+def make_shell_context():
+	return dict(
+		app=app, db=db, User=User,
+		Role=Role, Artist=Artist, Title=Title,
+		Permission=Permission, Follow=Follow, Size=Size,
+		Format=Format, user_local_time=user_local_time)
+
+manager.add_command('shell', Shell(make_context=make_shell_context))
+manager.add_command('db', MigrateCommand)
+
 
 @manager.command
 def test(coverage=False):
@@ -38,7 +43,7 @@ def test(coverage=False):
 		import sys
 		os.environ['FLASK_COVERAGE'] = '1'
 		os.execvp(sys.executable, [sys.executable] + sys.argv)
-	
+
 	import unittest
 	tests = unittest.TestLoader().discover('tests')
 	unittest.TextTestRunner(verbosity=2).run(tests)
@@ -54,9 +59,10 @@ def test(coverage=False):
 		print 'HTML version: file://{}/index.html'.format(covdir)
 		COV.erase()
 
+
 @manager.command
 def deploy():
-	'''Run Deployment tasks'''
+	"""Run Deployment tasks"""
 	from flask_migrate import upgrade
 	from app.models import Role, User, Size, Format
 

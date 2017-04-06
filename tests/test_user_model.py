@@ -4,6 +4,7 @@ from app import create_app, db
 from app.models import User, AnonymousUser, Role, Permission, Follow
 from datetime import datetime
 
+
 class UserModelTestCase(unittest.TestCase):
 	def setUp(self):
 		self.app = create_app('testing')
@@ -120,7 +121,8 @@ class UserModelTestCase(unittest.TestCase):
 		db.session.add(u)
 		db.session.commit()
 		self.assertTrue((datetime.utcnow() - u.member_since).total_seconds() < 3)
-		self.assertTrue((datetime.utcnow() - u.last_seen).total_seconds() < 3)	
+		self.assertTrue((datetime.utcnow() - u.last_seen).total_seconds() < 3)
+
 	def test_ping(self):
 		u = User(password='cat')
 		db.session.add(u)
@@ -143,7 +145,9 @@ class UserModelTestCase(unittest.TestCase):
 		self.assertTrue('s=256' in gravatar_256)
 		self.assertTrue('r=pg' in gravatar_pg)
 		self.assertTrue('d=retro' in gravatar_retro)
-		self.assertTrue('https://secure.gravatar.com/avatar/' +'d4c74594d841139328695756648b6bd6' in gravatar_ssl)
+		self.assertTrue(
+			'https://secure.gravatar.com/avatar/' +
+			'd4c74594d841139328695756648b6bd6' in gravatar_ssl)
 
 	def test_follows(self):
 		u1 = User(email='john@example.com', password='cat')
@@ -180,4 +184,4 @@ class UserModelTestCase(unittest.TestCase):
 		db.session.commit()
 		db.session.delete(u2)
 		db.session.commit()
-		self.assertTrue(Follow.query.count() == 0)	
+		self.assertTrue(Follow.query.count() == 0)

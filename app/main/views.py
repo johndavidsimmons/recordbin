@@ -1,39 +1,43 @@
-from flask import render_template, session, redirect, url_for, current_app, abort, flash, request, jsonify
+from flask import render_template, redirect, url_for, current_app, abort, flash, request, jsonify
 from flask_login import login_required, current_user
 from .. import db
-from ..models import User, Role	, AnonymousUser, Permission, Artist, Title, Size, Format, Follow, gravatar, user_local_time
+from ..models import User, Role, Artist, Title, Size, Format, gravatar, user_local_time
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
-from ..decorators import admin_required, permission_required
-from werkzeug.local import LocalProxy
+from ..decorators import admin_required
 from datetime import datetime
+
 
 @main.route('/users', methods=['GET', 'POST'])
 def all_users():
 	all_users = User.query.all()
 	return render_template('users.html', all_users=all_users)
 
+
 @main.route('/shutdown')
 def server_shutdown():
 	if not current_app.testing:
 		abort(404)
 	shutdown = request.environ.get('werkzeug.server.shutdown')
+
 	if not shutdown:
 		abort(500)
 	shutdown()
+
 	return 'Shutting down...'
+
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
 
 	if current_user.is_authenticated:
 		follower_records = current_user.follower_records()
-
 	else:
 		follower_records = None
 
-	return render_template('index.html', db=db, follower_records=follower_records, gravatar=gravatar, now = user_local_time(datetime.utcnow))
-	
+	return render_template(
+		'index.html', db=db, follower_records=follower_records,
+		gravatar=gravatar, now=user_local_time(datetime.utcnow))
 
 
 @main.route('/<username>', methods=["GET", "POST"])
@@ -48,7 +52,6 @@ def user(username):
 		form = AddRecordForm()
 
 		if form.validate_on_submit():
-
 			# Form data
 			artist = form.artist.data
 			title = form.title.data
@@ -58,7 +61,6 @@ def user(username):
 			year = form.year.data
 			notes = form.notes.data
 			mail = 1 if form.incoming.data else 0
-			
 			a = Artist.query.filter_by(name=artist).first()
 			if a is None:
 				Artist(name=form.artist.data).add_to_table()
@@ -66,15 +68,20 @@ def user(username):
 			else:
 				artist_id = a.id
 
-			# See if you already have this
-			t = Title.query.filter_by(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes, owner_id=current_user.id).first()
-					
+			# See if you already have this title
+			t = Title.query.filter_by(
+				name=title, artist_id=artist_id, year=year,
+				format_id=format_id, size_id=size_id, color=color,
+				notes=notes, owner_id=current_user.id).first()
+
 			if t is None:
-				Title(name=title, artist_id=artist_id, year=year, format_id=format_id, size_id=size_id, color=color, notes=notes, owner_id=current_user.id, mail=mail).add_to_table()
+				Title(
+					name=title, artist_id=artist_id, year=year,
+					format_id=format_id, size_id=size_id, color=color,
+					notes=notes, owner_id=current_user.id, mail=mail).add_to_table()
 			else:
 				flash('You already own this')
 				return redirect(url_for('.user', username=current_user.username))
-				
 
 			flash('{} - {} added'.format(artist, title))
 			return redirect(url_for('.user', username=current_user.username))
@@ -83,24 +90,30 @@ def user(username):
 		form = None
 
 	if user != current_user:
-		user_records = Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name, Title.mail).filter(Title.owner_id==user.id).all()
+		user_records = Title.query.join(
+			Artist, Title.artist_id == Artist.id) \
+			.join(Size, Title.size_id == Size.id) \
+			.join(Format, Title.format_id == Format.id) \
+			.add_columns(Artist.name, Size.name, Format.name, Title.mail) \
+			.filter(Title.owner_id == user.id).all()
 	else:
 		user_records = current_user.owned_records()
 
 	# Sort by artist name, then title year
 	user_records = sorted(user_records, key=lambda x: (x[1].lower(), x[0].year))
 
-
-	return render_template('user.html', 
-		form=form, user=user, followers=followers, 
-		followers_count = followers_count, followed=followed, followed_count=followed_count,
+	return render_template(
+		'user.html',
+		form=form, user=user, followers=followers,
+		followers_count=followers_count, followed=followed, followed_count=followed_count,
 		seven_inches=[record for record in user_records if record[2] == 7 and record[4] == 0],
 		ten_inches=[record for record in user_records if record[2] == 10 and record[4] == 0],
 		twelve_inches=[record for record in user_records if record[2] == 12 and record[4] == 0],
-		seven_inches_mail = [record for record in user_records if record[2] == 7 and record[4] == 1],
+		seven_inches_mail=[record for record in user_records if record[2] == 7 and record[4] == 1],
 		ten_inches_mail=[record for record in user_records if record[2] == 10 and record[4] == 1],
 		twelve_inches_mail=[record for record in user_records if record[2] == 12 and record[4] == 1],
 		user_records_count=len(user_records))
+
 
 @main.route('/<username>/follower_records', methods=["GET", "POST"])
 @login_required
@@ -111,21 +124,20 @@ def user_fr(username):
 	# Sort by ID descending
 	fr.sort(key=lambda x: x[0].id, reverse=True)
 
-	json_records = {
-		
-	}
+	json_records = {}
 
 	for i in range(len(fr)):
-		json_records[i] = { 
-			"artist" : fr[i][2], 
-			"title" : fr[i][0].name, 
-			"user" : "you" if fr[i][-1] == username else fr[i][-1], 
-			"timestamp": fr[i][0].timestamp, 
-			"gravatar" : gravatar(fr[i][1]), 
-			"id" : fr[i][0].id 
+		json_records[i] = {
+			"artist": fr[i][2],
+			"title": fr[i][0].name,
+			"user": "you" if fr[i][-1] == username else fr[i][-1],
+			"timestamp": fr[i][0].timestamp,
+			"gravatar": gravatar(fr[i][1]),
+			"id": fr[i][0].id
 		}
 
-	return  jsonify(json_records)
+	return jsonify(json_records)
+
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
@@ -142,6 +154,7 @@ def edit_profile():
 	form.name.data = current_user.name
 	form.location.data = current_user.location
 	form.about_me.data = current_user.about_me
+
 	return render_template('edit_profile.html', form=form, user=current_user)
 
 
@@ -170,8 +183,8 @@ def edit_profile_admin(id):
 	form.name.data = user.name
 	form.location.data = user.location
 	form.about_me.data = user.about_me
-	return render_template('admin_edit_profile.html', form=form, user=user)	
 
+	return render_template('admin_edit_profile.html', form=form, user=user)
 
 
 @main.route('/follow/<username>')
@@ -185,7 +198,7 @@ def follow(username):
 		flash('You are already following this user.')
 		return redirect(url_for('.user', username=username))
 	current_user.follow(user)
-	flash('You are now following %s.' % username)
+	flash('You are now following {}.'.format(username))
 	return redirect(url_for('.user', username=username))
 
 
@@ -200,8 +213,9 @@ def unfollow(username):
 		flash('You are not following this user.')
 		return redirect(url_for('.user', username=username))
 	current_user.unfollow(user)
-	flash('You are not following %s anymore.' % username)
+	flash('You are not following {} anymore.'.format(username))
 	return redirect(url_for('.user', username=username))
+
 
 @main.route('/delete-record/<id>')
 @login_required
@@ -215,6 +229,7 @@ def delete_record(id):
 	else:
 		flash("You dont own that")
 		return redirect(url_for('.user', username=current_user.username))
+
 
 @main.route('/update-record/<id>')
 @login_required

@@ -7,7 +7,7 @@ from flask import current_app, request
 import hashlib
 from datetime import datetime
 from dateutil import tz
-from werkzeug.local import LocalProxy
+
 
 def gravatar(email, size=100, default='identicon', rating='g'):
 	if request.is_secure:
@@ -18,7 +18,8 @@ def gravatar(email, size=100, default='identicon', rating='g'):
 	hash = hashlib.md5(email.encode('utf-8')).hexdigest()
 
 	return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
-				url=url, hash=hash, size=size, default=default, rating=rating)
+		url=url, hash=hash, size=size, default=default, rating=rating)
+
 
 def user_local_time(utctime):
 	from_zone = tz.tzutc()
@@ -34,22 +35,22 @@ class Permission:
 	ADMINISTER = 0x80
 	USE = 0x01
 
+
 class Role(db.Model):
 	__tablename__ = 'roles'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64), unique=True)
 	default = db.Column(db.Boolean, default=False, index=True)
 	permissions = db.Column(db.Integer)
-	
+
 	# FK & Relationship
 	users = db.relationship('User', backref='role', lazy='dynamic')
-
 
 	@staticmethod
 	def insert_roles():
 		roles = {
-			'user' : (Permission.USE, True),
-			'admin' : (Permission.ADMINISTER, False)
+			'user': (Permission.USE, True),
+			'admin': (Permission.ADMINISTER, False)
 		}
 
 		for r in roles:
@@ -68,11 +69,13 @@ class Role(db.Model):
 	def __repr__(self):
 		return '<Role {}>'.format(self.name)
 
+
 class Follow(db.Model):
 	__tablename__ = 'follows'
 	follower_id = db.Column(db.Integer, db.ForeignKey('users_table.id'), primary_key=True)
 	followed_id = db.Column(db.Integer, db.ForeignKey('users_table.id'), primary_key=True)
 	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 class User(UserMixin, db.Model):
 	__tablename__ = 'users_table'
@@ -88,20 +91,20 @@ class User(UserMixin, db.Model):
 	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 	avatar_hash = db.Column(db.String(32))
 	migrate_test = db.Column(db.String(32))
-	
+
 	# FK & Relationship
 	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-	followed = db.relationship('Follow',
-							   foreign_keys=[Follow.follower_id],
-							   backref=db.backref('follower', lazy='joined'),
-							   lazy='dynamic',
-							   cascade='all, delete-orphan')
-	followers = db.relationship('Follow',
-								foreign_keys=[Follow.followed_id],
-								backref=db.backref('followed', lazy='joined'),
-								lazy='dynamic',
-								cascade='all, delete-orphan')
-
+	followed = db.relationship(
+		'Follow',
+		foreign_keys=[Follow.follower_id],
+		backref=db.backref('follower', lazy='joined'),
+		lazy='dynamic',
+		cascade='all, delete-orphan')
+	followers = db.relationship(
+		'Follow',
+		foreign_keys=[Follow.followed_id],
+		backref=db.backref(
+			'followed', lazy='joined'), lazy='dynamic', cascade='all, delete-orphan')
 
 	def gravatar(self, size=100, default='identicon', rating='g'):
 		if request.is_secure:
@@ -112,7 +115,8 @@ class User(UserMixin, db.Model):
 		hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
 
 		return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
-					url=url, hash=hash, size=size, default=default, rating=rating)	
+			url=url, hash=hash, size=size, default=default, rating=rating)
+
 	def follow(self, user):
 		if not self.is_following(user):
 			f = Follow(follower=self, followed=user)
@@ -134,11 +138,20 @@ class User(UserMixin, db.Model):
 			follower_id=user.id).first() is not None
 
 	def owned_records(self):
-		return Title.query.join(Artist, Title.artist_id==Artist.id).join(Size, Title.size_id==Size.id).join(Format, Title.format_id==Format.id).add_columns(Artist.name, Size.name, Format.name, Title.mail).filter(Title.owner_id==self.id).all()
+		return Title.query.join(
+			Artist, Title.artist_id == Artist.id) \
+			.join(Size, Title.size_id == Size.id) \
+			.join(Format, Title.format_id == Format.id) \
+			.add_columns(Artist.name, Size.name, Format.name, Title.mail) \
+			.filter(Title.owner_id == self.id).all()
 
 	def follower_records(self):
-		return Title.query.join(Follow, Follow.followed_id == Title.owner_id).join(User, Follow.followed_id==User.id).join(Artist, Title.artist_id==Artist.id).add_columns(User.email, Artist.name, User.username).filter(Follow.follower_id==self.id).order_by(Title.timestamp.desc()).limit(5)		
-		
+		return Title.query.join(
+			Follow, Follow.followed_id == Title.owner_id) \
+			.join(User, Follow.followed_id == User.id) \
+			.join(Artist, Title.artist_id == Artist.id) \
+			.add_columns(User.email, Artist.name, User.username) \
+			.filter(Follow.follower_id == self.id).order_by(Title.timestamp.desc()).limit(5)
 
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
@@ -149,7 +162,7 @@ class User(UserMixin, db.Model):
 				self.role = Role.query.filter_by(name='user').first()
 		if self.email is not None and self.avatar_hash is None:
 			self.avatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
-	 
+
 	def change_email(self, token):
 		s = Serializer(current_app.config['SECRET_KEY'])
 		try:
@@ -171,7 +184,7 @@ class User(UserMixin, db.Model):
 
 	def generate_email_change_token(self, new_email, expiration=3600):
 		s = Serializer(current_app.config['SECRET_KEY'], expiration)
-		return s.dumps({'change_email': self.id, 'new_email': new_email})	
+		return s.dumps({'change_email': self.id, 'new_email': new_email})
 
 	@staticmethod
 	def add_self_follows():
@@ -194,7 +207,7 @@ class User(UserMixin, db.Model):
 	def ping(self):
 		self.last_seen = datetime.utcnow()
 		db.session.add(self)
-		db.session.commit()	
+		db.session.commit()
 
 	@password.setter
 	def password(self, password):
@@ -205,7 +218,7 @@ class User(UserMixin, db.Model):
 
 	def __repr__(self):
 		return '<User {}>'.format(self.email)
-	
+
 	def generate_confirmation_token(self, expiration=3600):
 		s = Serializer(current_app.config['SECRET_KEY'], expiration)
 		return s.dumps({'confirm': self.id})
@@ -238,7 +251,7 @@ class User(UserMixin, db.Model):
 		self.password = new_password
 		db.session.add(self)
 		db.session.commit()
-		return True	
+		return True
 
 	@staticmethod
 	def generate_fake(count=100):
@@ -248,7 +261,14 @@ class User(UserMixin, db.Model):
 
 		seed()
 		for i in range(count):
-			u = User(email=forgery_py.internet.email_address(), username=forgery_py.internet.user_name(True), password=forgery_py.lorem_ipsum.word(), confirmed=True, name=forgery_py.name.full_name(), location=forgery_py.address.city(), about_me=forgery_py.lorem_ipsum.sentence(), member_since=forgery_py.date.date(True))
+			u = User(
+				email=forgery_py.internet.email_address(),
+				username=forgery_py.internet.user_name(True),
+				password=forgery_py.lorem_ipsum.word(),
+				confirmed=True, name=forgery_py.name.full_name(),
+				location=forgery_py.address.city(),
+				about_me=forgery_py.lorem_ipsum.sentence(),
+				member_since=forgery_py.date.date(True))
 			db.session.add(u)
 			try:
 				db.session.commit()
@@ -256,26 +276,18 @@ class User(UserMixin, db.Model):
 				db.session.rollback()
 
 	@staticmethod
-	def add_self_follows():
-		for user in User.query.all():
-			if not user.is_following(user):
-				user.follow(user)
-				db.session.add(user)
-				db.session.commit()
-
-	@staticmethod
 	def to_json(self):
 		json_user = {
-			"ID" : self.id,
-			'username' : self.username,
-			"email" : self.email,
+			"ID": self.id,
+			'username': self.username,
+			"email": self.email,
 			'member_since': self.member_since,
-			'last_seen':self.last_seen,
+			'last_seen': self.last_seen,
 			"owned_record_count": len(self.owned_records()),
 			"users_following:": len(self.followed.all()),
-			"users_followed_by" : len(self.followers.all()),
-			"name" : self.name,
-			"about_me" : self.about_me
+			"users_followed_by": len(self.followers.all()),
+			"name": self.name,
+			"about_me": self.about_me
 		}
 
 		return json_user
@@ -299,10 +311,10 @@ class Title(db.Model):
 	owner_id = db.Column(db.Integer, db.ForeignKey('users_table.id'))
 	mail = db.Column(db.Integer, default=0)
 
-
-
 	# Methods
-	def __init__(self, name, artist_id, year, format_id, owner_id, mail, size_id=None, color=None, notes=None):
+	def __init__(
+		self, name, artist_id, year, format_id, owner_id, mail,
+		size_id=None, color=None, notes=None):
 		self.name = name
 		self.artist_id = artist_id
 		self.year = year
@@ -322,30 +334,30 @@ class Title(db.Model):
 		db.session.commit()
 
 	def update_from_mail(self):
-		print self.mail
 		if self.mail == 1:
 			self.mail = 0
+			self.timestamp = datetime.now()
 			db.session.add(self)
 			db.session.commit()
-			print self.mail
 
 	def to_json(self):
 		json_title = {
-			"name" : self.name,
-			"artist_id" : self.artist_id,
-			"year" : self.year,
-			"format_id" : self.format_id,
-			"owner_id" : self.owner_id, 
-			"size_id" : self.size_id,
-			"color" : self.color,
-			"notes" : self.notes,
-			"mail" : self.mail 
-		}	
+			"name": self.name,
+			"artist_id": self.artist_id,
+			"year": self.year,
+			"format_id": self.format_id,
+			"owner_id": self.owner_id,
+			"size_id": self.size_id,
+			"color": self.color,
+			"notes": self.notes,
+			"mail": self.mail
+		}
 
 		return json_title
 
 	def __repr__(self):
-		return '<Title: {}>'.format(self.name) 
+		return '<Title: {}>'.format(self.name)
+
 
 class Size(db.Model):
 	__tablename__ = 'sizes'
@@ -361,11 +373,12 @@ class Size(db.Model):
 
 	@staticmethod
 	def insert_sizes():
-		sizes = [7,10,12]
+		sizes = [7, 10, 12]
 
 		for s in sizes:
 			db.session.add(Size(name=s))
-			db.session.commit()			
+			db.session.commit()
+
 
 class Format(db.Model):
 	__tablename__ = 'formats'
@@ -377,7 +390,7 @@ class Format(db.Model):
 		self.name = name
 
 	def __repr__(self):
-		return '<Format {}>'.format(self.name) 	
+		return '<Format {}>'.format(self.name)
 
 	@staticmethod
 	def insert_formats():
@@ -385,13 +398,13 @@ class Format(db.Model):
 
 		for f in formats:
 			db.session.add(Format(name=f))
-			db.session.commit()	
+			db.session.commit()
+
 
 class Artist(db.Model):
 	__tablename__ = 'artists'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64), unique=True)
-
 
 	# FK & Relationship
 
@@ -404,17 +417,20 @@ class Artist(db.Model):
 
 	def add_to_table(self):
 		db.session.add(self)
-		db.session.commit()	
+		db.session.commit()
 
 	def delete_from_table(self):
 		db.session.delete(self)
 		db.session.commit()
-		
+
+
 class AnonymousUser(AnonymousUserMixin):
 	def can(self, permissions):
 		return False
+
 	def is_administrator(self):
 		return False
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -425,6 +441,3 @@ def load_user(user_id):
 	# python manage.py db upgrade
 
 # Title.query.join(Artist).filter(Artist.id==Title.artist_id).all()
-
-
- 
