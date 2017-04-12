@@ -1,0 +1,51 @@
+<p data-toggle="modal" data-target=".following-modal"><strong><a>Following ({{ followed_count - 1 }})</a></strong></p>
+
+<div class="modal fade following-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document" style="overflow-y: initial !important">
+    <div class="modal-content">
+    <div class="modal-header">
+    	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    	<h4 class="modal-title">{{ user.username }} Follows</h4>
+    </div>
+    <div class="modal-body" style="overflow-y: auto; height: 500px;">
+        <div class="row">
+          <div class="col-sm-12">
+            <ul>
+            {% for f in followed %}
+              {% if f.followed.username != user.username%}
+              <li><img class="gravatar" src="{{ f.followed.gravatar(size=50) }}" alt=""><p><a href="/{{f.followed.username}}">{{f.followed.username}}</a></p></li>
+              {% endif %}
+            {% endfor %}
+            </ul>
+          </div>
+        </div> 		
+		</div>
+    </div>
+  </div>
+</div>
+
+<p data-toggle="modal" data-target=".follower-modal"><strong><a>Followers ({{ followers_count - 1}})</a></strong></p>
+
+<div class="modal fade follower-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document" style="overflow-y: initial !important">
+    <div class="modal-content">
+    <div class="modal-header">
+    	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    	<h4 class="modal-title">{{ user.username }}'s Followers</h4>
+    </div>
+    <div class="modal-body" style="overflow-y: auto; height: 500px;">
+      <div class="row">
+        <div class="col-sm-12">
+          <ul>
+          {% for f in followers %}
+            {% if f.follower.username != user.username%}
+            <li><img class="gravatar" src="{{ f.follower.gravatar(size=50) }}" alt=""><p><a href="/{{f.follower.username}}">{{f.follower.username}}</a></p></li>
+            {% endif %}
+          {% endfor %}
+          </ul>
+        </div>
+      </div>
+		</div>
+    </div>
+  </div>
+</div>

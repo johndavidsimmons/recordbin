@@ -12,9 +12,9 @@ class Config:
 	MAIL_USE_TLS = True
 	MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-	FLASKY_MAIL_SUBJECT_PREFIX = '[RecordBin - SendGRID]'
-	FLASKY_MAIL_SENDER = os.environ.get('FLASKY_MAIL_SENDER')
-	FLASKY_ADMIN = 'RecordBin Admin <app57807167@heroku.com>'
+	RECORDBIN_MAIL_SUBJECT_PREFIX = '[RecordBin]'
+	RECORDBIN_MAIL_SENDER = os.environ.get('RECORDBIN_MAIL_SENDER')
+	RECORDBIN_ADMIN = 'RecordBin Admin <app57807167@heroku.com>'
 
 	@staticmethod
 	def init_app(app):
@@ -51,9 +51,9 @@ class ProductionConfig(Config):
 				secure = ()
 		mail_handler = SMTPHandler(
 			mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
-			fromaddr=cls.FLASKY_MAIL_SENDER,
-			toaddrs=[cls.FLASKY_ADMIN],
-			subject=cls.FLASKY_MAIL_SUBJECT_PREFIX + ' Application Error',
+			fromaddr=cls.RECORDBIN_MAIL_SENDER,
+			toaddrs=[cls.RECORDBIN_ADMIN],
+			subject=cls.RECORDBIN_MAIL_SUBJECT_PREFIX + ' Application Error',
 			credentials=credentials,
 			secure=secure)
 		mail_handler.setLevel(logging.ERROR)

@@ -32,27 +32,8 @@
 	<div class="col-sm-2 followers">
 
 		<!-- Followers  -->
-		<p><strong>Following ({{ followed_count - 1 }}):</strong></p>
-		<ul>
-		{% for f in followed %}
-			{% if f.followed.username != user.username%}
-			<li><a href="/{{f.followed.username}}">{{f.followed.username}}</a></li>
-			{% endif %}
-		{% endfor %}
-		</ul>
+		{% include "/include/_followmodal.html" %}
 
-		<p><strong>Followers ({{ followers_count - 1}}):</strong></p>
-		<ul>
-		{% for f in followers %}
-			{% if f.follower.username != user.username%}
-			<li><a href="/{{f.follower.username}}">{{f.follower.username}}</a></li>
-			{% endif %}
-		{% endfor %}
-		</ul>
-
-		<!-- {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-			<h3 style="text-decoration:underline;">FOLLOWS YOU</h3>
-		{% endif %} -->
 
 		<!-- Follow Button -->
 		{% if current_user.is_authenticated %}

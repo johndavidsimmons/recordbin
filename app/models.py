@@ -156,7 +156,7 @@ class User(UserMixin, db.Model):
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
 		if self.role is None:
-			if self.email == current_app.config['FLASKY_ADMIN']:
+			if self.email == current_app.config['RECORDBIN_ADMIN']:
 				self.role = Role.query.filter_by(name='admin').first()
 			if self.role is None:
 				self.role = Role.query.filter_by(name='user').first()

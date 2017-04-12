@@ -76,58 +76,61 @@
   min-height: 150px;
   float: left; }
 
-  table {
-    width: 100%;
-    margin-bottom: 1em; }
+  p[data-toggle="modal"] strong {
+    cursor: pointer; }
 
-    .gray {
-      background-color: #f0f0f0; }
+    table {
+      width: 100%;
+      margin-bottom: 1em; }
 
-      .left {
-        float: left; }
+      .gray {
+        background-color: #f0f0f0; }
 
-        .artist {
-          width: 20%; }
+        .left {
+          float: left; }
 
-          .title {
-            width: 30%; }
+          .artist {
+            width: 20%; }
 
-            .color {
-              width: 10%; }
+            .title {
+              width: 30%; }
 
-              .year {
+              .color {
                 width: 10%; }
 
-                .notes {
-                  width: 20%; }
+                .year {
+                  width: 10%; }
 
-                  .timestamp {
-                    width: 10%; }
+                  .notes {
+                    width: 20%; }
 
-                    .delete {
+                    .timestamp {
                       width: 10%; }
 
-                      tr > td {
-                        padding: 0.5em 1em 0.5em 0.5em; }
+                      .delete {
+                        width: 10%; }
 
-                        thead {
-                          border-bottom: 1px solid black !important; }
+                        tr > td {
+                          padding: 0.5em 1em 0.5em 0.5em; }
 
-                          th {
-                            padding-bottom: 0.5em !important; }
+                          thead {
+                            border-bottom: 1px solid black !important; }
 
-                            #add-record {
-                              display: none; }
+                            th {
+                              padding-bottom: 0.5em !important; }
 
-                              #follower_records {
-                                list-style: none;
-                                margin: 0;
-                                padding: 0; }
-                                #follower_records li {
-                                  padding-bottom: 1em; }
-                                  #follower_records li img {
-                                    height: 50px;
-                                    margin-right: 1em; }
+                              #add-record {
+                                display: none; }
+
+                                #follower_records {
+                                  list-style: none;
+                                  margin: 0;
+                                  padding: 0; }
+                                  #follower_records li {
+                                    padding-bottom: 1em; }
+                                    #follower_records li img {
+                                      height: 50px;
+                                      margin-right: 1em; }
 
 label {
   font-weight: bold; }
