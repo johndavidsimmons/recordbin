@@ -10,6 +10,8 @@
         	<h1>Edit Profile</h1>
             <img class="gravatar" src="{{ user.gravatar(size=100) }}" alt="">
             <p>Profile images via <a href="http://en.gravatar.com/" target="_blank">Gravatar</a></p>
+            <p><a href="{{url_for('auth.change_password')}}">Change Password</a></p>
+            <p><a href="{{url_for('auth.change_email_request')}}">Change Email Address</a></p>
         {% from 'render_field.html' import render_field %}
         <form action method="post">
     		{{ form.csrf_token }}

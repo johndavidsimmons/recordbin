@@ -75,36 +75,63 @@ class FlaskClientTestCase(unittest.TestCase):
 			url_for("main.edit_profile"),
 			data=dict(about_me="This is new"), follow_redirects=True)
 
-	# Functionality
+	def change_user_password(self, old, new, new2):
+		return self.client.post(
+			url_for('auth.change_password'),
+			data=dict(old_password=old, password=new, password2=new2),
+			follow_redirects=True)
+
+	def password_reset_request(self, email):
+		return self.client.post(
+			url_for('auth.password_reset_request'),
+			data=dict(email=email),
+			follow_redirects=True)
+
+	def reset_password(self, email, new_password, token):
+		return self.client.post(
+			url_for('auth.password_reset', token=token),
+			data=dict(email=email, password=new_password, password2=new_password),
+			follow_redirects=True)
+
+	# ------ Functionality ------#
+
+	# Login #
 	def test_login_and_logout(self):
 		response = self.login(email="profile_john@example.com", password="yolo")
 		assert "Hello, profile_john@example.com!" in response.data
 		response = self.logout()
 		assert "You have logged out" in response.data
 
-	def test_nonexistent_user(self):
+	def test_nonexistent_user_login(self):
 		response = self.login(email="fakeuser@example.com", password="yolo")
 		assert "invalid username or password" in response.data
+
+	def test_login_fields_required(self):
+		response = self.login(email="", password="")
+		assert "Email is required" in response.data
+		assert "Password is required" in response.data
 
 	def test_invalid_email_format(self):
 		response = self.login(email="fakeuser", password="yolo")
 		assert "Invalid email address" in response.data
 
-	def test_email_and_password_required(self):
-		response = self.login(email="", password="")
-		assert "Email is required" in response.data
-		assert "Password is required" in response.data
-
 	def test_invalid_password(self):
 		response = self.login(email="profile_john@example.com", password="yolo1")
 		assert "invalid username or password" in response.data
 
+	# Add a record #
 	def test_add_record(self):
 		# Login
 		self.login(email="profile_john@example.com", password="yolo")
 		response = self.add_record(username="profile_john")
 		assert "Black Sabbath - Master of Reality added" in response.data
 
+	def test_add_record_as_different_user(self):
+		self.login(email="profile_john@example.com", password="yolo")
+		response = self.add_record(username="kgjkhgh")
+		assert response.status_code == 404
+
+	# Delete a record #
 	def test_delete_record(self):
 		self.login(email="profile_john@example.com", password="yolo")
 		self.add_record(username="profile_john")
@@ -119,6 +146,13 @@ class FlaskClientTestCase(unittest.TestCase):
 		response = self.delete_record(Title.query.first().id)
 		assert "You dont own that" in response.data
 
+	def test_delete_nonexistent_record(self):
+		self.login(email="profile_john@example.com", password="yolo")
+		self.add_record(username="profile_john")
+		response = self.delete_record(99)
+		assert response.status_code == 404
+
+	# Edit Profile #
 	def test_edit_profile(self):
 		self.login(email="profile_john@example.com", password="yolo")
 		response = self.client.get("/edit-profile")
@@ -147,6 +181,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		response = self.client.get("/edit-profile/1")
 		assert response.status_code == 403
 
+	# Register #
 	def test_register(self):
 		response = self.client.get(url_for("auth.register"))
 		assert "Register" in response.data
@@ -177,18 +212,97 @@ class FlaskClientTestCase(unittest.TestCase):
 			email="yolo@example.com", username="profile_john", password="test", password2="test")
 		assert "Username already registered." in response.data
 
-	# Status Code
+	def test_register_forbidden_username(self):
+		response = self.client.get(url_for("auth.register"))
+		assert "Register" in response.data
+		response = self.register(
+			email="yolo@example.com", username="register", password="test", password2="test")
+		assert "Please choose a different username" in response.data
+
+	def test_regex_username(self):
+		response = self.client.get(url_for("auth.register"))
+		assert "Register" in response.data
+		response = self.register(
+			email="yolo@example.com", username="!!!", password="test", password2="test")
+		assert "Usernames can only be letters and numbers" in response.data
+
+	def test_register_fields_required(self):
+		response = self.client.get(url_for("auth.register"))
+		assert "Register" in response.data
+		response = self.register(
+			email="", username="", password="", password2="")
+		assert "Email is required" in response.data
+		assert "Username is required" in response.data
+		assert "Password is required" in response.data
+		assert "Password match is required" in response.data
+
+	# Change Password
+	def test_change_password(self):
+		self.login(email="profile_john@example.com", password="yolo")
+		response = self.client.get(url_for('auth.change_password'))
+		assert "Change password" in response.data
+
+		response = self.change_user_password(old="yolo", new="yolo1", new2="yolo1")
+		assert "Your password has been updated." in response.data
+
+	def test_change_password_bad_new(self):
+		self.login(email="profile_john@example.com", password="yolo")
+		response = self.client.get(url_for('auth.change_password'))
+		assert "Change password" in response.data
+
+		response = self.change_user_password(old="yolo", new="yolo1", new2="yolo3")
+		assert "Passwords must match" in response.data
+
+	def test_change_password_bad_current_pw(self):
+		self.login(email="profile_john@example.com", password="yolo")
+		response = self.client.get(url_for('auth.change_password'))
+		assert "Change password" in response.data
+
+		response = self.change_user_password(old="yolo7", new="yolo1", new2="yolo1")
+		assert "invalid password" in response.data
+
+	# Password Reset
+	def test_password_reset_request(self):
+		response = self.password_reset_request(email="profile_john@example.com")
+		assert "An email with instructions has been sent to you." in response.data
+
+		user = User.query.filter_by(email="profile_john@example.com").first()
+		token = user.generate_reset_token()
+
+		response = self.reset_password(email="profile_john@example.com", new_password="yolo", token=token)
+		assert "Your password has been updated" in response.data
+
+	def test_password_reset_nonexistent_email(self):
+		response = self.password_reset_request(email="yolo@swag.com")
+		assert "There is no account associated with that email address" in response.data
+
+	def test_password_reset_request_bad_email_format(self):
+		response = self.password_reset_request(email="yolo")
+		assert "Invalid email address." in response.data
+
+	def test_password_reset_request_bad_token(self):
+		response = self.password_reset_request(email="profile_john@example.com")
+		assert "An email with instructions has been sent to you." in response.data
+
+		token = "bad_token"
+		response = self.reset_password(email="profile_john@example.com", new_password="yolo", token=token)
+		assert "Something went wrong, password not updated" in response.data
+
+	# Status Code/CSS/Static
 	def test_home_page_status(self):
 		response = self.client.get(url_for('main.index'))
 		assert response.status_code == 200
+		assert '<a class="active"  href="/">Home </a>' in response.data
 
 	def test_login_page_status(self):
 		response = self.client.get(url_for('auth.login'))
 		assert response.status_code == 200
+		assert '<a class="active"  href="/auth/login">Log In</a>' in response.data
 
 	def test_register_page_status(self):
 		response = self.client.get(url_for('auth.register'))
 		assert response.status_code == 200
+		assert '<a class="active"  href="/auth/register">Register</a>' in response.data
 
 	def test_password_reset_page_status(self):
 		response = self.client.get(url_for('auth.password_reset_request'))
@@ -201,6 +315,7 @@ class FlaskClientTestCase(unittest.TestCase):
 	def test_all_users_page_status(self):
 		response = self.client.get(url_for('main.all_users'))
 		assert response.status_code == 200
+		assert '<a class="active"  href="/users">Users</a>' in response.data
 
 	def test_404_status(self):
 		response = self.client.get("/yolo")

@@ -80,10 +80,10 @@ def user(username):
 					format_id=format_id, size_id=size_id, color=color,
 					notes=notes, owner_id=current_user.id, mail=mail).add_to_table()
 			else:
-				flash('You already own this')
+				flash('You already own this', 'error')
 				return redirect(url_for('.user', username=current_user.username))
 
-			flash('{} - {} added'.format(artist, title))
+			flash('{} - {} added'.format(artist, title), 'success')
 			return redirect(url_for('.user', username=current_user.username))
 
 	else:
@@ -149,7 +149,7 @@ def edit_profile():
 		current_user.about_me = form.about_me.data
 		db.session.add(current_user)
 		db.session.commit()
-		flash('Your profile has been updated.')
+		flash('Your profile has been updated.', 'success')
 		return redirect(url_for('.user', username=current_user.username))
 	form.name.data = current_user.name
 	form.location.data = current_user.location
@@ -174,7 +174,7 @@ def edit_profile_admin(id):
 		user.about_me = form.about_me.data
 		db.session.add(user)
 		db.session.commit()
-		flash('The profile has been updated.')
+		flash('The profile has been updated.', 'success')
 		return redirect(url_for('.user', username=user.username))
 	form.email.data = user.email
 	form.username.data = user.username
@@ -192,13 +192,13 @@ def edit_profile_admin(id):
 def follow(username):
 	user = User.query.filter_by(username=username).first()
 	if user is None:
-		flash('Invalid user.')
+		flash('Invalid user.', 'error')
 		return redirect(url_for('.index'))
 	if current_user.is_following(user):
-		flash('You are already following this user.')
+		flash('You are already following this user.', '')
 		return redirect(url_for('.user', username=username))
 	current_user.follow(user)
-	flash('You are now following {}.'.format(username))
+	flash('You are now following {}.'.format(username), 'success')
 	return redirect(url_for('.user', username=username))
 
 
@@ -207,13 +207,13 @@ def follow(username):
 def unfollow(username):
 	user = User.query.filter_by(username=username).first()
 	if user is None:
-		flash('Invalid user.')
+		flash('Invalid user.', 'error')
 		return redirect(url_for('.index'))
 	if not current_user.is_following(user):
-		flash('You are not following this user.')
+		flash('You are not following this user.', 'error')
 		return redirect(url_for('.user', username=username))
 	current_user.unfollow(user)
-	flash('You are not following {} anymore.'.format(username))
+	flash('You are not following {} anymore.'.format(username), 'success')
 	return redirect(url_for('.user', username=username))
 
 
@@ -224,10 +224,10 @@ def delete_record(id):
 
 	if record.owner_id == current_user.id:
 		record.delete_from_table()
-		flash("DELETED")
+		flash("DELETED", 'success')
 		return redirect(url_for('.user', username=current_user.username))
 	else:
-		flash("You dont own that")
+		flash("You dont own that", 'error')
 		return redirect(url_for('.user', username=current_user.username))
 
 
@@ -236,5 +236,5 @@ def delete_record(id):
 def update_record(id):
 	record = Title.query.filter_by(id=id).first_or_404()
 	record.update_from_mail()
-	flash("{} Arrived!".format(record.name))
+	flash("{} Arrived!".format(record.name), 'success')
 	return redirect(url_for('.user', username=current_user.username))

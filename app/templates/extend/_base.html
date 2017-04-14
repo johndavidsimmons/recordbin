@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <title>
             {% block title %}
-                Record Bin 
+                Record Bin
             {% endblock %}    
         </title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,12 +22,7 @@
 
     {% block content %}
         <div class="container">
-
-            {% for message in get_flashed_messages() %}
-            <div>
-                <p><strong>Flash:</strong> {{ message }}</p>
-            </div>
-            {% endfor %}
+            {% include "include/_flash.html" %}
 
             {% block page_content %}
             {% endblock %}

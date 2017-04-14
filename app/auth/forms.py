@@ -1,8 +1,13 @@
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import Required, Length, Email, Regexp, EqualTo
+from wtforms.validators import Required, Length, Email, Regexp, EqualTo, NoneOf
 from wtforms import ValidationError
 from ..models import User
+
+forbidden_usernames = [
+	"users", "login", "register",
+	"home", "index", "/", "edit-profile",
+	"auth", "auth/", "edit-profile/"]
 
 
 class LoginForm(Form):
@@ -23,9 +28,12 @@ class RegistrationForm(Form):
 		Required(message="Username is required"),
 		Length(1, 64),
 		Regexp(
-			'^[A-Za-z][A-Za-z0-9_.]*$', 0,
-			'Usernames must have only letters, numbers, dots or underscores'
-		)])
+			'^[A-Za-z0-9]', 0,
+			'Usernames can only be letters and numbers'
+		),
+		NoneOf(
+			[x.lower() for x in forbidden_usernames],
+			message="Please choose a different username")])
 
 	email = StringField('Email', validators=[
 		Required(message="Email is required"), Length(1, 64),

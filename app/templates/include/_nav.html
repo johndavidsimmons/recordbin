@@ -1,24 +1,24 @@
 <nav role="navigation">
     <ul class="navigation">
         <li class="navigation__item">
-            <a {% if request.path == '/'%} class="active" {% endif %} href="{{ url_for('main.index') }}">{% if current_user.is_authenticated %}My Feed{%else%}Home {%endif%}</a>
+            <a{% if request.path == '/'%} class="active" {% endif %} href="{{ url_for('main.index') }}">{% if current_user.is_authenticated %}My Feed{%else%}Home {%endif%}</a>
         </li>
         <li class="navigation__item">
-            <a {% if request.path =='/users' %} class="active" {% endif %} href="{{ url_for('main.all_users') }}">Users</a>
+            <a{% if request.path =='/users' %} class="active" {% endif %} href="{{ url_for('main.all_users') }}">Users</a>
         </li>
     {% if current_user.is_authenticated %}
         <li class="navigation__item">
-            <a {% if current_user.username in request.path %} class="active" {% endif %}  href="{{ url_for('main.user', username=current_user.username) }}">My Records</a>
+            <a{% if current_user.username in request.path %} class="active" {% endif %}  href="{{ url_for('main.user', username=current_user.username) }}">My Records</a>
         </li>
         <li class="navigation__item pull-right">
             <a href="{{ url_for('auth.logout') }}">Log Out</a>
         </li>
     {% else %}
         <li class="navigation__item">
-            <a {% if request.path =='/auth/login' %} class="active" {% endif %} href="{{ url_for('auth.login') }}">Log In</a>
+            <a{% if request.path =='/auth/login' %} class="active" {% endif %} href="{{ url_for('auth.login') }}">Log In</a>
         </li>
         <li class="navigation__item">
-            <a {% if request.path == '/auth/register' %} class="active" {% endif %} href="{{ url_for('auth.register') }}">Register</a>
+            <a{% if request.path == '/auth/register' %} class="active" {% endif %} href="{{ url_for('auth.register') }}">Register</a>
         </li>
     {% endif %}
     </ul>
