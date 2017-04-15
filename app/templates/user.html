@@ -79,38 +79,38 @@
     	<!-- 7 INCH  -->
     	{% if seven_inches %}
 	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('7', seven_inches, current_user, user=user, id='seven_inches') }}
+	    	    {{ record_table('7', seven_inches, current_user, user=user, id='seven_inches', encode_id=encode_id) }}
 		{% endif %}
     	    
 		<!-- 10 INCH -->
 		{% if ten_inches %}
 	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('10', ten_inches, current_user, user=user, id="ten_inches") }}
+	    	    {{ record_table('10', ten_inches, current_user, user=user, id="ten_inches", encode_id=encode_id) }}
     	{% endif %}
     	
         <!-- 12 INCH  -->
         {% if twelve_inches %}
 	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('12', twelve_inches, current_user, user=user, id="twelve_inches") }}
+	    	    {{ record_table('12', twelve_inches, current_user, user=user, id="twelve_inches", encode_id=encode_id) }}
     	{% endif %}
 
 		<div id="mail">
 	    	<!-- 7 INCH MAIL -->
 			{% if seven_inches_mail %}
 		    	{% from 'macro/record_table.html' import record_table %}
-		    	    {{ record_table('7', seven_inches_mail, current_user, user=user, id="seven_inches_mail") }}
+		    	    {{ record_table('7', seven_inches_mail, current_user, user=user, id="seven_inches_mail", encode_id=encode_id) }}
 			{% endif %}
 
 			<!-- 10 INCH MAIL -->
 			{% if ten_inches_mail %}
 		    	{% from 'macro/record_table.html' import record_table %}
-		    	    {{ record_table('10', ten_inches_mail, current_user, user=user, id="ten_inches_mail") }}
+		    	    {{ record_table('10', ten_inches_mail, current_user, user=user, id="ten_inches_mail", encode_id=encode_id) }}
 			{% endif %}
 
 			<!-- 12 INCH MAIL -->
 			{% if twelve_inches_mail %}
 		    	{% from 'macro/record_table.html' import record_table %}
-		    	    {{ record_table('12', twelve_inches_mail, current_user, user=user, id="twelve_inches_mail") }}
+		    	    {{ record_table('12', twelve_inches_mail, current_user, user=user, id="twelve_inches_mail", encode_id=encode_id) }}
 			{% endif %}
 
 

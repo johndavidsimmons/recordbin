@@ -34,9 +34,9 @@
                 <!-- Delete -->
                 {% if current_user == user %}
                     {% if r[0].mail == 1%}
-                        <td><a href="/update-record/{{r[0].id}}">Arrived</a></td>
+                        <td><a href="/update-record/{{ kwargs['encode_id'](r[0].id) }}">Arrived</a></td>
                     {% endif %}
-                    <td class="delete" ><a href="/delete-record/{{r[0].id}}">delete</a></td>
+                    <td class="delete" ><a href="/delete-record/{{ kwargs['encode_id'](r[0].id) }}">delete</a></td>
                 {% endif %}
             </tr>
         {% endfor %}

@@ -7,6 +7,8 @@ from flask import current_app, request
 import hashlib
 from datetime import datetime
 from dateutil import tz
+import os
+import base64
 
 
 def gravatar(email, size=100, default='identicon', rating='g'):
@@ -29,6 +31,30 @@ def user_local_time(utctime):
 	utc = utc.replace(tzinfo=from_zone)
 	user_time = utc.astimezone(to_zone)
 	return user_time
+
+
+def encode_id(string):
+	key = os.environ.get('SECRET_KEY')
+	string = str(string)
+	encoded_chars = []
+	for i in range(len(string)):
+		key_c = key[i % len(key)]
+		encoded_c = chr(ord(string[i]) + ord(key_c) % 256)
+		encoded_chars.append(encoded_c)
+	encoded_string = "".join(encoded_chars)
+	return base64.urlsafe_b64encode(encoded_string)
+
+
+def decode_id(string):
+	key = os.environ.get('SECRET_KEY')
+	decoded_chars = []
+	string = base64.urlsafe_b64decode(string)
+	for i in range(len(string)):
+		key_c = key[i % len(key)]
+		encoded_c = chr(abs(ord(string[i]) - ord(key_c) % 256))
+		decoded_chars.append(encoded_c)
+	decoded_string = "".join(decoded_chars)
+	return int(decoded_string.encode('ascii', 'ignore'))
 
 
 class Permission:

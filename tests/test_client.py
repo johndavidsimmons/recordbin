@@ -1,6 +1,6 @@
 import unittest
 from app import create_app, db
-from app.models import User, Role, Size, Format, Title
+from app.models import User, Role, Size, Format, Title, encode_id
 from flask import url_for
 
 
@@ -68,7 +68,9 @@ class FlaskClientTestCase(unittest.TestCase):
 			follow_redirects=True)
 
 	def delete_record(self, record_id):
-		return self.client.get(url_for('main.delete_record', id=record_id), follow_redirects=True)
+		hashed_id = encode_id(record_id)
+		return self.client.get(
+			url_for('main.delete_record', hashed_id=hashed_id), follow_redirects=True)
 
 	def edit_profile(self):
 		return self.client.post(

@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, current_app, abort, flash, request, jsonify
 from flask_login import login_required, current_user
 from .. import db
-from ..models import User, Role, Artist, Title, Size, Format, gravatar, user_local_time
+from ..models import (User, Role, Artist, Title,
+Size, Format, gravatar, user_local_time, encode_id, decode_id)
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
 from ..decorators import admin_required
@@ -112,7 +113,8 @@ def user(username):
 		seven_inches_mail=[record for record in user_records if record[2] == 7 and record[4] == 1],
 		ten_inches_mail=[record for record in user_records if record[2] == 10 and record[4] == 1],
 		twelve_inches_mail=[record for record in user_records if record[2] == 12 and record[4] == 1],
-		user_records_count=len(user_records))
+		user_records_count=len(user_records),
+		encode_id=encode_id)
 
 
 @main.route('/<username>/follower_records', methods=["GET", "POST"])
@@ -217,10 +219,11 @@ def unfollow(username):
 	return redirect(url_for('.user', username=username))
 
 
-@main.route('/delete-record/<id>')
+@main.route('/delete-record/<hashed_id>')
 @login_required
-def delete_record(id):
-	record = Title.query.filter_by(id=id).first_or_404()
+def delete_record(hashed_id):
+	decoded_id = decode_id(str(hashed_id))
+	record = Title.query.filter_by(id=decoded_id).first_or_404()
 
 	if record.owner_id == current_user.id:
 		record.delete_from_table()
@@ -231,10 +234,11 @@ def delete_record(id):
 		return redirect(url_for('.user', username=current_user.username))
 
 
-@main.route('/update-record/<id>')
+@main.route('/update-record/<hashed_id>')
 @login_required
-def update_record(id):
-	record = Title.query.filter_by(id=id).first_or_404()
+def update_record(hashed_id):
+	decoded_id = decode_id(str(hashed_id))
+	record = Title.query.filter_by(id=decoded_id).first_or_404()
 	record.update_from_mail()
 	flash("{} Arrived!".format(record.name), 'success')
 	return redirect(url_for('.user', username=current_user.username))
