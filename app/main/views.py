@@ -1,4 +1,5 @@
-from flask import render_template, redirect, url_for, current_app, abort, flash, request, jsonify
+from flask import (render_template, redirect, url_for,
+	current_app, abort, flash, request, jsonify, make_response)
 from flask_login import login_required, current_user
 from .. import db
 from ..models import (User, Role, Artist, Title,
@@ -242,3 +243,28 @@ def update_record(hashed_id):
 	record.update_from_mail()
 	flash("{} Arrived!".format(record.name), 'success')
 	return redirect(url_for('.user', username=current_user.username))
+
+
+@main.route('/download/<username>')
+@login_required
+def download(username):
+	import StringIO
+	import csv
+	user = User.query.filter_by(username=username).first()
+	if user == current_user:
+
+		head_column = ["Artist", "Title", "Color", "Year", "Size", "Date Added"]
+
+		si = StringIO.StringIO()
+		cw = csv.writer(si)
+		cw.writerow(head_column)
+
+		for row in user.owned_records():
+			title, artist, size, format, mail = row
+			cw.writerow([artist, title.name, title.color, title.year, size, title.timestamp.strftime('%m/%d/%y')])
+		output = make_response(si.getvalue())
+		output.headers["Content-Disposition"] = "attachment; filename={}_records_{}.csv".format(username, datetime.now().strftime('%m/%d/%y'))
+		output.headers["Content-type"] = "text/csv"
+		return output
+	else:
+		return redirect(url_for('main.index'))
