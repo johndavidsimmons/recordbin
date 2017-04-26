@@ -1,9 +1,11 @@
-from flask import (render_template, redirect, url_for,
+from flask import (
+	render_template, redirect, url_for,
 	current_app, abort, flash, request, jsonify, make_response)
 from flask_login import login_required, current_user
 from .. import db
-from ..models import (User, Role, Artist, Title,
-Size, Format, gravatar, user_local_time, encode_id, decode_id)
+from ..models import (
+	User, Role, Artist, Title,
+	Size, Format, gravatar, user_local_time, encode_id, decode_id)
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
 from ..decorators import admin_required
@@ -259,11 +261,17 @@ def download(username):
 		cw = csv.writer(si)
 		cw.writerow(head_column)
 
-		for row in user.owned_records():
+		sorted_list = sorted(user.owned_records(), key=lambda x: (x[2], x[0].year, x[1], x[0].name))
+		for row in sorted_list:
 			title, artist, size, format, mail = row
-			cw.writerow([artist, title.name, title.color, title.year, size, title.timestamp.strftime('%m/%d/%y')])
+			cw.writerow([
+				artist, title.name,
+				title.color, title.year,
+				size, title.timestamp.strftime('%m/%d/%y')])
+
 		output = make_response(si.getvalue())
-		output.headers["Content-Disposition"] = "attachment; filename={}_records_{}.csv".format(username, datetime.now().strftime('%m/%d/%y'))
+		now = datetime.now().strftime('%m/%d/%y')
+		output.headers["Content-Disposition"] = "attachment; filename={}_records_{}.csv".format(username, now)
 		output.headers["Content-type"] = "text/csv"
 		return output
 	else:

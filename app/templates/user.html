@@ -2,7 +2,7 @@
 
 {% block title %}
 	{{ super() }}
-	 | {{ user.username }}
+	 {{ user.username }}
 {% endblock %}
 
 {% block page_content %}
@@ -25,9 +25,13 @@
 	<div class="col-sm-4">
 		<ul>
 			<li><strong>Username:</strong> {{ user.username }}</li>
-			<li><strong>Location:</strong> {{ user.location }}</li>
 			<li><strong>Records:</strong> {{ user_records_count }} </li>
-			<li><strong>About:</strong> {{ user.about_me }} </li>
+			{% if user.location %}
+				<li><strong>Location:</strong> {{ user.location }}</li>
+			{% endif %}
+			{% if user.about_me %}
+				<li><strong>About:</strong> {{ user.about_me }} </li>
+			{% endif %}
 		</ul>
 	</div>
 	<div class="col-sm-2 followers">
@@ -124,8 +128,6 @@
 		{% endif %}
 	</div>
 </div>
-<strong><a href="#top" style="position:fixed;right:100px;bottom:100px" >Top</a></strong>
-
 	  
 <script src="static/js/size_nav.js" ></script>
 {% endblock %}

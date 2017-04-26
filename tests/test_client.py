@@ -2,6 +2,7 @@ import unittest
 from app import create_app, db
 from app.models import User, Role, Size, Format, Title, encode_id
 from flask import url_for
+import re
 
 
 class FlaskClientTestCase(unittest.TestCase):
@@ -54,7 +55,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		return self.client.post(url_for("auth.register"), data=dict(
 			email=email, password=password, username=username, password2=password), follow_redirects=True)
 
-	def add_record(self, username):
+	def add_record(self, username, mail=None):
 		return self.client.post(
 			url_for("main.user", username=username),
 			data=dict(
@@ -64,13 +65,19 @@ class FlaskClientTestCase(unittest.TestCase):
 				color="Black",
 				size=3,
 				year=1970,
-				notes="Lorem"),
+				notes="Lorem",
+				incoming=mail),
 			follow_redirects=True)
 
 	def delete_record(self, record_id):
 		hashed_id = encode_id(record_id)
 		return self.client.get(
 			url_for('main.delete_record', hashed_id=hashed_id), follow_redirects=True)
+
+	def arrive_record(self, record_id):
+		hashed_id = encode_id(record_id)
+		return self.client.get(
+			url_for('main.update_record', hashed_id=hashed_id), follow_redirects=True)
 
 	def edit_profile(self):
 		return self.client.post(
@@ -125,13 +132,27 @@ class FlaskClientTestCase(unittest.TestCase):
 	def test_add_record(self):
 		# Login
 		self.login(email="profile_john@example.com", password="yolo")
-		response = self.add_record(username="profile_john")
+		response = self.add_record(username="profile_john", mail=0)
 		assert "Black Sabbath - Master of Reality added" in response.data
 
 	def test_add_record_as_different_user(self):
 		self.login(email="profile_john@example.com", password="yolo")
-		response = self.add_record(username="kgjkhgh")
+		response = self.add_record(username="kgjkhgh", mail=0)
 		assert response.status_code == 404
+
+	def test_add_mail_record(self):
+		self.login(email="profile_john@example.com", password="yolo")
+		response = self.add_record(username="profile_john", mail=1)
+		stripped_response = re.sub(r'\s+', '', response.data)
+		assert '<tableid="twelve_inches_mail"><thead><tr><thclass="left">12Inch(1)</th>' in stripped_response
+
+	def test_arrive_record(self):
+		self.login(email="profile_john@example.com", password="yolo")
+		self.add_record(username="profile_john", mail=1)
+		record_id = Title.query.filter_by(mail=1).first().id
+		response = self.arrive_record(record_id)
+		stripped_response = re.sub(r'\s+', '', response.data)
+		assert '<tableid="twelve_inches"><thead><tr><thclass="left">12Inch(1)</th>' in stripped_response
 
 	# Delete a record #
 	def test_delete_record(self):
