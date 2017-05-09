@@ -1,0 +1,125 @@
+<div class="well well-sm">
+    <div id="feed">
+        <h4 class="nopadding">Activity <span class="glyphicon glyphicon-chevron-right pull-right pointer" aria-hidden="true"></span><span class="glyphicon glyphicon-chevron-left pull-right pointer" aria-hidden="true" style="display: none"></h4>
+    </div>
+</div>
+<script>
+
+    function getRecords() {
+        $.ajax({
+            url: "/" + username + "/follower_records",
+            dataType: "json",
+            type: "GET",
+
+            success: function(data) {
+                var dataArray = Object.values(data)
+                var newestRecord = dataArray[0]
+                var newestRecordId = dataArray[0].id;
+                var newRecordElement = $('#feed .media')[0];
+                var newRecordElementId = newRecordElement ? newRecordElement.id : "";
+                var lastRecordElement = $('#feed .media')[$('#feed .media').length - 1];
+                var lastRecordElementId = lastRecordElement ? lastRecordElement.id : "";
+
+
+                // Do this first time
+                if ( newRecordElement == undefined && lastRecordElement == undefined ) {
+
+                    for (var i = 0; i < dataArray.length; i++) {
+                        var dateOptions = { year : "2-digit", day : "numeric", month : "numeric"}
+                        var d = new Date(dataArray[i]['timestamp']).toLocaleDateString('en-US', dateOptions);
+
+                        var html_string = '<div id=' + dataArray[i]["id"] + ' class="media"><div class="media-left"><img style="height:25px;" src="' + dataArray[i]['gravatar']+'" class="media-object media-top"></div><div class="media-body"><p class="media-heading"><a href=/'+ dataArray[i]["user"] + '>' + dataArray[i]["user"] + '</a> <i>added</i><strong> ' + dataArray[i]["artist"] + '</strong> - <strong>' + dataArray[i]["artist"] + ' </strong><i>on</i> ' + d +'</p></div></div>'
+
+                        if (i < 3) {
+
+                            $("#feed").append(html_string);
+
+                        } else {
+
+                            html_string = html_string.substr(0, 5) + 'style="display:none;"' + html_string.substr(5);
+                            $("#feed").append(html_string)
+                        }
+                       } 
+                } 
+            }
+        });
+    }
+
+    getRecords()
+    // setInterval(getRecords, 5000);
+
+
+    // pagination
+    var $nextArrow = $('#feed .glyphicon-chevron-right');
+    var $prevArrow = $('#feed .glyphicon-chevron-left');
+    $nextArrow.on("click", function() {
+        var mediaArray = $("#feed .media");
+        var visible = [];
+        
+
+        for (var i = 0; i < mediaArray.length; i++) {
+            if (mediaArray[i].style.display != "none") {
+                visible.push(i);
+            } 
+        }
+
+        var sum = visible.reduce((a, b) => a + b, 0);
+        // first page
+        if (sum === 3) {
+            $(mediaArray[0]).hide()
+            $(mediaArray[1]).hide()
+            $(mediaArray[2]).hide()
+            $(mediaArray[3]).show()
+            $(mediaArray[4]).show()
+            $(mediaArray[5]).show()
+            $prevArrow.show();
+
+        // second page
+        } else if (sum === 12) {
+            $(mediaArray[3]).hide()
+            $(mediaArray[4]).hide()
+            $(mediaArray[5]).hide()
+            $(mediaArray[6]).show()
+            $(mediaArray[7]).show()
+            $(mediaArray[8]).show()
+            $(this).hide();
+        } 
+    });
+
+    $prevArrow.on("click", function() {
+        var mediaArray = $("#feed .media");
+        var visible = [];
+
+        for (var i = 0; i < mediaArray.length; i++) {
+            if (mediaArray[i].style.display != "none") {
+                visible.push(i);
+            } 
+        }
+
+        var sum = visible.reduce((a, b) => a + b, 0);
+
+        // second page
+        if (sum === 12) {
+            $(mediaArray[0]).show()
+            $(mediaArray[1]).show()
+            $(mediaArray[2]).show()
+            $(mediaArray[3]).hide()
+            $(mediaArray[4]).hide()
+            $(mediaArray[5]).hide()
+            $(this).hide();
+
+        // second page
+        } else if (sum === 21) {
+            $(mediaArray[3]).show()
+            $(mediaArray[4]).show()
+            $(mediaArray[5]).show()
+            $(mediaArray[6]).hide()
+            $(mediaArray[7]).hide()
+            $(mediaArray[8]).hide()
+            $nextArrow.show();
+        } 
+
+    });
+
+
+</script>

@@ -25,6 +25,7 @@ class FlaskClientTestCase(unittest.TestCase):
 			username='profile_john',
 			password='yolo',
 			about_me="Overlord",
+			location='Detroit',
 			role=admin_role,
 			confirmed=True)
 		db.session.add(user)
@@ -33,6 +34,7 @@ class FlaskClientTestCase(unittest.TestCase):
 			username='profile_john2',
 			password='yolo',
 			about_me="not in charge",
+			location="USA",
 			role=user_role,
 			confirmed=True)
 		db.session.add(user2)
@@ -44,7 +46,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		self.app_context.pop()
 
 	def login(self, email, password):
-		return self.client.post(url_for("auth.login"), data=dict(
+		return self.client.post(url_for("main.index"), data=dict(
 			email=email, password=password, remember_me=True),
 			follow_redirects=True)
 
@@ -82,7 +84,7 @@ class FlaskClientTestCase(unittest.TestCase):
 	def edit_profile(self):
 		return self.client.post(
 			url_for("main.edit_profile"),
-			data=dict(about_me="This is new"), follow_redirects=True)
+			data=dict(location="yolo"), follow_redirects=True)
 
 	def change_user_password(self, old, new, new2):
 		return self.client.post(
@@ -107,7 +109,7 @@ class FlaskClientTestCase(unittest.TestCase):
 	# Login #
 	def test_login_and_logout(self):
 		response = self.login(email="profile_john@example.com", password="yolo")
-		assert "Hello, profile_john@example.com!" in response.data
+		assert '<h4 class="media-heading">profile_john</h4>' in response.data
 		response = self.logout()
 		assert "You have logged out" in response.data
 
@@ -122,7 +124,7 @@ class FlaskClientTestCase(unittest.TestCase):
 
 	def test_invalid_email_format(self):
 		response = self.login(email="fakeuser", password="yolo")
-		assert "Invalid email address" in response.data
+		assert 'Invalid email address' in response.data
 
 	def test_invalid_password(self):
 		response = self.login(email="profile_john@example.com", password="yolo1")
@@ -144,7 +146,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		self.login(email="profile_john@example.com", password="yolo")
 		response = self.add_record(username="profile_john", mail=1)
 		stripped_response = re.sub(r'\s+', '', response.data)
-		assert '<tableid="twelve_inches_mail"><thead><tr><thclass="left">12Inch(1)</th>' in stripped_response
+		assert '<divid="twelve_inches_mail"class="panelpanel-default"><!--Defaultpanelcontents--><divclass="panel-heading"><strong>12Inches</strong><spanclass="badgepull-right">1</span>' in stripped_response
 
 	def test_arrive_record(self):
 		self.login(email="profile_john@example.com", password="yolo")
@@ -152,7 +154,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		record_id = Title.query.filter_by(mail=1).first().id
 		response = self.arrive_record(record_id)
 		stripped_response = re.sub(r'\s+', '', response.data)
-		assert '<tableid="twelve_inches"><thead><tr><thclass="left">12Inch(1)</th>' in stripped_response
+		assert '<divid="twelve_inches"class="panelpanel-default"><!--Defaultpanelcontents--><divclass="panel-heading"><strong>12Inches</strong><spanclass="badgepull-right">1</span></' in stripped_response
 
 	# Delete a record #
 	def test_delete_record(self):
@@ -179,17 +181,16 @@ class FlaskClientTestCase(unittest.TestCase):
 	def test_edit_profile(self):
 		self.login(email="profile_john@example.com", password="yolo")
 		response = self.client.get("/edit-profile")
-		assert "Overlord" in response.data
+		assert "Detroit" in response.data
 		response = self.edit_profile()
-		assert "This is new" in response.data
+		assert "yolo" in response.data
 
 	def test_admin_edit_profile(self):
 		self.login(email="profile_john@example.com", password="yolo")
 		response = self.client.get("/edit-profile/1")
-		assert "Confirmed" in response.data
-		assert "Overlord" in response.data
+		assert "Detroit" in response.data
 		response = self.edit_profile()
-		assert "This is new" in response.data
+		assert "yolo" in response.data
 
 	def test_admin_edit_other_profile(self):
 		self.login(email="profile_john@example.com", password="yolo")
@@ -197,7 +198,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		assert "Confirmed" in response.data
 		assert "not in charge" in response.data
 		response = self.edit_profile()
-		assert "This is new" in response.data
+		assert "yolo" in response.data
 
 	def test_user_edit_other_profile(self):
 		self.login(email="profile_john2@example.com", password="yolo")
@@ -218,8 +219,8 @@ class FlaskClientTestCase(unittest.TestCase):
 		test_user = User.query.filter_by(email="test@example.com").first()
 		test_user.confirmed = True
 
-		response = self.client.get(url_for("main.index"))
-		assert "Hello, test@example.com" in response.data
+		response = self.client.get(url_for("main.user", username="test"))
+		assert '<h4 class="media-heading">test</h4>' in response.data
 
 	def test_register_email_exists(self):
 		response = self.client.get(url_for("auth.register"))
@@ -315,17 +316,15 @@ class FlaskClientTestCase(unittest.TestCase):
 	def test_home_page_status(self):
 		response = self.client.get(url_for('main.index'))
 		assert response.status_code == 200
-		assert '<a class="active"  href="/">Home </a>' in response.data
+		stripped_response = re.sub(r'\s+', '', response.data)
+		assert '<liclass="active"><ahref="/">Home</a></li>' in stripped_response
 
-	def test_login_page_status(self):
-		response = self.client.get(url_for('auth.login'))
-		assert response.status_code == 200
-		assert '<a class="active"  href="/auth/login">Log In</a>' in response.data
 
 	def test_register_page_status(self):
 		response = self.client.get(url_for('auth.register'))
 		assert response.status_code == 200
-		assert '<a class="active"  href="/auth/register">Register</a>' in response.data
+		stripped_response = re.sub(r'\s+', '', response.data)
+		assert '<liclass="active"><ahref="/auth/register">Register</a></li>' in stripped_response
 
 	def test_password_reset_page_status(self):
 		response = self.client.get(url_for('auth.password_reset_request'))
@@ -337,8 +336,8 @@ class FlaskClientTestCase(unittest.TestCase):
 
 	def test_all_users_page_status(self):
 		response = self.client.get(url_for('main.all_users'))
-		assert response.status_code == 200
-		assert '<a class="active"  href="/users">Users</a>' in response.data
+		stripped_response = re.sub(r'\s+', '', response.data)
+		assert '<liclass="active"><ahref="/users">Users</a></li>' in stripped_response
 
 	def test_404_status(self):
 		response = self.client.get("/yolo")

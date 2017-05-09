@@ -1,0 +1,38 @@
+<div class="well well-sm">
+    <div class="media">
+        <img class="media-object pull-left" src="{{ user.gravatar(size=105) }}" alt="">
+        <div class="media-body">
+        {% if user.is_administrator()  %}
+            <span class="label label-default pull-right">Admin</span>
+        {% endif %}
+        <h4 class="media-heading">{{user.username}}</h4>
+        <h5 class="">{{ user.location }}</h5>
+        <p>
+            <span class="label label-primary">{{ user_records_count }} Records</span>
+            <span class="label label-info pointer" data-toggle="modal" data-target=".follower-modal">{{ followers_count - 1}} followers</span>
+            <span class="label label-success pointer" data-toggle="modal" data-target=".following-modal">{{ followed_count - 1 }} following</span>
+        </p>
+        <p>
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_administrator() %}
+                    <a href="{{ url_for('.edit_profile_admin', id=user.id) }}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-wrench"></span> Admin Settings</a>
+                {% endif %}
+                {% if user == current_user and not current_user.is_administrator() %}
+                    <a href="{{ url_for('.edit_profile') }}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-wrench"></span> Settings</a>
+                {% endif %}
+                {% if user == current_user %}
+                    <a href="{{ url_for('main.download', username=current_user.username) }}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-download"></span> Download CSV</a>
+                {% endif %}
+                {% if user != current_user %}
+                    {% if not current_user.is_following(user) %}
+                        <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-ok"></span> Follow</a>
+                    {% else %}
+                        <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-ban-circle"></span> Unfollow</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </p>
+
+        </div>
+    </div>
+</div>

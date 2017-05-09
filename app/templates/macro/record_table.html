@@ -1,45 +1,50 @@
 {% macro record_table(size, list, current_user, user=None) %}
-<table id="{{ kwargs['id'] }}">
-    <thead>
-        <tr>
-            <th class="left" >{{ size }} Inch ({{ list|length }})</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in list %}
-            <tr  {% if loop.index % 2 == 0 %} class="gray" {%  endif %} >
-                <!-- Artist -->
-                <td class="artist">{{ r[1] }}</td>
-
-                <!-- Title -->
-                <td class="title" >{{ r[0].name }}</td>
-
-                <!-- Color -->
-                <td class="color" >{{ r[0].color }}</td>
-
-                <!-- Year -->
-                <td class="year" >{{ r[0].year }}</td>
-
-                <!-- Notes -->
-                <td class="notes" >{{ r[0].notes }}</td>
-
-                <!-- Timestamp -->
-                <td class="timestamp" >{{ r[0].timestamp.strftime('%-m/%-d/%y') }}</td>
-
-                <!-- Delete -->
-                {% if current_user == user %}
-                    {% if r[0].mail == 1%}
-                        <td><a href="/update-record/{{ kwargs['encode_id'](r[0].id) }}">Arrived</a></td>
-                    {% endif %}
-                    <td class="delete" ><a href="/delete-record/{{ kwargs['encode_id'](r[0].id) }}">delete</a></td>
-                {% endif %}
+<div class="table-responsive">
+    <table id="{{ kwargs['id'] }}" class="table">
+        <thead>
+            <tr>
+                <th class="left" style="border-bottom: 0px solid transparent;"><a href="">[-]</a> {{ size }} Inch ({{ list|length }})</th>
+            </tr>   
+            <tr>
+                <th>Artist</th>
+                <th>Title</th>
+                <th>Color</th>
+                <th>Year</th>
+                <th>Notes</th>
+                <th>Added On</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for r in list %}
+                <tr  {% if loop.index % 2 == 0 %} class="gray" {%  endif %} >
+                    <!-- Artist -->
+                    <td class="artist">{{ r[1] }}</td>
+
+                    <!-- Title -->
+                    <td class="title" >{{ r[0].name }}</td>
+
+                    <!-- Color -->
+                    <td class="color" >{{ r[0].color }}</td>
+
+                    <!-- Year -->
+                    <td class="year" >{{ r[0].year }}</td>
+
+                    <!-- Notes -->
+                    <td class="notes" >{{ r[0].notes }}</td>
+
+                    <!-- Timestamp -->
+                    <td class="timestamp" >{{ r[0].timestamp.strftime('%-m/%-d/%y') }}</td>
+
+                    <!-- Delete -->
+                    {% if current_user == user %}
+                        {% if r[0].mail == 1%}
+                            <td><a href="/update-record/{{ kwargs['encode_id'](r[0].id) }}">Arrived</a></td>
+                        {% endif %}
+                        <td class="delete" ><a href="/delete-record/{{ kwargs['encode_id'](r[0].id) }}">delete</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endmacro %}

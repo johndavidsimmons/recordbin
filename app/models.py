@@ -177,7 +177,7 @@ class User(UserMixin, db.Model):
 			.join(User, Follow.followed_id == User.id) \
 			.join(Artist, Title.artist_id == Artist.id) \
 			.add_columns(User.email, Artist.name, User.username) \
-			.filter(Follow.follower_id == self.id).order_by(Title.timestamp.desc()).limit(5)
+			.filter(Follow.follower_id == self.id).order_by(Title.timestamp.desc())
 
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
@@ -331,7 +331,7 @@ class Title(db.Model):
 	size_id = db.Column(db.Integer, db.ForeignKey('sizes.id'))
 	color = db.Column(db.String(64))
 	year = db.Column(db.Integer)
-	format_id = db.Column(db.Integer, db.ForeignKey('formats.id'))
+	format_id = db.Column(db.Integer, db.ForeignKey('formats.id'), default=1)
 	notes = db.Column(db.String(128))
 	timestamp = db.Column(db.DateTime, default=user_local_time(datetime.utcnow))
 	owner_id = db.Column(db.Integer, db.ForeignKey('users_table.id'))

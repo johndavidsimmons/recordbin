@@ -1,162 +1,43 @@
-.container {
-  margin: 0 auto;
-  max-width: 960px; }
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important; }
 
-  footer p {
-    color: #777;
-    font-size: 0.75em;
-    text-align: center; }
+  .push {
+    padding-top: 2em; }
 
-    .btn {
-      background-color: transparent;
-      border: 1px solid #000;
-      border-radius: 5px;
-      color: #000;
-      padding: 1em;
-      min-width: 125px; }
-      .btn:hover {
-        background-color: #000;
-        color: white;
-        cursor: pointer; }
+    .margin-push {
+      margin-top: 1em; }
 
-* {
-  font-family: sans-serif; }
+      .push-bottom {
+        margin-bottom: 1em; }
 
-  nav {
-    margin: 1em 0 0 1em; }
+        .pointer:hover {
+          cursor: pointer; }
 
-    .navigation {
-      list-style-type: none;
-      margin: 0px;
-      padding: 0px; }
+          #add-record, #mail {
+            display: none; }
 
-      .navigation__item {
-        display: inline;
-        margin-right: 1em; }
-        .navigation__item a {
-          color: #000;
-          font-weight: bold;
-          text-decoration: none; }
-          .navigation__item a:hover {
-            color: #777; }
-            .navigation__item a.active {
-              border-bottom: 1px solid #000; }
+            .well {
+              min-height: 160px; }
 
-#sizes {
-  list-style: none;
-  padding-left: 0px; }
-  #sizes li {
-    border: 1px solid black;
-    border-radius: 5px;
-    color: black;
-    cursor: pointer;
-    display: inline-block;
-    padding: 1em 2em 1em 2em;
-    margin: 1em;
-    width: 100px;
-    text-align: center; }
-    #sizes li.active {
-      background-color: black;
-      border: 1px solid black;
-      border-radius: 5px;
-      color: white; }
+              .break-all {
+                -ms-word-break: break-all;
+                word-break: break-all; }
 
-#mail {
-  display: none; }
+                .keep-all {
+                  -ms-word-break: keep-all;
+                  word-break: keep-all; }
 
-  .gravatar {
-    border-radius: 5px; }
+                  #remember_me {
+                    float: left;
+                    margin-right: 0.5em; }
 
-    .profile ul {
-      list-style: none;
-      padding: 0;
-      margin: 0; }
+                    .error {
+                      color: #a94442;
+                      font-weight: bold; }
 
-.bio, .followers {
-  min-height: 150px;
-  float: left; }
-
-  p[data-toggle="modal"] strong {
-    cursor: pointer; }
-
-    table {
-      width: 100%;
-      margin-bottom: 1em; }
-
-      .gray {
-        background-color: #f0f0f0; }
-
-        .left {
-          float: left; }
-
-          .artist {
-            width: 20%; }
-
-            .title {
-              width: 30%; }
-
-              .color {
-                width: 10%; }
-
-                .year {
-                  width: 10%; }
-
-                  .notes {
-                    width: 20%; }
-
-                    .timestamp {
-                      width: 10%; }
-
-                      .delete {
-                        width: 10%; }
-
-                        tr > td {
-                          padding: 0.5em 1em 0.5em 0.5em; }
-
-                          thead {
-                            border-bottom: 1px solid black !important; }
-
-                            th {
-                              padding-bottom: 0.5em !important; }
-
-                              #add-record {
-                                display: none; }
-
-                                #follower_records {
-                                  list-style: none;
-                                  margin: 0;
-                                  padding: 0; }
-                                  #follower_records li {
-                                    padding-bottom: 1em; }
-                                    #follower_records li img {
-                                      height: 50px;
-                                      margin-right: 1em; }
-
-label {
-  font-weight: bold; }
-
-  dd {
-    margin: 0; }
-    dd input {
-      border-top: none;
-      border-left: none;
-      border-right: none;
-      border-bottom: 1px solid #777;
-      margin-bottom: 2em;
-      outline: none; }
-
-.error {
-  color: red;
-  font-weight: bold;
-  padding-left: 1em;
-  vertical-align: -webkit-baseline-middle; }
-
-  .nopadding {
-    padding: 0 !important;
-    margin: 0 !important; }
-
-    .push {
-      padding-top: 2em; }
-
-      .margin-push {
-        margin-top: 1em; }
+                      .jumbotron p {
+                        font-size: 16px;
+                        color: #a94442; }
+                        .jumbotron p.error {
+                          font-weight: bold; }

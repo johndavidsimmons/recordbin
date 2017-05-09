@@ -1,13 +1,40 @@
-<form id="add-record" name="add-record" action method="post">
-{% from 'render_field.html' import render_field %}
-    {{ form.csrf_token }}
-    <dl>{{ render_field(form.artist) }}</dl>
-    <dl>{{ render_field(form.title) }}</dl>
-    <dl>{{ render_field(form.format) }}</dl>
-    <dl>{{ render_field(form.year) }}</dl>
-    <dl>{{ render_field(form.notes) }}</dl>
-    <dl>{{ render_field(form.color) }}</dl>
-    <dl>{{ render_field(form.size) }}</dl>
-    <dl>{{ render_field(form.incoming) }}</dl>
-    <button class="btn" type="submit" name="submit">Add</button>
+<form name="add-record" action method="post">
+    {% from 'render_field.html' import render_field %}
+            {{ form.csrf_token }}
+            {{ render_field(form.artist, class="form-control") }}
+            {{ render_field(form.title, class="form-control") }}
+            {{ render_field(form.color, class="form-control") }}
+            <div class="row form-group">
+                <div class="col-sm-2">
+                    {{ render_field(form.size, class="form-control") }}        
+                </div>
+                <div class="col-sm-2">
+                    {{ render_field(form.year, class="form-control") }}        
+                </div>
+                <div class="col-sm-2">
+                    {{ render_field(form.incoming) }}
+                </div>
+                <div class="col-sm-6"></div>
+            </div>
+            {{ render_field(form.notes, class="form-control") }}
+         <button type="submit" name="submit" class="btn btn-primary btn-lg margin-push btn-block">Add</button>
 </form>
+
+
+
+
+<script>
+    var $closeButton = $('#add-record .glyphicon-remove');
+    var $addRecordPanel = $('#add-record');
+    var $addButton = $('#add-button');
+
+    $closeButton.on('click', function(){
+        $addRecordPanel.hide();
+        $addButton.removeClass('disabled');
+    })
+
+    $addButton.on('click', function() {
+        $addRecordPanel.show();
+        $(this).addClass('disabled');
+    });
+</script>

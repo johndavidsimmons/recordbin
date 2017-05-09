@@ -39,47 +39,10 @@ table {
 	float: left;
 }
 
-.artist {
-	width: 20%;
-}
-
-.title {
-	width: 30%;
-}
-
-.color {
-	width: 10%;
-}
-
-.year {
-	width: 10%;
-}
-
-.notes {
-	width: 20%;
-}
-
-.timestamp {
-	width: 10%;
-}
-
-.delete {
-	width: 10%;
-}
-
-tr > td {
-	padding: 0.5em 1em 0.5em 0.5em;
-
-}
-
-thead {
-	border-bottom: 1px solid black !important;
-}
-
-th {
-	padding-bottom: 0.5em !important;
-}
-
 #add-record {
 	display: none;
+}
+
+.table>thead>tr>th {
+	border: none;
 }

@@ -15,6 +15,10 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>var username = '{{ current_user.username }}'</script>
         <meta name="requestpath"  content="{{ request.path }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block scripts %}
+        {{ moment.include_moment() }}
+        {% endblock %}
     {% endblock %}
 </head>
 <body>
@@ -29,7 +33,12 @@
             {% endblock %}
             <footer>
                 <hr>
-                <p>RecordBin &copy; 2017</p>
+                <p class="text-center">RecordBin &copy; <span id="year" ></span></p>
+                <script>
+                    var d = new Date();
+                    var year = d.getFullYear();
+                    document.getElementById('year').innerHTML = year.toString();
+                </script>
             </footer>
         </div>
     {% endblock %}
@@ -37,8 +46,3 @@
 
 </body>
 </html>
-
-
-{% block scripts %}
-{{ moment.include_moment() }}
-{% endblock %}

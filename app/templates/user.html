@@ -6,128 +6,69 @@
 {% endblock %}
 
 {% block page_content %}
-<!-- Profile Section -->
-<div class="row profile push">
-	<div class="col-sm-2">
-		<img class="gravatar" src="{{ user.gravatar(size=100) }}" alt="">
 
-		<!-- Edit Profile -->
-		{% if current_user.is_authenticated %}
-			{% if current_user.is_administrator()  %}
-				<p><a name="admin-edit" href="{{ url_for('.edit_profile_admin', id=user.id) }}">[Admin] Profile &amp; Settings</a></p>
-			{% endif %}	
-			{% if user == current_user %}	
-				<p><a href="{{ url_for('.edit_profile') }}">Profile &amp; Settings</a></p>
-				<p><a href="{{ url_for('main.download', username=current_user.username) }}">Download CSV</a></p>
-			{% endif %}
+<!-- Profile Section -->
+<div class="row">
+	<div class="col-sm-6">
+		{% include "include/_profile.html" %}
+	</div>
+	<div class="col-sm-6">
+		{% if current_user.is_authenticated and user == current_user %}
+			{% include "include/_feed.html" %}
 		{% endif %}
 	</div>
-	<div class="col-sm-4">
-		<ul>
-			<li><strong>Username:</strong> {{ user.username }}</li>
-			<li><strong>Records:</strong> {{ user_records_count }} </li>
-			{% if user.location %}
-				<li><strong>Location:</strong> {{ user.location }}</li>
-			{% endif %}
-			{% if user.about_me %}
-				<li><strong>About:</strong> {{ user.about_me }} </li>
-			{% endif %}
-		</ul>
-	</div>
-	<div class="col-sm-2 followers">
-
-		<!-- Followers  -->
-		{% include "/include/_followmodal.html" %}
-
-
-		<!-- Follow Button -->
-		{% if current_user.is_authenticated %}
-			{% if user != current_user %}
-				{% if not current_user.is_following(user) %}
-					<form style="padding-top:1em;"action="{{ url_for('.follow', username=user.username) }}">
-					    <button class="btn" type="submit">Follow</button>
-					</form>
-				{% else %}
-					<form style="padding-top:1em;"action="{{ url_for('.unfollow', username=user.username) }}">
-					    <button class="btn" type="submit">Unfollow</button>
-					</form>
-				{% endif %}
-			{% endif %}
-		{% endif %}	
-	</div>
 </div>
 
+<!-- Followers  -->
+{% include "/include/_followmodal.html" %}
 
-<!-- Size Navigation -->
-<div class="row">
-	<div class="col-sm-12 nopadding">
-		<ul id="sizes">
-			<li class="active">All</li>
-			<li>7</li>
-			<li>10</li>
-			<li>12</li>
-			<li>Mail</li>
-			{% if current_user.is_authenticated %}
-				{% if user == current_user %}
-					<li id="plus">+</li>
-				{% endif %}
-			{% endif %}
-		</ul>
-	</div> 
+<!-- Size Nav -->
+<div class="row" style="margin-bottom: 1em;">
+	<div class="col-sm-12">
+	<ul id="sizes" class="nav nav-tabs nav-justified">
+	  <li role="presentation" class="active pointer"><a><strong>All</strong></a></li>
+	  <li role="presentation" class="pointer"><a><strong>7 Inches</strong></a></li>
+	  <li role="presentation" class="pointer"><a><strong>10 Inches</strong></a></li>
+	  <li role="presentation" class="pointer"><a><strong>12 Inches</strong></a></li>
+	  <li role="presentation" class="pointer"><a><strong>Incoming</strong></a></li>
+	</ul>
+	</div>
 </div>
-
+{% if current_user.is_authenticated and user == current_user %}
+<div class="row" style="margin-bottom: 1em;">
+	<div class="col-sm-12">
+		<button id="add-button" type="button" class="btn btn-success pull-right btn-block"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Record</button>
+	</div>
+</div>
+<div id="add-record" class="panel panel-default">
+	<div class="panel-heading"><strong>Add Record</strong><span class="glyphicon glyphicon-remove pull-right pointer" aria-hidden="true"></span>
+	</div>
+	<div class="panel-body">
+	{% include "include/_addrecordform.html" %}
+	</div>
+</div> 
+{% endif %}
 
 <!-- Records -->
 <div class="row">
 	<div class="col-sm-12">
+		<div class="clearfix">
 
-    	<!-- 7 INCH  -->
-    	{% if seven_inches %}
-	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('7', seven_inches, current_user, user=user, id='seven_inches', encode_id=encode_id) }}
-		{% endif %}
-    	    
-		<!-- 10 INCH -->
-		{% if ten_inches %}
-	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('10', ten_inches, current_user, user=user, id="ten_inches", encode_id=encode_id) }}
-    	{% endif %}
-    	
-        <!-- 12 INCH  -->
-        {% if twelve_inches %}
-	    	{% from 'macro/record_table.html' import record_table %}
-	    	    {{ record_table('12', twelve_inches, current_user, user=user, id="twelve_inches", encode_id=encode_id) }}
-    	{% endif %}
+		<!-- size, list, current_user, user=None -->
+		{% from "macro/render_record_table.html" import render_record_table %}
+			    {{ render_record_table(seven_inches, current_user, user=user, size="7", id="seven_inches", encode_id=encode_id) }}
+				{{ render_record_table(ten_inches, current_user, user=user, size="10", id="ten_inches", encode_id=encode_id) }}
+				{{ render_record_table(twelve_inches, current_user, user=user, size="12", id="twelve_inches", encode_id=encode_id) }}
 
-		<div id="mail">
-	    	<!-- 7 INCH MAIL -->
-			{% if seven_inches_mail %}
-		    	{% from 'macro/record_table.html' import record_table %}
-		    	    {{ record_table('7', seven_inches_mail, current_user, user=user, id="seven_inches_mail", encode_id=encode_id) }}
-			{% endif %}
-
-			<!-- 10 INCH MAIL -->
-			{% if ten_inches_mail %}
-		    	{% from 'macro/record_table.html' import record_table %}
-		    	    {{ record_table('10', ten_inches_mail, current_user, user=user, id="ten_inches_mail", encode_id=encode_id) }}
-			{% endif %}
-
-			<!-- 12 INCH MAIL -->
-			{% if twelve_inches_mail %}
-		    	{% from 'macro/record_table.html' import record_table %}
-		    	    {{ record_table('12', twelve_inches_mail, current_user, user=user, id="twelve_inches_mail", encode_id=encode_id) }}
-			{% endif %}
-
-
-		</div> 
-
-		{% if current_user.is_authenticated %}
-			{% if user == current_user %}
-		    	{% include "include/_addrecordform.html" %}
-		    {% endif %}
-		{% endif %}
+				<div id="mail">
+				    {{ render_record_table(seven_inches_mail, current_user, user=user, size="7", id="seven_inches_mail", encode_id=encode_id) }}
+					{{ render_record_table(ten_inches_mail, current_user, user=user, size="10", id="ten_inches_mail", encode_id=encode_id) }}
+					{{ render_record_table(twelve_inches_mail, current_user, user=user, size="12", id="twelve_inches_mail", encode_id=encode_id) }}
+				</div>
+		</div>
 	</div>
 </div>
+
 	  
 <script src="static/js/size_nav.js" ></script>
 {% endblock %}

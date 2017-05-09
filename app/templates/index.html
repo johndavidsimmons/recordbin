@@ -5,23 +5,24 @@
 {% endblock %}
 
 {% block page_content %}
-<div>
 	
-	
-	{% if current_user.is_authenticated %}
-	<h1>Hello, {% if current_user.is_authenticated %}{{ current_user.email }}{% else %}Stranger{% endif %}!</h1>
-	<h2>Recent Activity</h2>
-	<div >
-		<ul id="follower_records"></ul>
+	<div class="jumbotron">
+	<div class="row">
+			<div class="col-sm-6">
+				<h1>RecordBin</h1>
+				<h4>Simple Record Collections</h4>
+			</div>
+			<div class="col-sm-6">
+				<form action method="post">
+				{% from 'render_field.html' import render_field %}
+						{{ form.csrf_token }}
+					    {{ render_field(form.email, class="form-control push-bottom") }}
+					    {{ render_field(form.password, class="form-control push-bottom") }}
+					    {{ render_field(form.remember_me) }}
+				     <button type="submit" name="submit" class="btn btn-primary btn-lg margin-push btn-block">Log In</button>
+			    </form>
+			    <small><a href="{{ url_for('auth.password_reset_request') }}">Forgot your password?</a></small>
+			</div>
+		</div>
 	</div>
-
-	<script src="/static/js/follower_records.js"></script>
-
-	{% else %}
-		{% include "/include/_splash.html" %}
-	{% endif %}
-
-
-
-</div>
 {% endblock %}

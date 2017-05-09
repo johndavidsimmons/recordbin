@@ -1,10 +1,28 @@
 {% macro render_field(field) %}
-  <dt>{{ field.label }}
-  <dd>{{ field(**kwargs)|safe }}
-  {% if field.errors %}
-    {% for error in field.errors %}
-      <span class=error>{{ error }}</span>
-    {% endfor %}
-  {% endif %}
-  </dd>
+<div class="form-group {%if field.errors%}has-error{%endif%} has-feedback">
+<label for="{{field.id}}" class="control-label">
+	{{ field.label.text }}
+</label>
+{% if field.type == "SelectField" %}
+	<select name="{{field.id}}">
+	{% for v, o in field.choices %}
+		<option value="{{v}}">{{o}}</option>
+	{% endfor %}
+	</select>
+	{% if field.errors %}
+  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+  {% for error in field.errors %}
+    <p class="error push-bottom">{{ error }}</p>
+  {% endfor %}
+{% endif %}
+{% else %}
+	{{field(**kwargs)}}
+{% endif %}
+{% if field.errors %}
+  <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+  {% for error in field.errors %}
+    <p class="error push-bottom">{{ error }}</p>
+  {% endfor %}
+{% endif %}
+</div>
 {% endmacro %}

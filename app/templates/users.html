@@ -7,12 +7,6 @@
 
 
 {% block page_content %}
-<div class="push">
-<p><strong>Users ({{ all_users|length }})</strong></p>
-
 	{% from 'macro/users_table.html' import users_table %}
 		{{ users_table(all_users) }}
-   
-</div>
-
 {% endblock %}

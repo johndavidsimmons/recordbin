@@ -1,11 +1,11 @@
-@import "_colors";
+/*@import "_colors";
 @import "_body";
 @import "_buttons";
 @import "_fonts";
 @import "_nav";
 @import "_profile";
 @import "_follower_records";
-@import "_forms";
+@import "_forms";*/
 
 .nopadding {
    padding: 0 !important;
@@ -18,4 +18,50 @@
 
 .margin-push {
 	margin-top: 1em;
+}
+
+.push-bottom {
+	margin-bottom: 1em;
+}
+
+.pointer:hover {
+	cursor: pointer;
+}
+
+#add-record,
+#mail {
+	display: none;
+}
+
+.well {
+	min-height: 160px;
+}
+
+.break-all {
+	-ms-word-break: break-all;
+	    word-break: break-all;
+}
+
+.keep-all {
+	-ms-word-break: keep-all;
+	    word-break: keep-all;
+}
+
+#remember_me {
+	float: left;
+	margin-right: 0.5em;
+}
+
+.error {
+	color:#a94442;
+	font-weight: bold;
+}
+
+.jumbotron  p {
+	font-size: 16px;
+	color: rgb(169, 68, 66);
+	
+	&.error {
+	 	font-weight: bold;
+	 }
 }

@@ -80,7 +80,7 @@ class AddRecordForm(Form):
     year = SelectField("Year", coerce=int, validators=[
         Required()])
 
-    format = SelectField('Format', coerce=int)
+    # format = SelectField('Format', coerce=int)
 
     notes = TextAreaField('Notes')
 
@@ -96,8 +96,8 @@ class AddRecordForm(Form):
         super(AddRecordForm, self).__init__(*args, **kwargs)
 
         # Formats
-        formats = Format.query.order_by(Format.id).all()
-        self.format.choices = [(format.id, format.name) for format in formats]
+        # formats = Format.query.order_by(Format.id).all()
+        # self.format.choices = [(format.id, format.name) for format in formats]
 
         # Record Sizes
         self.size.choices = [(size.id, size.name) for size in Size.query.order_by(Size.id).all()]

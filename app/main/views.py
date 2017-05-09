@@ -1,7 +1,7 @@
 from flask import (
 	render_template, redirect, url_for,
 	current_app, abort, flash, request, jsonify, make_response)
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, login_user
 from .. import db
 from ..models import (
 	User, Role, Artist, Title,
@@ -10,6 +10,7 @@ from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
 from ..decorators import admin_required
 from datetime import datetime
+from ..auth.forms import LoginForm
 
 
 @main.route('/users', methods=['GET', 'POST'])
@@ -35,13 +36,24 @@ def server_shutdown():
 def index():
 
 	if current_user.is_authenticated:
-		follower_records = current_user.follower_records()
-	else:
-		follower_records = None
+		return redirect(url_for("main.user", username=current_user.username))
 
-	return render_template(
-		'index.html', db=db, follower_records=follower_records,
-		gravatar=gravatar, now=user_local_time(datetime.utcnow))
+
+	form = LoginForm()
+
+	if form.validate_on_submit():
+		user = User.query.filter_by(email=form.email.data).first()
+		if user is not None and user.verify_password(form.password.data):
+			login_user(user, form.remember_me.data)
+			return redirect(request.args.get('next') or url_for("main.user", username=user.username))
+		flash('invalid username or password', 'error')		
+
+	# if current_user.is_anonymous:
+		# return redirect(url_for('main.index',form=form))
+	# else:
+		# return redirect(url_for('main.index'))
+
+	return render_template('index.html', form=form)
 
 
 @main.route('/<username>', methods=["GET", "POST"])
@@ -51,6 +63,7 @@ def user(username):
 	followers_count = user.followers.count()
 	followed = user.followed.all()
 	followed_count = user.followed.count()
+	now = datetime.utcnow
 
 	if current_user.is_authenticated and user == current_user:
 		form = AddRecordForm()
@@ -59,7 +72,7 @@ def user(username):
 			# Form data
 			artist = form.artist.data
 			title = form.title.data
-			format_id = form.format.data
+			format_id = 1
 			color = form.color.data
 			size_id = form.size.data
 			year = form.year.data
@@ -117,7 +130,7 @@ def user(username):
 		ten_inches_mail=[record for record in user_records if record[2] == 10 and record[4] == 1],
 		twelve_inches_mail=[record for record in user_records if record[2] == 12 and record[4] == 1],
 		user_records_count=len(user_records),
-		encode_id=encode_id)
+		encode_id=encode_id, now=now)
 
 
 @main.route('/<username>/follower_records', methods=["GET", "POST"])

@@ -1,20 +1,28 @@
 {% macro users_table(list) %}
-	<table>
-	<thead>
-		<tr>
-			<th>Username</th>
-			<th>Records</th>
-			<th>Member Since</th>
-			<th>Last Seen</th>
-		</tr>
-	</thead>
-	{% for user in list %}
-		<tr {% if loop.index % 2 == 0 %} class="gray" {%  endif %} >
-			<td><a href="/{{ user.username }}">{{user.username}}</a></td>
-			<td>{{user.record_count(user)}}</td>
-			<td>{{user.member_since.strftime('%m/%d/%y')}}</td>
-			<td>{{user.last_seen.strftime('%m/%d/%y')}}</td>
-		</tr>
-	{% endfor %}
-	</table>
+<div class="panel panel-default">
+	<!-- Default panel contents -->
+	<div class="panel-heading"><strong>All Users</strong><span class="badge pull-right">{{ list|length }}</span></div>
+	<div class="panel-body">
+		<table class="table table-list-search table-responsive">
+			<thead>
+				<tr>
+					<th style="width: 25%;">Username</th>
+					<th style="width: 25%;">Records</th>
+					<th style="width: 25%;">Member Since</th>
+					<th style="width: 25%">Last Seen</th>
+				</tr>
+			</thead>
+			<tbody style="word-break:keep-all;">
+			{% for user in list %}
+				<tr>
+					<td><a href="/{{ user.username }}"><img src="{{ user.gravatar(size=50) }}" alt=""><p>{{user.username}}</a></p></td>
+					<td>{{user.record_count(user)}}</td>
+					<td>{{user.member_since.strftime('%m/%d/%y')}}</td>
+					<td>{{user.last_seen.strftime('%m/%d/%y')}}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>  
+	</div>
+</div> 
 {% endmacro %}

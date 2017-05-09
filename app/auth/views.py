@@ -17,13 +17,13 @@ def login():
 		user = User.query.filter_by(email=form.email.data).first()
 		if user is not None and user.verify_password(form.password.data):
 			login_user(user, form.remember_me.data)
-			return redirect(request.args.get('next') or url_for('main.index'))
+			return redirect(request.args.get('next') or url_for("main.user", username=user.username))
 		flash('invalid username or password', 'error')
 
-	if current_user.is_anonymous:
-		return render_template('auth/login.html', form=form)
-	else:
-		return redirect(url_for('main.index'))
+	# if current_user.is_anonymous:
+		# return render_template('auth/login.html', form=form)
+	# else:
+	return redirect(url_for('main.index'))
 
 
 @auth.route('/logout')
