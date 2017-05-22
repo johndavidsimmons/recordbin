@@ -6,15 +6,17 @@
 
 {% block page_content %}
 <div>
-
-        	<h1>Change Email</h1>
-        {% from 'render_field.html' import render_field %}
-        <form action method="post">
-    		{{ form.csrf_token }}
-    	    {{ render_field(form.email) }}
-    	    {{ render_field(form.password) }}
-    	    <button class="btn" type="submit" name="submit">Change Email</button>
-        </form>
-
+	<div class="row">
+		<div class="col-sm-6">
+	    	<h1>Change Email Address</h1>
+		    {% from 'render_field.html' import render_field %}
+		    <form action method="post">
+				{{ form.csrf_token }}
+			    {{ render_field(form.email, class="form-control") }}
+			    {{ render_field(form.password, class="form-control") }}
+			    <button type="submit" name="submit" class="btn btn-primary btn-lg margin-push">Change Email Address</button>
+		    </form>
+		</div>
+	</div>
 </div>
 {% endblock %}

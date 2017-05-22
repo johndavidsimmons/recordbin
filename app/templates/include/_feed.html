@@ -28,7 +28,7 @@
                         var dateOptions = { year : "2-digit", day : "numeric", month : "numeric"}
                         var d = new Date(dataArray[i]['timestamp']).toLocaleDateString('en-US', dateOptions);
 
-                        var html_string = '<div id=' + dataArray[i]["id"] + ' class="media"><div class="media-left"><img style="height:25px;" src="' + dataArray[i]['gravatar']+'" class="media-object media-top"></div><div class="media-body"><p class="media-heading"><a href=/'+ dataArray[i]["user"] + '>' + dataArray[i]["user"] + '</a> <i>added</i><strong> ' + dataArray[i]["artist"] + '</strong> - <strong>' + dataArray[i]["artist"] + ' </strong><i>on</i> ' + d +'</p></div></div>'
+                        var html_string = '<div id=' + dataArray[i]["id"] + ' class="media"><div class="media-left"><img style="height:25px;" src="' + dataArray[i]['gravatar']+'" class="media-object media-top"></div><div class="media-body"><p class="media-heading"><a href=/'+ dataArray[i]["user"] + '>' + dataArray[i]["user"] + '</a> <i>added</i><strong> ' + dataArray[i]["artist"] + '</strong> - <strong>' + dataArray[i]["title"] + ' </strong><i>on</i> ' + d +'</p></div></div>'
 
                         if (i < 3) {
 

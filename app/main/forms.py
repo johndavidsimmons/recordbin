@@ -14,7 +14,7 @@ class NameForm(Form):
 
 class EditProfileForm(Form):
 
-    name = StringField('Real name', validators=[
+    name = StringField('Real Name', validators=[
         Length(0, 64)])
     location = StringField('Location', validators=[
         Length(0, 64)])
@@ -41,7 +41,7 @@ class EditProfileAdminForm(Form):
 
     role = SelectField('Role', coerce=int)
 
-    name = StringField('Real name', validators=[
+    name = StringField('Real Name', validators=[
         Length(0, 64)])
 
     location = StringField('Location', validators=[

@@ -1,27 +1,35 @@
 {% extends "/extend/_base.html" %}
 
 {% block title %}
-	Record Bin - Edit Profile
+	{{ super() }}Edit Profile
 {% endblock %}
 
 {% block page_content %}
 <div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Settings</h1>       
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            {% include "include/_editprofile.html" %}        
+        </div>
 
-        	<h1>Edit Profile</h1>
-            <img class="gravatar" src="{{ user.gravatar(size=100) }}" alt="">
-            <p>Profile images via <a href="http://en.gravatar.com/" target="_blank">Gravatar</a></p>
-        {% from 'render_field.html' import render_field %}
-        <form action method="post">
-    		{{ form.csrf_token }}
-    	    {{ render_field(form.email) }}
-    	    {{ render_field(form.username) }}
-            {{ render_field(form.name) }}
-    	    {{ render_field(form.confirmed) }}
-    	    {{ render_field(form.role) }}
-            {{ render_field(form.location) }}
-            {{ render_field(form.about_me) }}
-            <button class="btn" type="submit" name="submit">Submit</button>
-        </form>
-
+        <div class="col-sm-8 push">
+            {% from 'render_field.html' import render_field %}
+            <form action method="post">
+                    {{ form.csrf_token }}
+                    {{ render_field(form.name, class="form-control") }}
+                    {{ render_field(form.location, class="form-control") }}
+                    {{ render_field(form.about_me, class="form-control") }}
+                    {{ render_field(form.email, class="form-control") }}
+                    {{ render_field(form.username, class="form-control") }}
+                    {{ render_field(form.confirmed) }}
+                    {{ render_field(form.role, class="form-control") }}
+                    <button type="submit" name="submit" class="btn btn-primary btn-lg margin-push">Submit</button>
+            </form>  
+        </div>  
+    </div>
 </div>
 {% endblock %}
