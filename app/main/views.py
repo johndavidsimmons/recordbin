@@ -192,7 +192,7 @@ def edit_profile_admin(id):
 		user.about_me = form.about_me.data
 		db.session.add(user)
 		db.session.commit()
-		flash('The profile has been updated.', 'success')
+		flash('Your settings have been updated.', 'success')
 		return redirect(url_for('.user', username=user.username))
 	form.email.data = user.email
 	form.username.data = user.username
@@ -255,8 +255,10 @@ def delete_record(hashed_id):
 def update_record(hashed_id):
 	decoded_id = decode_id(str(hashed_id))
 	record = Title.query.filter_by(id=decoded_id).first_or_404()
+	if record:
+		artist = Artist.query.filter_by(id=record.artist_id).first().name
 	record.update_from_mail()
-	flash("{} Arrived!".format(record.name), 'success')
+	flash("{} -{} Arrived!".format(artist, record.name), 'success')
 	return redirect(url_for('.user', username=current_user.username))
 
 

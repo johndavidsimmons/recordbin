@@ -210,10 +210,10 @@ class FlaskClientTestCase(unittest.TestCase):
 		response = self.client.get(url_for("auth.register"))
 		assert "Register" in response.data
 		response = self.register(
-			email="test@example.com", username="test", password="test", password2="test")
+			email="test@example.com", username="test", password="testtest", password2="testtest")
 		assert "A confirmation email has been sent to you by email." in response.data
 
-		response = self.login(email="test@example.com", password="test")
+		response = self.login(email="test@example.com", password="testtest")
 		assert "Need another confirmation email?" in response.data
 
 		test_user = User.query.filter_by(email="test@example.com").first()
@@ -248,7 +248,7 @@ class FlaskClientTestCase(unittest.TestCase):
 		assert "Register" in response.data
 		response = self.register(
 			email="yolo@example.com", username="!!!", password="test", password2="test")
-		assert "Usernames can only be letters and numbers" in response.data
+		assert "Usernames can only contain letters and numbers" in response.data
 
 	def test_register_fields_required(self):
 		response = self.client.get(url_for("auth.register"))

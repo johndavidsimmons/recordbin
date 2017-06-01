@@ -40,7 +40,12 @@
                         	<td style="width: 10%;" class="break-all" >{{ r[0].timestamp.strftime('%-m/%-d/%y') }}</td>
 
                             {% if current_user.is_authenticated and user == current_user %}
-                                <td><a href="/delete-record/{{ kwargs['encode_id'](r[0].id)}}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                <td>
+                                {% if r[0].mail == 1 %}
+                                <a style="padding-right: 1em;" href="/update-record/{{ kwargs['encode_id'](r[0].id) }}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a>
+                                {% endif %}
+                                <a href="/delete-record/{{ kwargs['encode_id'](r[0].id)}}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                                </td>
                             {% endif %}
                         	</tr>
                         {% endfor %}

@@ -26,10 +26,10 @@ class RegistrationForm(Form):
 
 	username = StringField('Username', validators=[
 		Required(message="Username is required"),
-		Length(1, 64),
+		Length(min=3, message="Usernames must be at least 3 characters"),
 		Regexp(
 			'^[A-Za-z0-9]', 0,
-			'Usernames can only be letters and numbers'
+			'Usernames can only contain letters and numbers'
 		),
 		NoneOf(
 			[x.lower() for x in forbidden_usernames],
@@ -41,6 +41,7 @@ class RegistrationForm(Form):
 
 	password = PasswordField('Password', validators=[
 		Required(message="Password is required"),
+		Length(min=8, message="Passwords must be at least 8 characters"),
 		EqualTo('password2', message='Passwords must match.')])
 
 	password2 = PasswordField('Confirm password', validators=[
