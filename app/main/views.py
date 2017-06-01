@@ -258,7 +258,7 @@ def update_record(hashed_id):
 	if record:
 		artist = Artist.query.filter_by(id=record.artist_id).first().name
 	record.update_from_mail()
-	flash("{} -{} Arrived!".format(artist, record.name), 'success')
+	flash("{} - {} Arrived!".format(artist, record.name), 'success')
 	return redirect(url_for('.user', username=current_user.username))
 
 
