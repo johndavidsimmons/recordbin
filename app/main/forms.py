@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, SubmitField, BooleanField, TextAreaField, SelectField
+from wtforms import StringField, SubmitField, BooleanField, TextAreaField, SelectField, HiddenField
 from wtforms.validators import Required, Email, Length, Regexp, ValidationError
 from ..models import Role, User, Format, Size
 import datetime
@@ -71,11 +71,11 @@ class EditProfileAdminForm(Form):
 
 
 class AddRecordForm(Form):
-    artist = StringField('Artist', validators=[
-        Required()])
+    artist = StringField('Artist*', validators=[
+        Required(message="Artist is required")])
 
-    title = StringField('Title', validators=[
-        Required()])
+    title = StringField('Title*', validators=[
+        Required(message="Title is required")])
 
     year = SelectField("Year", coerce=int, validators=[
         Required()])
@@ -84,8 +84,8 @@ class AddRecordForm(Form):
 
     notes = TextAreaField('Notes')
 
-    color = StringField('Color', validators=[
-        Required()])
+    color = StringField('Color*', validators=[
+        Required(message="Please provide a color")])
 
     size = SelectField('Size', coerce=int)
 
@@ -95,10 +95,6 @@ class AddRecordForm(Form):
         """Auto fill dropdown menus with choices"""
         super(AddRecordForm, self).__init__(*args, **kwargs)
 
-        # Formats
-        # formats = Format.query.order_by(Format.id).all()
-        # self.format.choices = [(format.id, format.name) for format in formats]
-
         # Record Sizes
         self.size.choices = [(size.id, size.name) for size in Size.query.order_by(Size.id).all()]
 
@@ -106,3 +102,39 @@ class AddRecordForm(Form):
         years = list(xrange(1950, datetime.datetime.now().year + 1))
         years.sort(reverse=True)
         self.year.choices = [(value, value) for value in years]
+
+
+class EditRecordForm(Form):
+    edit_id = HiddenField("")
+
+    edit_artist = StringField('Artist*', validators=[
+        Required(message="Artist is required")])
+
+    edit_title = StringField('Title*', validators=[
+        Required(message="Title is required")])
+
+    edit_year = SelectField("Year", coerce=int, validators=[
+        Required()])
+
+    # format = SelectField('Format', coerce=int)
+
+    edit_notes = TextAreaField('Notes')
+
+    edit_color = StringField('Color*', validators=[
+        Required(message="Please provide a color")])
+
+    edit_size = SelectField('Size', coerce=int)
+
+    edit_incoming = BooleanField('Mail')
+
+    def __init__(self, *args, **kwargs):
+        """Auto fill dropdown menus with choices"""
+        super(EditRecordForm, self).__init__(*args, **kwargs)
+
+        # Record Sizes
+        self.edit_size.choices = [(size.id, size.name) for size in Size.query.order_by(Size.id).all()]
+
+        # Release Years
+        years = list(xrange(1950, datetime.datetime.now().year + 1))
+        years.sort(reverse=True)
+        self.edit_year.choices = [(value, value) for value in years]

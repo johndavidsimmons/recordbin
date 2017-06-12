@@ -7,10 +7,11 @@ from ..models import (
 	User, Role, Artist, Title,
 	Size, Format, gravatar, user_local_time, encode_id, decode_id)
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm
+from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm, EditRecordForm
 from ..decorators import admin_required
 from datetime import datetime
 from ..auth.forms import LoginForm
+import urlparse
 
 
 @main.route('/users', methods=['GET', 'POST'])
@@ -44,7 +45,7 @@ def index():
 	if form.validate_on_submit():
 		user = User.query.filter_by(email=form.email.data).first()
 		if user is not None and user.verify_password(form.password.data):
-			login_user(user, form.remember_me.data)
+			login_user(user, remember=form.remember_me.data)
 			return redirect(request.args.get('next') or url_for("main.user", username=user.username))
 		flash('invalid username or password', 'error')		
 
@@ -67,6 +68,7 @@ def user(username):
 
 	if current_user.is_authenticated and user == current_user:
 		form = AddRecordForm()
+		edit_form = EditRecordForm()
 
 		if form.validate_on_submit():
 			# Form data
@@ -103,8 +105,50 @@ def user(username):
 			flash('{} - {} added'.format(artist, title), 'success')
 			return redirect(url_for('.user', username=current_user.username))
 
+		elif edit_form.validate_on_submit():
+
+			# decoded_id = decode_id(str(hashed_id))
+			# record = Title.query.filter_by(id=decoded_id).first_or_404()
+
+			record_id = decode_id(str(edit_form.edit_id.data))
+
+			record = Title.query.filter_by(id=record_id).first_or_404()
+
+			if record:
+
+				artist = edit_form.edit_artist.data
+				title = edit_form.edit_title.data
+				format_id = 1
+				color = edit_form.edit_color.data
+				size_id = edit_form.edit_size.data
+				year = edit_form.edit_year.data
+				notes = edit_form.edit_notes.data
+				mail = 1 if edit_form.edit_incoming.data else 0
+
+				a = Artist.query.filter_by(name=artist).first()
+				if a is None:
+					Artist(name=form.edit_artist.data).add_to_table()
+					artist_id = Artist.query.filter_by(name=artist).first().id
+				else:
+					artist_id = a.id
+
+				record.artist_id = artist_id
+				record.name = title
+				record.color = color
+				record.size_id = size_id
+				record.year = year
+				record.notes = notes
+				record.mail = mail
+
+				db.session.add(record)
+				db.session.commit()
+
+				flash('{} - {} Updated!'.format(artist, title), 'success')
+				return redirect(url_for('.user', username=current_user.username))		
+
 	else:
 		form = None
+		edit_form = None
 
 	if user != current_user:
 		user_records = Title.query.join(
@@ -121,7 +165,7 @@ def user(username):
 
 	return render_template(
 		'user.html',
-		form=form, user=user, followers=followers,
+		form=form, edit_form=edit_form, user=user, followers=followers,
 		followers_count=followers_count, followed=followed, followed_count=followed_count,
 		seven_inches=[record for record in user_records if record[2] == 7 and record[4] == 0],
 		ten_inches=[record for record in user_records if record[2] == 10 and record[4] == 0],
@@ -242,24 +286,14 @@ def delete_record(hashed_id):
 	record = Title.query.filter_by(id=decoded_id).first_or_404()
 
 	if record.owner_id == current_user.id:
+		artist = Artist.query.filter_by(id=record.artist_id).first().name
+		title = record.name
 		record.delete_from_table()
-		flash("DELETED", 'success')
+		flash("{} - {} Deleted!".format(artist, title), 'success')
 		return redirect(url_for('.user', username=current_user.username))
 	else:
 		flash("You dont own that", 'error')
 		return redirect(url_for('.user', username=current_user.username))
-
-
-@main.route('/update-record/<hashed_id>')
-@login_required
-def update_record(hashed_id):
-	decoded_id = decode_id(str(hashed_id))
-	record = Title.query.filter_by(id=decoded_id).first_or_404()
-	if record:
-		artist = Artist.query.filter_by(id=record.artist_id).first().name
-	record.update_from_mail()
-	flash("{} - {} Arrived!".format(artist, record.name), 'success')
-	return redirect(url_for('.user', username=current_user.username))
 
 
 @main.route('/download/<username>')

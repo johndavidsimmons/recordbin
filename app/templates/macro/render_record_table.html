@@ -22,7 +22,7 @@
                     <tbody>
                         {% for r in list %}
                         	<tr>
-                        	<td style="width: 20%;" class="keep-all">{{ r[1] }}</td>
+                        	<td id="{{ kwargs['encode_id'](r[0].id)}}" style="width: 20%;" class="keep-all">{{ r[1] }}</td>
 
                         	<!-- Title -->
                         	<td style="width: 20%;" class="keep-all" >{{ r[0].name }}</td>
@@ -41,10 +41,7 @@
 
                             {% if current_user.is_authenticated and user == current_user %}
                                 <td>
-                                {% if r[0].mail == 1 %}
-                                <a style="padding-right: 1em;" href="/update-record/{{ kwargs['encode_id'](r[0].id) }}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a>
-                                {% endif %}
-                                <a href="/delete-record/{{ kwargs['encode_id'](r[0].id)}}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                                <span class="glyphicon glyphicon-pencil pointer" aria-hidden="true" data-toggle="modal" data-target=".edit-modal"></span>
                                 </td>
                             {% endif %}
                         	</tr>
