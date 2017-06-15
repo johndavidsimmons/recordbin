@@ -9,13 +9,11 @@
     <div class="modal-body" style="overflow-y: auto; height: 500px;">
         <div class="row">
           <div class="col-sm-12">
-            <ul>
             {% for f in followed %}
               {% if f.followed.username != user.username%}
-              <li><img class="gravatar" src="{{ f.followed.gravatar(size=50) }}" alt=""><p><a href="/{{f.followed.username}}">{{f.followed.username}}</a></p></li>
+              <div><img class="gravatar" src="{{ f.followed.gravatar(size=50) }}" alt=""><p><a href="/{{f.followed.username}}">{{f.followed.username}}</a></p></div>
               {% endif %}
             {% endfor %}
-            </ul>
           </div>
         </div> 		
 		</div>
@@ -33,13 +31,11 @@
     <div class="modal-body" style="overflow-y: auto; height: 500px;">
       <div class="row">
         <div class="col-sm-12">
-          <ul>
           {% for f in followers %}
             {% if f.follower.username != user.username%}
-            <li><img class="gravatar" src="{{ f.follower.gravatar(size=50) }}" alt=""><p><a href="/{{f.follower.username}}">{{f.follower.username}}</a></p></li>
+            <div><img class="gravatar" src="{{ f.follower.gravatar(size=50) }}" alt=""><p><a href="/{{f.follower.username}}">{{f.follower.username}}</a></p></div>
             {% endif %}
           {% endfor %}
-          </ul>
         </div>
       </div>
 		</div>
