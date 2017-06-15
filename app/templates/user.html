@@ -50,6 +50,15 @@
 	</div>
 </div> 
 {% endif %}
+      
+
+
+<div class="form-group has-feedback">
+    <label class="control-label">Filter</label><span id="results" class="label label-primary pull-right" style="display: none;"> Results</span>
+    <input id="search" type="text" class="form-control" placeholder="Artist/Title" autocomplete="off" onkeyup="searchFunction()">
+    <i id="searchClear" style="cursor: pointer; pointer-events: all;" class="glyphicon glyphicon-remove-circle form-control-feedback"></i>
+</div>
+
 
 <!-- Records -->
 <div class="row">
@@ -74,6 +83,7 @@
 	  
 <script src="static/js/size_nav.js" ></script>
 <script src="static/js/edit_record.js" ></script>
+<script src="static/js/search.js"></script>
 <script type="text/javascript">
 
 	if ($(".error").length > 0) {

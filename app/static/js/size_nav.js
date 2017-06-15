@@ -2,6 +2,8 @@ var $seven = $('#seven_inches');
 var $ten = $('#ten_inches');
 var $twelve = $('#twelve_inches');
 var $mail = $('#mail');
+var $searchDiv = $($("#search").parents()[0]);
+
 
 $('#sizes li').on('click', function(){
 
@@ -10,6 +12,17 @@ $('#sizes li').on('click', function(){
 	  $(this).removeClass('active');
 
 	});
+
+
+	// Clear the search box && show all rows
+	$("#search").val("");
+	$("#results").hide();
+
+	allRows = document.querySelectorAll("tr");
+
+	for (var i = allRows.length - 1; i >= 0; i--) {
+		allRows[i].style.display = "";
+	}
  
  	// Active Class Navigator
 	if  ( $(this).hasClass('active') != true) {
@@ -22,6 +35,7 @@ $('#sizes li').on('click', function(){
 			$twelve.hide();
 			$mail.hide();
 			$seven.show();
+			$searchDiv.show();
 			break;
 
 		case "10 Inches":
@@ -29,6 +43,7 @@ $('#sizes li').on('click', function(){
 			$twelve.hide();
 			$mail.hide();
 			$ten.show();
+			$searchDiv.show();
 			break;
 
 		case "12 Inches":
@@ -36,6 +51,7 @@ $('#sizes li').on('click', function(){
 			$ten.hide();
 			$mail.hide();
 			$twelve.show();
+			$searchDiv.show();
 			break;
 
 		case "Incoming":
@@ -43,6 +59,7 @@ $('#sizes li').on('click', function(){
 	  		$ten.hide();
 	  		$twelve.hide();
 	 		$mail.show();
+	 		$searchDiv.hide();
 			break;	
 
 		default:
@@ -50,6 +67,7 @@ $('#sizes li').on('click', function(){
 			$seven.show();
 			$ten.show();
 			$twelve.show();
+			$searchDiv.show();
 			break;
 	}
 })
