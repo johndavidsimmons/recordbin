@@ -32,13 +32,11 @@ def server_shutdown():
 
 	return 'Shutting down...'
 
-
 @main.route('/', methods=['GET', 'POST'])
 def index():
 
 	if current_user.is_authenticated:
 		return redirect(url_for("main.user", username=current_user.username))
-
 
 	form = LoginForm()
 
@@ -48,12 +46,6 @@ def index():
 			login_user(user, remember=form.remember_me.data)
 			return redirect(request.args.get('next') or url_for("main.user", username=user.username))
 		flash('invalid username or password', 'error')		
-
-	# if current_user.is_anonymous:
-		# return redirect(url_for('main.index',form=form))
-	# else:
-		# return redirect(url_for('main.index'))
-
 	return render_template('index.html', form=form)
 
 
