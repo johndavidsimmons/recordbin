@@ -119,7 +119,7 @@ class User(UserMixin, db.Model):
 	migrate_test = db.Column(db.String(32))
 
 	# FK & Relationship
-	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=2)
 	followed = db.relationship(
 		'Follow',
 		foreign_keys=[Follow.follower_id],

@@ -72,10 +72,12 @@ class EditProfileAdminForm(Form):
 
 class AddRecordForm(Form):
     artist = StringField('Artist*', validators=[
-        Required(message="Artist is required")])
+        Required(message="Artist is required"),
+        Length(1, 63, message="Artist name has a 64 character limit")])
 
     title = StringField('Title*', validators=[
-        Required(message="Title is required")])
+        Required(message="Title is required"),
+        Length(1, 63, message="Title field has a 64 character limit")])
 
     year = SelectField("Year", coerce=int, validators=[
         Required()])
@@ -85,7 +87,8 @@ class AddRecordForm(Form):
     notes = TextAreaField('Notes')
 
     color = StringField('Color*', validators=[
-        Required(message="Please provide a color")])
+        Required(message="Please provide a color"),
+        Length(1, 63, message="Color field has a 64 character limit")])
 
     size = SelectField('Size', coerce=int)
 
