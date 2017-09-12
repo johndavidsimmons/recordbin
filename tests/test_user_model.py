@@ -110,7 +110,10 @@ class UserModelTestCase(unittest.TestCase):
 
 	def test_roles_and_permissions(self):
 		u = User(email='john@example.com', password='cat')
+		db.session.add(u)
+		db.session.commit()
 		self.assertTrue(u.can(Permission.USE))
+		self.assertTrue(u.role_id == 2)
 
 	def test_anonymous_user(self):
 		u = AnonymousUser()
