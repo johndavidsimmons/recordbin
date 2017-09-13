@@ -255,8 +255,8 @@ def follow(username):
 	current_user.follow(user)
 	send_email(
 		user.email,
-		'... Is following you',
-		'auth/email/followed_by', user=user)
+		'{} is now following you'.format(current_user.username),
+		'auth/email/followed_by', user=user, current_user=current_user)
 	flash('You are now following {}.'.format(username), 'success')
 	return redirect(url_for('.user', username=username))
 
