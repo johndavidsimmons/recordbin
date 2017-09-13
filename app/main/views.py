@@ -12,6 +12,7 @@ from ..decorators import admin_required
 from datetime import datetime
 from ..auth.forms import LoginForm
 import urlparse
+from ..email import send_email
 
 
 @main.route('/users', methods=['GET', 'POST'])
@@ -252,6 +253,10 @@ def follow(username):
 		flash('You are already following this user.', '')
 		return redirect(url_for('.user', username=username))
 	current_user.follow(user)
+	send_email(
+		user.email,
+		'... Is following you',
+		'auth/email/followed_by', user=user)
 	flash('You are now following {}.'.format(username), 'success')
 	return redirect(url_for('.user', username=username))
 
