@@ -142,7 +142,8 @@ def user(username):
 					image = Image(record_id=record.id, image_url=image_url)
 					image.add_to_table()
 				else:
-					i.image_url = image_url
+					if image_url:
+						i.image_url = image_url
 
 				db.session.commit()
 

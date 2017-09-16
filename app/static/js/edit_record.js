@@ -19,11 +19,11 @@ editPencils.on("click", function(){
 	record_dimensions = parentRow.children();
 	var artist = $(record_dimensions[0]).text();
 	var title = $(record_dimensions[1]).text();
-	var color = $(record_dimensions[2]).text();
-	var year = $(record_dimensions[3]).text();
-	var notes = $(record_dimensions[4]).text();
-	var timestamp = $(record_dimensions[5]).text();
-	var imageURL = $(record_dimensions[6]).attr("value");
+	var color = $(record_dimensions[3]).text();
+	var year = $(record_dimensions[4]).text();
+	var notes = $(record_dimensions[5]).text();
+	var timestamp = $(record_dimensions[6]).text();
+	var imageURL = $(record_dimensions[7]).attr("value");
 	recordId = $(record_dimensions[0]).attr('id');
 	trashcan.attr("href", "delete-record/" + recordId)
 
