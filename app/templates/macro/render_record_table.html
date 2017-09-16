@@ -25,7 +25,15 @@
                         	<td id="{{ kwargs['encode_id'](r[0].id)}}" style="width: 20%;" class="keep-all">{{ r[1] }}</td>
 
                         	<!-- Title -->
-                        	<td style="width: 20%;" class="keep-all" >{{ r[0].name }}</td>
+                        	<td style="width: 20%;" class="keep-all" >{{ r[0].name }} 
+                            <!-- Image -->
+                            {%  if kwargs['images'][r[0].id] %}
+                                
+                                <a href="{{ kwargs['images'][r[0].id] }}" data-toggle="lightbox" data-title="{{ r[1] }} - {{ r[0].name }}">
+                                <span class="glyphicon glyphicon-camera pointer"></span>
+                                </a>
+                            {% endif %}
+                            </td>
 
                         	<!-- Color -->
                         	<td style="width: 10%;" class="keep-all" >{{ r[0].color }}</td>
@@ -38,6 +46,9 @@
 
                         	<!-- Timestamp -->
                         	<td style="width: 10%;" class="keep-all" >{{ r[0].timestamp.strftime('%-m/%-d/%y') }}</td>
+
+                            <!-- Image URL Hidden -->
+                            <td style="display:none" value="{{ kwargs['images'][r[0].id] }}"></td>
 
                             {% if current_user.is_authenticated and user == current_user %}
                                 <td>

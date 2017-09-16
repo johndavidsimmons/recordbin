@@ -5,7 +5,7 @@ from flask_login import login_required, current_user, login_user
 from .. import db
 from ..models import (
 	User, Role, Artist, Title,
-	Size, Format, gravatar, user_local_time, encode_id, decode_id)
+	Size, Format, gravatar, user_local_time, encode_id, decode_id, Image)
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, AddRecordForm, EditRecordForm
 from ..decorators import admin_required
@@ -117,6 +117,7 @@ def user(username):
 				year = edit_form.edit_year.data
 				notes = edit_form.edit_notes.data
 				mail = 1 if edit_form.edit_incoming.data else 0
+				image_url = edit_form.image_url.data
 
 				a = Artist.query.filter_by(name=artist).first()
 				if a is None:
@@ -134,6 +135,15 @@ def user(username):
 				record.mail = mail
 
 				db.session.add(record)
+				
+				i = Image.query.filter_by(record_id=record.id).first()
+
+				if i is None:
+					image = Image(record_id=record.id, image_url=image_url)
+					image.add_to_table()
+				else:
+					i.image_url = image_url
+
 				db.session.commit()
 
 				flash('{} - {} Updated!'.format(artist, title), 'success')
@@ -155,6 +165,7 @@ def user(username):
 
 	# Sort by artist name, then title year
 	user_records = sorted(user_records, key=lambda x: (x[1].lower(), x[0].year))
+	images = {x.record_id: x.image_url for x in Image.query.all()}
 
 	return render_template(
 		'user.html',
@@ -167,7 +178,7 @@ def user(username):
 		ten_inches_mail=[record for record in user_records if record[2] == 10 and record[4] == 1],
 		twelve_inches_mail=[record for record in user_records if record[2] == 12 and record[4] == 1],
 		user_records_count=len(user_records),
-		encode_id=encode_id, now=now)
+		encode_id=encode_id, now=now, images=images)
 
 
 @main.route('/<username>/follower_records', methods=["GET", "POST"])

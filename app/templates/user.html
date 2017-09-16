@@ -67,14 +67,14 @@
 
 		<!-- size, list, current_user, user=None -->
 		{% from "macro/render_record_table.html" import render_record_table %}
-			    {{ render_record_table(seven_inches, current_user, user=user, size="7", id="seven_inches", encode_id=encode_id) }}
-				{{ render_record_table(ten_inches, current_user, user=user, size="10", id="ten_inches", encode_id=encode_id) }}
-				{{ render_record_table(twelve_inches, current_user, user=user, size="12", id="twelve_inches", encode_id=encode_id) }}
+			    {{ render_record_table(seven_inches, current_user, user=user, size="7", id="seven_inches", encode_id=encode_id, images=images) }}
+				{{ render_record_table(ten_inches, current_user, user=user, size="10", id="ten_inches", encode_id=encode_id, images=images) }}
+				{{ render_record_table(twelve_inches, current_user, user=user, size="12", id="twelve_inches", encode_id=encode_id, images=images) }}
 
 				<div id="mail">
-				    {{ render_record_table(seven_inches_mail, current_user, user=user, size="7", id="seven_inches_mail", encode_id=encode_id) }}
-					{{ render_record_table(ten_inches_mail, current_user, user=user, size="10", id="ten_inches_mail", encode_id=encode_id) }}
-					{{ render_record_table(twelve_inches_mail, current_user, user=user, size="12", id="twelve_inches_mail", encode_id=encode_id) }}
+				    {{ render_record_table(seven_inches_mail, current_user, user=user, size="7", id="seven_inches_mail", encode_id=encode_id, images=images) }}
+					{{ render_record_table(ten_inches_mail, current_user, user=user, size="10", id="ten_inches_mail", encode_id=encode_id, images=images) }}
+					{{ render_record_table(twelve_inches_mail, current_user, user=user, size="12", id="twelve_inches_mail", encode_id=encode_id, images=images) }}
 				</div>
 		</div>
 	</div>

@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, SubmitField, BooleanField, TextAreaField, SelectField, HiddenField
+from wtforms import StringField, SubmitField, BooleanField, TextAreaField, SelectField, HiddenField, FileField
 from wtforms.validators import Required, Email, Length, Regexp, ValidationError
 from ..models import Role, User, Format, Size
 import datetime
@@ -129,6 +129,8 @@ class EditRecordForm(Form):
     edit_size = SelectField('Size', coerce=int)
 
     edit_incoming = BooleanField('Mail')
+
+    image_url = HiddenField("")
 
     def __init__(self, *args, **kwargs):
         """Auto fill dropdown menus with choices"""

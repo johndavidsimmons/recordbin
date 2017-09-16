@@ -12,6 +12,7 @@
                 {% from 'render_field.html' import render_field %}
                         {{ edit_form.csrf_token }}
                         {{ edit_form.edit_id }}
+                        {{ edit_form.image_url }}
                         {{ render_field(edit_form.edit_artist, class="form-control") }}
                         {{ render_field(edit_form.edit_title, class="form-control") }}
                         {{ render_field(edit_form.edit_color, class="form-control") }}
@@ -25,7 +26,13 @@
                             <div class="col-sm-2">
                                 {{ render_field(edit_form.edit_incoming) }}
                             </div>
-                            <div class="col-sm-6"></div>
+                            <div class="col-sm-2">
+                                <button id="fileSelect" class="btn btn-default"><span class="glyphicon glyphicon-camera"></span> Image Upload</button>
+                                <input type="file" id="fileElem" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+                            </div>
+                            <div class="col-sm-2">
+                                <div style="margin-top: 6px; height: 50px; width: 50px; background-color: lightgray" id="gallery"></div>
+                            </div>
                         </div>
                         {{ render_field(edit_form.edit_notes, class="form-control") }}
                         <button type="submit" name="edit-record-save" class="btn btn-primary btn-lg margin-push btn-block">Save</button>

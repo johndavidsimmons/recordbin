@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 from app import create_app, db
-from app.models import User, Follow, Role, Title, Artist, Permission, Size, Format, user_local_time
+from app.models import User, Follow, Role, Title, Artist, Permission, Size, Format, user_local_time, Image
 from flask_script import Manager
 from flask_script import Shell
 from flask.ext.migrate import Migrate, MigrateCommand
@@ -30,7 +30,7 @@ def make_shell_context():
 		app=app, db=db, User=User,
 		Role=Role, Artist=Artist, Title=Title,
 		Permission=Permission, Follow=Follow, Size=Size,
-		Format=Format, user_local_time=user_local_time)
+		Format=Format, user_local_time=user_local_time, Image=Image)
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)

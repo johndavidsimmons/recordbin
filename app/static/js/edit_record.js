@@ -10,6 +10,9 @@ var trashcan = $('h4.modal-title > a');
 // Autofill the form
 editPencils.on("click", function(){
 
+	// Clear upload thumbnail
+	$("#gallery").css("background-image", "none");
+
 	// Table Dimensions
 	tableId = $(this).closest("div.panel").attr("id");
 	parentRow = $(this).closest("tr");
@@ -20,6 +23,7 @@ editPencils.on("click", function(){
 	var year = $(record_dimensions[3]).text();
 	var notes = $(record_dimensions[4]).text();
 	var timestamp = $(record_dimensions[5]).text();
+	var imageURL = $(record_dimensions[6]).attr("value");
 	recordId = $(record_dimensions[0]).attr('id');
 	trashcan.attr("href", "delete-record/" + recordId)
 
@@ -54,4 +58,24 @@ editPencils.on("click", function(){
 		sizeInput.val("3")
 	}
 
+	// Load the image
+	if (imageURL) {
+		var tokens = imageURL.split('/');
+		tokens.splice(6, 0, 't_media_lib_thumb');
+		var thumbURL = tokens.join('/');
+
+		var img = $("<img />").attr('src', thumbURL)
+		.on('load', function() {
+		    if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+		        console.log('broken image!');
+		    } else {
+		        $("#gallery").css({
+		        	'background-image': 'url(' + thumbURL + ')',
+		        	'background-size': 'cover',
+		        	'background-repeat': 'no-repeat',
+		        	'background-position' : 'center center'  
+		        });
+		    }
+		});
+	} 
 });

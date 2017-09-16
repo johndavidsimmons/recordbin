@@ -457,6 +457,19 @@ class AnonymousUser(AnonymousUserMixin):
 	def is_administrator(self):
 		return False
 
+class Image(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	record_id = db.Column(db.Integer, db.ForeignKey('titles.id'))
+	image_url = db.Column(db.String(512))
+
+	def add_to_table(self):
+		db.session.add(self)
+		db.session.commit()
+
+	def delete_from_table(self):
+		db.session.delete(self)
+		db.session.commit()	
+
 
 @login_manager.user_loader
 def load_user(user_id):
