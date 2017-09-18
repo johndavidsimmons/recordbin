@@ -17,7 +17,7 @@ from ..email import send_email
 
 @main.route('/users', methods=['GET', 'POST'])
 def all_users():
-	all_users = User.query.all()
+	all_users = sorted(User.query.all(), key=lambda x: x.username)
 	return render_template('users.html', all_users=all_users)
 
 
@@ -305,9 +305,10 @@ def delete_record(hashed_id):
 	if record.owner_id == current_user.id:
 		artist = Artist.query.filter_by(id=record.artist_id).first().name
 		title = record.name
-		record.delete_from_table()
 		if image:
 			image.delete_from_table()
+		record.delete_from_table()
+		
 		flash("{} - {} Deleted!".format(artist, title), 'success')
 		return redirect(url_for('.user', username=current_user.username))
 	else:
