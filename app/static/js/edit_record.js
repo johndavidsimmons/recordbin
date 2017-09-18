@@ -11,7 +11,7 @@ var trashcan = $('h4.modal-title > a');
 editPencils.on("click", function(){
 
 	// Clear upload thumbnail
-	$("#gallery").css("background-image", "none");
+	$("#edit_gallery").css("background-image", "none");
 
 	// Table Dimensions
 	tableId = $(this).closest("div.panel").attr("id");
@@ -69,7 +69,7 @@ editPencils.on("click", function(){
 		    if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
 		        console.log('broken image!');
 		    } else {
-		        $("#gallery").css({
+		        $("#edit_gallery").css({
 		        	'background-image': 'url(' + thumbURL + ')',
 		        	'background-size': 'cover',
 		        	'background-repeat': 'no-repeat',

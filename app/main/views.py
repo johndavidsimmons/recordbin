@@ -73,6 +73,8 @@ def user(username):
 			year = form.year.data
 			notes = form.notes.data
 			mail = 1 if form.incoming.data else 0
+			add_image_url = form.add_image_url.data
+
 			a = Artist.query.filter_by(name=artist).first()
 			if a is None:
 				Artist(name=form.artist.data).add_to_table()
@@ -91,6 +93,11 @@ def user(username):
 					name=title, artist_id=artist_id, year=year,
 					format_id=format_id, size_id=size_id, color=color,
 					notes=notes, owner_id=current_user.id, mail=mail).add_to_table()
+				record_id = Title.query.filter_by(name=title, artist_id=artist_id, year=year,
+					format_id=format_id, size_id=size_id, color=color,
+					notes=notes, owner_id=current_user.id, mail=mail).first().id
+				image = Image(record_id=record_id, image_url=add_image_url)
+				image.add_to_table()
 			else:
 				flash('You already own this', 'error')
 				return redirect(url_for('.user', username=current_user.username))
@@ -293,11 +300,14 @@ def unfollow(username):
 def delete_record(hashed_id):
 	decoded_id = decode_id(str(hashed_id))
 	record = Title.query.filter_by(id=decoded_id).first_or_404()
+	image = Image.query.filter_by(record_id=record.id).first()
 
 	if record.owner_id == current_user.id:
 		artist = Artist.query.filter_by(id=record.artist_id).first().name
 		title = record.name
 		record.delete_from_table()
+		if image:
+			image.delete_from_table()
 		flash("{} - {} Deleted!".format(artist, title), 'success')
 		return redirect(url_for('.user', username=current_user.username))
 	else:

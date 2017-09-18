@@ -94,6 +94,8 @@ class AddRecordForm(Form):
 
     incoming = BooleanField('Mail')
 
+    add_image_url = HiddenField("")
+
     def __init__(self, *args, **kwargs):
         """Auto fill dropdown menus with choices"""
         super(AddRecordForm, self).__init__(*args, **kwargs)
