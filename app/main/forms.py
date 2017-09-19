@@ -113,10 +113,12 @@ class EditRecordForm(Form):
     edit_id = HiddenField("")
 
     edit_artist = StringField('Artist*', validators=[
-        Required(message="Artist is required")])
+        Required(message="Artist is required"),
+        Length(1, 63, message="Artist name has a 64 character limit")])
 
     edit_title = StringField('Title*', validators=[
-        Required(message="Title is required")])
+        Required(message="Title is required"),
+        Length(1, 63, message="Title field has a 64 character limit")])
 
     edit_year = SelectField("Year", coerce=int, validators=[
         Required()])
