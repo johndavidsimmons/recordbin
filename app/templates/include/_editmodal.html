@@ -53,8 +53,12 @@ $( "form[name='edit-record']" ).keyup(function() {
       $('#edit_color').val().length == 0
       ) {
       $('button[name="edit-record-save"]').addClass('disabled');
+        $('button[name="edit-record-save"]').click(function( event ) {
+          event.preventDefault();
+        });
   } else {
       $('button[name="edit-record-save"]').removeClass('disabled');
+      $('button[name="edit-record-save"]').unbind("click");
   }
 });
     
