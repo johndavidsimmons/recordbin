@@ -1,4 +1,5 @@
 <div class="modal fade edit-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+<div class="modal fade edit-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document" style="overflow-y: initial !important">
     <div class="modal-content">
     <div class="modal-header">
@@ -13,8 +14,8 @@
                         {{ edit_form.csrf_token }}
                         {{ edit_form.edit_id }}
                         {{ edit_form.image_url }}
-                        {{ render_field(edit_form.edit_artist, class="form-control") }}
-                        {{ render_field(edit_form.edit_title, class="form-control") }}
+                        {{ render_field(edit_form.edit_artist, class="form-control", maxlength="63") }}
+                        {{ render_field(edit_form.edit_title, class="form-control", maxlength="63") }}
                         {{ render_field(edit_form.edit_color, class="form-control") }}
                         <div class="row form-group">
                             <div class="col-sm-2">
