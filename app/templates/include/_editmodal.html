@@ -44,3 +44,18 @@
     </div>
   </div>
 </div>
+
+<script>
+$( "form[name='edit-record']" ).keyup(function() {
+  if (
+      $('#edit_artist').val().length == 0 ||
+      $('#edit_title').val().length == 0 ||
+      $('#edit_color').val().length == 0
+      ) {
+      $('button[name="edit-record-save"]').addClass('disabled');
+  } else {
+      $('button[name="edit-record-save"]').removeClass('disabled');
+  }
+});
+    
+</script>
