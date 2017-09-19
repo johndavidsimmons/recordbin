@@ -112,23 +112,17 @@ class AddRecordForm(Form):
 class EditRecordForm(Form):
     edit_id = HiddenField("")
 
-    edit_artist = StringField('Artist*', validators=[
-        Required(message="Artist is required"),
-        Length(1, 63, message="Artist name has a 64 character limit")])
+    edit_artist = StringField('Artist*')
 
-    edit_title = StringField('Title*', validators=[
-        Required(message="Title is required"),
-        Length(1, 63, message="Title field has a 64 character limit")])
+    edit_title = StringField('Title*')
 
-    edit_year = SelectField("Year", coerce=int, validators=[
-        Required()])
+    edit_year = SelectField("Year", coerce=int)
 
     # format = SelectField('Format', coerce=int)
 
     edit_notes = TextAreaField('Notes')
 
-    edit_color = StringField('Color*', validators=[
-        Required(message="Please provide a color")])
+    edit_color = StringField('Color*')
 
     edit_size = SelectField('Size', coerce=int)
 

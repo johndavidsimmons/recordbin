@@ -51,11 +51,14 @@ editPencils.on("click", function(){
 	}
 
 	if (tableId.indexOf("seven") > -1) {
-		sizeInput.val("1")
+		// sizeInput.val("1");
+		document.querySelector('select[name="edit_size"] option[value="1"]').setAttribute('selected', "selected");
 	} else if (tableId.indexOf("ten") > -1) {
-		sizeInput.val("2")
+		// sizeInput.val("2");
+		document.querySelector('select[name="edit_size"] option[value="2"]').setAttribute('selected', "selected");
 	} else if (tableId.indexOf("twelve") > -1) {
-		sizeInput.val("3")
+		// sizeInput.val("3");
+		document.querySelector('select[name="edit_size"] option[value="3"]').setAttribute('selected', "selected");
 	}
 
 	// Load the image

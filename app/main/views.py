@@ -96,16 +96,18 @@ def user(username):
 				record_id = Title.query.filter_by(name=title, artist_id=artist_id, year=year,
 					format_id=format_id, size_id=size_id, color=color,
 					notes=notes, owner_id=current_user.id, mail=mail).first().id
-				image = Image(record_id=record_id, image_url=add_image_url)
-				image.add_to_table()
+				if add_image_url:
+					image = Image(record_id=record_id, image_url=add_image_url)
+					image.add_to_table()
 			else:
 				flash('You already own this', 'error')
+				flash(request.form)
 				return redirect(url_for('.user', username=current_user.username))
 
 			flash('{} - {} added'.format(artist, title), 'success')
 			return redirect(url_for('.user', username=current_user.username))
 
-		elif edit_form.validate_on_submit():
+		elif request.form.get('edit_id') and edit_form.validate_on_submit():
 
 			# decoded_id = decode_id(str(hashed_id))
 			# record = Title.query.filter_by(id=decoded_id).first_or_404()
@@ -128,7 +130,7 @@ def user(username):
 
 				a = Artist.query.filter_by(name=artist).first()
 				if a is None:
-					Artist(name=form.edit_artist.data).add_to_table()
+					Artist(name=edit_form.edit_artist.data).add_to_table()
 					artist_id = Artist.query.filter_by(name=artist).first().id
 				else:
 					artist_id = a.id
@@ -146,8 +148,9 @@ def user(username):
 				i = Image.query.filter_by(record_id=record.id).first()
 
 				if i is None:
-					image = Image(record_id=record.id, image_url=image_url)
-					image.add_to_table()
+					if image_url:
+						image = Image(record_id=record.id, image_url=image_url)
+						image.add_to_table()
 				else:
 					if image_url:
 						i.image_url = image_url
@@ -174,7 +177,7 @@ def user(username):
 	# Sort by artist name, then title year
 	user_records = sorted(user_records, key=lambda x: (x[1].lower(), x[0].year))
 	images = {x.record_id: x.image_url for x in Image.query.all()}
-
+	flash(request.form)
 	return render_template(
 		'user.html',
 		form=form, edit_form=edit_form, user=user, followers=followers,
