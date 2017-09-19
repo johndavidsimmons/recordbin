@@ -101,7 +101,6 @@ def user(username):
 					image.add_to_table()
 			else:
 				flash('You already own this', 'error')
-				flash(request.form)
 				return redirect(url_for('.user', username=current_user.username))
 
 			flash('{} - {} added'.format(artist, title), 'success')
@@ -177,7 +176,6 @@ def user(username):
 	# Sort by artist name, then title year
 	user_records = sorted(user_records, key=lambda x: (x[1].lower(), x[0].year))
 	images = {x.record_id: x.image_url for x in Image.query.all()}
-	flash(request.form)
 	return render_template(
 		'user.html',
 		form=form, edit_form=edit_form, user=user, followers=followers,
