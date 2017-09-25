@@ -102,8 +102,7 @@ def user(username):
 			else:
 				flash('You already own this', 'error')
 				return redirect(url_for('.user', username=current_user.username))
-
-			flash('{} - {} added'.format(artist, title), 'success')
+			flash('{} - {} added'.format(artist.encode('utf-8'), title.encode('utf-8')), 'success')
 			return redirect(url_for('.user', username=current_user.username))
 
 		elif request.form.get('edit_id') and edit_form.validate_on_submit():
@@ -156,7 +155,7 @@ def user(username):
 
 				db.session.commit()
 
-				flash('{} - {} Updated!'.format(artist, title), 'success')
+				flash('{} - {} Updated!'.format(artist.encode('utf-8'), title.encode('utf-8')), 'success')
 				return redirect(url_for('.user', username=current_user.username))		
 
 	else:
@@ -310,7 +309,7 @@ def delete_record(hashed_id):
 			image.delete_from_table()
 		record.delete_from_table()
 		
-		flash("{} - {} Deleted!".format(artist, title), 'success')
+		flash("{} - {} Deleted!".format(artist.encode('utf-8'), title.encode('utf-8')), 'success')
 		return redirect(url_for('.user', username=current_user.username))
 	else:
 		flash("You dont own that", 'error')
