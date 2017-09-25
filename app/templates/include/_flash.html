@@ -9,11 +9,11 @@
 					alert-success
 				{% else %}
 					alert-info
-				{% endif %}"" role="alert">
+				{% endif %}" role="alert">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<strong>{{ message }}</strong>
+					<strong>{{ message.decode('utf-8') }}</strong>
 				</div>
 			</div>
 		{% endfor %}
