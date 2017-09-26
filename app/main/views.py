@@ -17,7 +17,7 @@ from ..email import send_email
 
 @main.route('/users', methods=['GET', 'POST'])
 def all_users():
-	all_users = sorted(User.query.all(), key=lambda x: x.username)
+	all_users = sorted(User.query.all(), key=lambda x: x.username.lower())
 	return render_template('users.html', all_users=all_users)
 
 
