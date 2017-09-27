@@ -29,6 +29,9 @@
         <li{% if request.path =='/users' %} class="active" {% endif %}>
             <a href="{{ url_for('main.all_users') }}">Users</a>
         </li>
+        <li{% if request.path =='/about' %} class="active" {% endif %}>
+            <a href="{{ url_for('main.about') }}">About</a>
+        </li>
       </ul>
       {% if current_user.is_authenticated %}
           <ul class="nav navbar-nav navbar-right">

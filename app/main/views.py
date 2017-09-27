@@ -20,6 +20,9 @@ def all_users():
 	all_users = sorted(User.query.all(), key=lambda x: x.username.lower())
 	return render_template('users.html', all_users=all_users)
 
+@main.route('/about', methods=['GET', 'POST'])
+def about():
+	return render_template('about.html')
 
 @main.route('/shutdown')
 def server_shutdown():

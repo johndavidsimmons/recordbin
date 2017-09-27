@@ -7,7 +7,7 @@ from ..models import User
 forbidden_usernames = [
 	"users", "login", "register",
 	"home", "index", "/", "edit-profile",
-	"auth", "auth/", "edit-profile/"]
+	"auth", "auth/", "edit-profile/", "about"]
 
 
 class LoginForm(Form):
@@ -26,7 +26,7 @@ class RegistrationForm(Form):
 
 	username = StringField('Username', validators=[
 		Required(message="Username is required"),
-		Length(min=3, message="Usernames must be at least 3 characters"),
+		Length(min=3, max=63, message="Usernames must be between 3-64 characters"),
 		Regexp(
 			'^[A-Za-z0-9]', 0,
 			'Usernames can only contain letters and numbers'
@@ -36,12 +36,13 @@ class RegistrationForm(Form):
 			message="Please choose a different username")])
 
 	email = StringField('Email', validators=[
-		Required(message="Email is required"), Length(1, 64),
+		Required(message="Email is required"), 
+		Length(1, 63, message="Email addresses must be between 3-64 characters"),
 		Email(message="Invalid email address")])
 
 	password = PasswordField('Password', validators=[
 		Required(message="Password is required"),
-		Length(min=8, message="Passwords must be at least 8 characters"),
+		Length(min=8, max=64, message="Passwords must be between 8-64 characters"),
 		EqualTo('password2', message='Passwords must match.')])
 
 	password2 = PasswordField('Confirm password', validators=[
