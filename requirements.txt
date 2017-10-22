@@ -17,6 +17,7 @@ Flask-Script==0.6.6
 Flask-Scss==0.5
 Flask-SendGrid==0.1.0
 Flask-SQLAlchemy==1.0
+Flask-Testing==0.6.2
 Flask-WTF==0.9.4
 ForgeryPy==0.1
 gunicorn==19.6.0
