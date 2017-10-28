@@ -1,16 +1,23 @@
 from datetime import datetime
 from functools import wraps
+import inspect
 import os
+import sys
 import urllib2
 
 from flask_testing import LiveServerTestCase
 from selenium import webdriver
+from selenium.common import exceptions
 
 from app import create_app, db
 from tests.factories.user import UserFactory
 
 # Using flask_testing LiveServerTestCase to run a dev server for local browser testing
 # docs can be found here: http://flask-testing.readthedocs.io/en/latest/
+
+# all possible selenium exception types
+selenium_exception_classes = tuple(
+    x[1] for x in inspect.getmembers(exceptions, inspect.isclass))
 
 
 def screenshot_exceptions(fn):
@@ -19,10 +26,20 @@ def screenshot_exceptions(fn):
     def wrapped(*args, **kwargs):
         try:
             return fn(*args, **kwargs)
+        # FYI, catching the most generic exception class like this is normally not best practice
+        # in the majority of cases, you will want to catch specific exception classes instead
+        # of this catch all. Because we are re-raising the exception in this case, it is okay
         except Exception as e:
-            now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            args[0].driver.save_screenshot(
-                'tests/client/screenshots/{}-failure-{}.png'.format(fn.__name__, now))
+            # check if its a selenium exception before taking a screenshot
+            # (no reason to take a screenshot otherwise)
+            if isinstance(e, selenium_exception_classes):
+                now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                args[0].driver.save_screenshot(
+                    'tests/client/screenshots/{}-failure-{}.png'.format(fn.__name__, now))
+            # get original exception information, including stacktrace
+            exc_info = sys.exc_info()
+            # raise original exception with associated info
+            raise exc_info[0], exc_info[1], exc_info[2]
     return wrapped
 
 
