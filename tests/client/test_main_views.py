@@ -186,6 +186,10 @@ class TestEditDeleteRecord(SeleniumTestBase):
         db.session.add(self.title)
         db.session.commit()
 
+        # these are necessary for when a record is deleted
+        self.artist_name = self.artist.name
+        self.title_name = self.title.name
+
     def navigate_to_edit_record(self):
         ''' logs in user and navigates to the edit record modal '''
         self.login_user(self.test_user.email, self.test_user_password)
@@ -197,94 +201,96 @@ class TestEditDeleteRecord(SeleniumTestBase):
 
         time.sleep(1)
 
-    # @screenshot_exceptions
-    # def test_edit_record(self):
-    #     ''' verify editing a record functionality '''
-    #     self.navigate_to_edit_record()
+    @screenshot_exceptions
+    def test_edit_record(self):
+        ''' verify editing a record functionality '''
+        self.navigate_to_edit_record()
 
-    #     # verify modal is present and has Edit Record as the title
-    #     self.assertTrue(self.driver.find_element_by_class_name('modal-title'))
-    #     self.assertEquals(
-    #         self.driver.find_element_by_class_name('modal-title').text, 'Edit Record')
+        # verify modal is present and has Edit Record as the title
+        self.assertTrue(self.driver.find_element_by_class_name('modal-title'))
+        self.assertEquals(
+            self.driver.find_element_by_class_name('modal-title').text, 'Edit Record')
 
-    #     # complete all new record form fields and click add button
-    #     artist = 'Of Monsters and Men'
-    #     artist_field = self.driver.find_element_by_id('artist')
-    #     artist_field.send_keys(artist)
+        # complete all new record form fields and click add button
+        artist = 'Of Monsters and Men'
+        artist_field = self.driver.find_element_by_id('edit_artist')
+        artist_field.send_keys(artist)
 
-    #     title = 'My Head is an Animal'
-    #     title_field = self.driver.find_element_by_id('title')
-    #     title_field.send_keys(title)
+        title = 'My Head is an Animal'
+        title_field = self.driver.find_element_by_id('edit_title')
+        title_field.send_keys(title)
 
-    #     color_field = self.driver.find_element_by_id('color')
-    #     color_field.send_keys('Black')
+        color_field = self.driver.find_element_by_id('edit_color')
+        color_field.send_keys('Black')
 
-    #     # selecting option in dropdown menu by referencing 'select' parent
-    #     select_size = self.driver.find_element_by_xpath(
-    #         '//select[@name="size"]/option[@value="1"]')
-    #     select_size.click()
+        # selecting option in dropdown menu by referencing 'select' parent
+        select_size = self.driver.find_element_by_xpath(
+            '//select[@name="edit_size"]/option[@value="1"]')
+        select_size.click()
 
-    #     select_year = self.driver.find_element_by_xpath(
-    #         '//select[@name="year"]/option[@value="2017"]')
-    #     select_year.click()
+        select_year = self.driver.find_element_by_xpath(
+            '//select[@name="edit_year"]/option[@value="2017"]')
+        select_year.click()
 
-    #     mail_checkbox = self.driver.find_element_by_id('incoming')
-    #     mail_checkbox.click()
+        mail_checkbox = self.driver.find_element_by_id('edit_incoming')
+        mail_checkbox.click()
 
-    #     image_uploader = self.driver.find_element_by_id('addFileSelect')
-    #     image_uploader.send_keys(os.getcwd() + '/image.png')
+        image_uploader = self.driver.find_element_by_id('fileSelect')
+        image_uploader.send_keys(os.getcwd() + '/image.png')
 
-    #     notes_field = self.driver.find_element_by_id('notes')
-    #     notes_field.send_keys('test notes')
+        notes_field = self.driver.find_element_by_id('edit_notes')
+        notes_field.send_keys('test notes')
 
-    #     # submit form for adding new record
-    #     save_button = self.driver.find_element_by_name('edit-record-save')
-    #     save_button.click()
+        # submit form for adding new record
+        save_button = self.driver.find_element_by_name('edit-record-save')
+        save_button.click()
 
-    #     time.sleep(1)
+        time.sleep(1)
 
-    #     # check for confirmation message that record was deleted
-    #     msg = '{} - {} Updated!'.format(artist, title)
-    #     self.assertTrue(
-    #         self.driver.find_element_by_xpath(
-    #             '//strong[contains(text(),"{}")]'.format(msg))
-    #     )
+        # check for confirmation message that record was deleted
+        msg = '{} - {} Updated!'.format(artist, title)
+        self.assertTrue(
+            self.driver.find_element_by_xpath(
+                '//strong[contains(text(),"{}")]'.format(msg))
+        )
 
-    #     # make sure the Artist was added to the database
-    #     self.assertEquals(
-    #         db.session.query(Artist).filter_by(name=artist).count(), 1)
+        # make sure the Artist was added to the database
+        self.assertEquals(
+            db.session.query(Artist).filter_by(name=artist).count(), 1)
 
-    #     # make sure the Title was added to the database and the title owner
-    #     # is correctly assigned to the user
-    #     title_query = db.session.query(Title).filter_by(name=title)
-    #     self.assertEquals(title_query.count(), 1)
-    #     self.assertEquals(title_query.first().owner_id, self.test_user.id)
+        # make sure the Title was added to the database and the title owner
+        # is correctly assigned to the user
+        title_query = db.session.query(Title).filter_by(name=title)
+        self.assertEquals(title_query.count(), 1)
+        self.assertEquals(title_query.first().owner_id, self.test_user.id)
 
-    # @screenshot_exceptions
-    # def test_delete_record(self):
-    #     ''' verify deleting a record functionality '''
-    #     self.navigate_to_edit_record()
+    @screenshot_exceptions
+    def test_delete_record(self):
+        ''' verify deleting a record functionality '''
+        self.navigate_to_edit_record()
 
-    #     # make sure delete record link is present
-    #     self.assertTrue(self.driver.find_element_by_class_name('glyphicon-trash'))
+        # make sure delete record link is present
+        # Side Note - the reason I don't assign this to a variable first (since I'm referencing
+        # the same element again below) is I want it to fail on the assertion, not the assignment
+        self.assertTrue(self.driver.find_element_by_xpath('//a[contains(@href,"delete-record")]'))
 
-    #     # click on delete record link
-    #     delete_link = self.driver.find_element_by_xpath(delete_link_path)
-    #     delete_link.click()
+        # click on delete record link
+        delete_link = self.driver.find_element_by_xpath('//a[contains(@href,"delete-record")]')
+        delete_link.click()
 
-    #     time.sleep(1)
+        time.sleep(1)
 
-    #     # check for confirmation message that record was deleted
-    #     msg = '{} - {} Deleted!'.format(self.artist.name, self.title.name)
-    #     self.assertTrue(
-    #         self.driver.find_element_by_xpath(
-    #             '//strong[contains(text(),"{}")]'.format(msg))
-    #     )
+        # check for confirmation message that record was deleted
+        msg = '{} - {} Deleted!'.format(self.artist_name, self.title_name)
+        self.assertTrue(
+            self.driver.find_element_by_xpath(
+                '//strong[contains(text(),"{}")]'.format(msg))
+        )
 
-    #     # make sure the Artist was deleted from the database
-    #     self.assertEquals(
-    #         db.session.query(Artist).filter_by(name=self.artist.name).count(), 0)
+        # make sure the Artist was not deleted from the database
+        self.assertEquals(
+            db.session.query(Artist).filter_by(name=self.artist_name).count(), 1)
 
-    #     # make sure the Title was deleted from the database
-    #     self.assertEquals(
-    #         db.session.query(Title).filter_by(name=self.artist.name).count(), 0)
+        # make sure the Title was deleted from the database
+        self.assertEquals(
+            db.session.query(Title).filter_by(name=self.title_name).count(), 0)
