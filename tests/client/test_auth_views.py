@@ -2,64 +2,27 @@ import time
 
 from flask import url_for
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from app import db
 from tests.client.base import screenshot_exceptions, SeleniumTestBase
 from tests.factories.user import UserFactory
 
 
-# I am moving the login_user method to a base class. It makes more sense that way
-# since i am having to reference the driver. The login_user would work as a solo function
-# as well, but it seems to fit better this way. I also added the tearDown while I was at
-# it since its common to all these classes
-class TestAuthBase(SeleniumTestBase):
-
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        # call parent tearDown method in TestAuthBase class
-        super(TestAuthBase, self).tearDown()
-
-    def login_user(self, email, password):
-        ''' user login method for reuse in tests '''
-
-        # complete login form fields and click submit button
-        email_field = self.driver.find_element_by_id('email')
-        email_field.send_keys(email)
-        # you may be wondering why i don't put these on one line. personally,
-        # i find it much better to write clear code than concise code.
-        # by assigning these to variables, i am able to identify exactly
-        # what it is i am retrieving
-        password_field = self.driver.find_element_by_id('password')
-        password_field.send_keys(password)
-
-        # these time.sleep functions are necessary to allow the server time to
-        # process our request
-        time.sleep(1)
-
-        # this find_element_by_xpath is a great utility for finding elements
-        # that you cant find using id, class, name, tag, etc. I am using it here
-        # for a little flexibility with future development rather than selecting
-        # by name. This would be easier to select by more unique html identifiers.
-        login_button = self.driver.find_element_by_xpath('//button[contains(text(),"Log In")]')
-        login_button.click()
-
-        time.sleep(2)
-
-
-class TestLoginLogout(TestAuthBase):
+class TestLoginLogout(SeleniumTestBase):
     ''' Test class for user login and logout functionality '''
 
     def setUp(self):
-        db.create_all()
+        # call parent setUp method in SeleniumTestBase class
+        super(TestLoginLogout, self).setUp()
         # create a user object from test factory
         self.test_user_password = 'password123'
         # you can manually pass in different parameters to the factory if you
         # want to override the default values. this is useful here since we
         # need the original password string value
         self.test_user = UserFactory(password=self.test_user_password)
-        # call parent setUp method in TestAuthBase class
-        super(TestLoginLogout, self).setUp()
 
     @screenshot_exceptions
     def test_user_login(self):
@@ -74,7 +37,7 @@ class TestLoginLogout(TestAuthBase):
 
         # verify register link is no longer in navigation bar
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_xpath('//a[contains(text(),"Register")]')
+            self.driver.find_element_by_partial_link_text('Register')
 
     @screenshot_exceptions
     def test_nonexistent_user_login(self):
@@ -132,7 +95,10 @@ class TestLoginLogout(TestAuthBase):
         ''' test basic logout functionality through logout link '''
         self.login_user(self.test_user.email, self.test_user_password)
 
-        logout_link = self.driver.find_element_by_xpath('//a[contains(text(),"Logout")]')
+        logout_link = self.wait().until(
+            EC.presence_of_element_located(
+                (By.PARTIAL_LINK_TEXT, 'Logout'))
+        )
         logout_link.click()
 
         time.sleep(2)
@@ -141,25 +107,25 @@ class TestLoginLogout(TestAuthBase):
         self.assertIn(url_for('main.index'), self.driver.current_url)
 
 
-class TestRegister(TestAuthBase):
+class TestRegister(SeleniumTestBase):
     ''' Test class for user registration functionality '''
-
-    def setUp(self):
-        db.create_all()
-        super(TestRegister, self).setUp()
 
     def navigate_to_registration(self):
         ''' navigate to user registration page for reuse in tests '''
-        register_link = self.driver.find_element_by_xpath('//a[contains(text(),"Register")]')
+        register_link = self.wait().until(
+            EC.presence_of_element_located(
+                (By.PARTIAL_LINK_TEXT, 'Register'))
+        )
         register_link.click()
-        time.sleep(2)
 
     def register_new_user(self, email, username, password, password_confirm):
         ''' register new user method for reuse in tests '''
         self.navigate_to_registration()
 
         # complete registration form fields and click register button
-        email_field = self.driver.find_element_by_id('email')
+        email_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'email'))
+        )
         email_field.send_keys(email)
 
         username_field = self.driver.find_element_by_id('username')
@@ -184,6 +150,8 @@ class TestRegister(TestAuthBase):
     def test_register(self):
         ''' test successful new user registration functionality '''
         self.navigate_to_registration()
+
+        time.sleep(1)
 
         # verify we are on the registration page
         self.assertIn(url_for('auth.register'), self.driver.current_url)
@@ -326,41 +294,39 @@ class TestRegister(TestAuthBase):
         )
 
 
-class TestPasswordManagement(TestAuthBase):
-    ''' Test class for user password management functionality '''
+class TestChangePassword(SeleniumTestBase):
+    ''' Test class for changing user password functionality '''
 
     def setUp(self):
-        db.create_all()
+        super(TestChangePassword, self).setUp()
         self.test_user_password = 'password123'
         self.test_user = UserFactory(password=self.test_user_password)
-        super(TestPasswordManagement, self).setUp()
 
-    def navigate_to_edit_profile(self):
-        ''' navigate to edit profile page for reuse in tests '''
+    def navigate_to_change_password(self):
+        ''' navigate to change password page for reuse in tests '''
 
         # login user first to get to user dashboard page
         self.login_user(self.test_user.email, self.test_user_password)
 
-        time.sleep(1)
         # click on edit profile link on user dash
-        edit_profile_link = self.driver.find_element_by_xpath('//a[@href="/edit-profile"]')
+        edit_profile_link = self.wait().until(
+            EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'Settings'))
+        )
         edit_profile_link.click()
 
-        time.sleep(2)
+        # navigate to change password page
+        change_password_link = self.wait().until(
+            EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'Change Password'))
+        )
+        change_password_link.click()
 
     def change_user_password(self, old_password, new_password, confirm_password):
         ''' change user password form method for reuse in tests '''
-        self.navigate_to_edit_profile()
-
-        # navigate to change password page
-        change_password_link = self.driver.find_element_by_xpath(
-            '//a[contains(text(),"Change Password")]')
-        change_password_link.click()
-
-        time.sleep(2)
 
         # enter valid values in all fields
-        old_password_field = self.driver.find_element_by_id('old_password')
+        old_password_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'old_password'))
+        )
         old_password_field.send_keys(old_password)
 
         new_password_field = self.driver.find_element_by_id('password')
@@ -380,6 +346,8 @@ class TestPasswordManagement(TestAuthBase):
     @screenshot_exceptions
     def test_change_password(self):
         ''' test change existing user password '''
+        self.navigate_to_change_password()
+
         self.change_user_password(
             self.test_user_password,
             self.test_user_password + '1',
@@ -391,14 +359,84 @@ class TestPasswordManagement(TestAuthBase):
             '//strong[contains(text(),"{}")]'.format(msg)))
         self.assertIn(url_for('main.edit_profile'), self.driver.current_url)
 
-    def test_change_password_invalid(self):
-        ''' test change user password with invalid values '''
-        pass
+    @screenshot_exceptions
+    def test_change_password_form_validation(self):
+        ''' test change password form error handling '''
 
+        self.navigate_to_change_password()
+
+        self.change_user_password(self.test_user_password, '111', '123')
+
+        msg = 'Passwords must match'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//p[contains(text(),"{}")]'.format(msg)))
+
+        self.change_user_password(self.test_user_password, '', '')
+
+        msg = 'This field is required'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//p[contains(text(),"{}")]'.format(msg)))
+
+
+class TestResetPassword(SeleniumTestBase):
+    ''' Test class for resetting user password functionality '''
+
+    def setUp(self):
+        super(TestResetPassword, self).setUp()
+        self.test_user_password = 'password123'
+        self.test_user = UserFactory(password=self.test_user_password)
+
+    def navigate_to_reset_password(self):
+        ''' navigate to reset password page for reuse in tests '''
+
+        # click on reset password link to navigate to reset password form
+        reset_password_link = self.wait().until(
+            EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'Forgot your password'))
+        )
+        reset_password_link.click()
+
+    def reset_user_password(self, email):
+        ''' reset user password form method for reuse in tests '''
+        self.navigate_to_reset_password()
+
+        # enter email address in email field
+        email_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'email'))
+        )
+        email_field.send_keys(email)
+
+        # click on reset password button to submit form
+        reset_button_path = '//button[contains(text(),"Reset Password")]'
+        reset_password_button = self.wait().until(
+            EC.presence_of_element_located((By.XPATH, reset_button_path))
+        )
+        reset_password_button.click()
+
+        time.sleep(2)
+
+    @screenshot_exceptions
     def test_reset_password(self):
         ''' test reset user password '''
-        pass
+        self.reset_user_password(self.test_user.email)
 
-    def test_reset_password_invalid_email(self):
-        ''' test reset password with invalid email '''
-        pass
+        msg = 'An email with instructions has been sent to you'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//strong[contains(text(),"{}")]'.format(msg)))
+
+    @screenshot_exceptions
+    def test_reset_password_form_validation(self):
+        ''' test reset password form error handling '''
+        self.reset_user_password('abc')
+
+        msg = 'Invalid email address'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//p[contains(text(),"{}")]'.format(msg)))
+
+    @screenshot_exceptions
+    def test_reset_password_nonexistent_email(self):
+        ''' test reset password with nonexistent email '''
+        self.reset_user_password('nonexistent@test.com')
+
+        msg = 'There is no account associated with that email address'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//strong[contains(text(),"{}")]'.format(msg)))
