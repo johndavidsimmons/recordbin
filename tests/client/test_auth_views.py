@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from app import db
+from app.models import Role, User
 from tests.client.base import screenshot_exceptions, SeleniumTestBase
 from tests.factories.user import UserFactory
 
@@ -293,7 +294,6 @@ class TestRegister(SeleniumTestBase):
                 '//p[contains(text(),"{}")]'.format(msg))
         )
 
-
 class TestChangePassword(SeleniumTestBase):
     ''' Test class for changing user password functionality '''
 
@@ -377,7 +377,6 @@ class TestChangePassword(SeleniumTestBase):
         self.assertTrue(self.driver.find_element_by_xpath(
             '//p[contains(text(),"{}")]'.format(msg)))
 
-
 class TestResetPassword(SeleniumTestBase):
     ''' Test class for resetting user password functionality '''
 
@@ -440,3 +439,93 @@ class TestResetPassword(SeleniumTestBase):
         msg = 'There is no account associated with that email address'
         self.assertTrue(self.driver.find_element_by_xpath(
             '//strong[contains(text(),"{}")]'.format(msg)))
+
+class TestAdminEditProfile(SeleniumTestBase):
+    ''' Test class for editing profiles as an admin '''
+
+    def setUp(self):
+        # call parent setUp method in SeleniumTestBase class
+        super(TestAdminEditProfile, self).setUp()
+        # create a user object from test factory
+        self.test_user_password = 'password123'
+        # you can manually pass in different parameters to the factory if you
+        # want to override the default values. this is useful here since we
+        # need the original password string value
+
+        # Admin test user
+        self.test_user = UserFactory(
+            password=self.test_user_password,
+            role_id = 1,
+            role = Role.query.filter_by(name="admin").first()
+        )
+
+        # Non-admin user
+        self.test_nonadmin_user = UserFactory(
+            username="nonadmin",
+            password = self.test_user_password,
+            role_id=2,
+            role = Role.query.filter_by(name="user").first()
+        )
+
+    def navigate_to_admin_settings(self):
+        ''' navigate to own admin settings page for reuse in tests '''
+
+        # Login 
+        self.login_user(self.test_user.email, self.test_user_password)
+
+        # click on admin settings link to navigate to admin settings page
+        admin_settings_link = self.wait().until(
+            EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'Admin Settings'))
+        )
+        admin_settings_link.click()
+
+    def navigate_to_other_users_settings(self):
+        ''' navigate to other users admin settings page for reuse in tests '''
+
+        # Login
+        self.login_user(self.test_user.email, self.test_user_password)
+
+        # go to users page
+        users_page_link = self.wait().until(
+            EC.presence_of_element_located((By.LINK_TEXT, 'Users'))
+        )
+        users_page_link.click()
+
+        # Go to non admin users profile page
+        users_settings_page_link = self.wait().until(
+            EC.presence_of_element_located((By.LINK_TEXT, self.test_nonadmin_user.username))
+        )
+        users_settings_page_link.click()
+
+        # Go to non admin users edit profile page
+        users_settings_page_link = self.wait().until(
+            EC.presence_of_element_located((By.LINK_TEXT, 'Admin Settings'))
+        )
+        users_settings_page_link.click()        
+
+
+    @screenshot_exceptions
+    def test_admin_has_correct_role_on_own_settings_page(self):
+        self.navigate_to_admin_settings()
+
+        # Admin option is selected
+        self.assertTrue(self.driver.find_element_by_css_selector(
+            'select[name="role"] option[value="1"][selected=""]'))
+
+        # User option is not selected
+        with self.assertRaises(NoSuchElementException):
+            self.driver.find_element_by_css_selector(
+            'select[name="role"] option[value="2"][selected=""]')
+
+    @screenshot_exceptions
+    def test_user_has_correct_role_viewing_settings_as_admin(self):
+        self.navigate_to_other_users_settings()
+
+        # User option is selected
+        self.assertTrue(self.driver.find_element_by_css_selector(
+            'select[name="role"] option[value="2"][selected=""]'))
+
+        # Admin option is not selected
+        with self.assertRaises(NoSuchElementException):
+            self.driver.find_element_by_css_selector(
+            'select[name="role"] option[value="1"][selected=""]')

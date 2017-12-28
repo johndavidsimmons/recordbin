@@ -14,6 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from app import create_app, db
+from app.models import Role
 from tests.factories.user import UserFactory
 
 # Using flask_testing LiveServerTestCase to run a dev server for local browser testing
@@ -51,6 +52,7 @@ class SeleniumTestBase(LiveServerTestCase):
 
     def setUp(self):
         db.create_all()
+        Role.insert_roles()
         # initialize webdriver with phantomjs
         self.driver = webdriver.PhantomJS()
         self.driver.set_window_size(1024, 768)

@@ -17,3 +17,5 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
     about_me = 'hello'
     location = 'world'
     confirmed = True
+    role = None
+    role_id = None

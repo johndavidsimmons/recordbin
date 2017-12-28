@@ -47,3 +47,7 @@ nosetests.xml
 
 # Virtual environment
 venv
+venv2
+
+# Test screenshots 
+tests/client/screenshots/
