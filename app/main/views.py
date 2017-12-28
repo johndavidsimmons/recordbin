@@ -251,7 +251,10 @@ def edit_profile_admin(id):
 		user.about_me = form.about_me.data
 		db.session.add(user)
 		db.session.commit()
-		flash('Your settings have been updated.', 'success')
+		if user == current_user:
+			flash('Your settings have been updated.', 'success')
+		else:
+			flash("You have updated {}'s settings".format(user.username), 'success')
 		return redirect(url_for('.user', username=user.username))
 	form.email.data = user.email
 	form.username.data = user.username

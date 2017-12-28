@@ -556,5 +556,39 @@ class TestEditProfile(SeleniumTestBase):
          
         heading = 'Settings'
         self.assertTrue(self.driver.find_element_by_xpath(
-            '//h1[contains(text(),"{}")]'.format(heading)))    
+            '//h1[contains(text(),"{}")]'.format(heading)))
+
+    @screenshot_exceptions
+    def test_self_profile_edit_flash(self):
+        self.navigate_to_admin_settings()
+
+        # click on settings submit button
+        submit_button = self.wait().until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'button[type="submit"]'))
+        )
+        submit_button.click()
+
+        time.sleep(2)
+
+        # verify self flash message
+        msg = 'Your settings have been updated.'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//strong[contains(text(),"{}")]'.format(msg)))
+
+    @screenshot_exceptions
+    def test_other_user_edit_profile_flash(self):
+        self.navigate_to_other_users_settings()
+
+        # click on settings submit button
+        submit_button = self.wait().until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'button[type="submit"]'))
+        )
+        submit_button.click()
+
+        time.sleep(2)
+
+        # verify other users flash message
+        msg = "You have updated {}'s settings".format(self.test_nonadmin_user.username)
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//strong[contains(text(),"{}")]'.format(msg)))    
 
