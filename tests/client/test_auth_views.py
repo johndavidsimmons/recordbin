@@ -440,12 +440,12 @@ class TestResetPassword(SeleniumTestBase):
         self.assertTrue(self.driver.find_element_by_xpath(
             '//strong[contains(text(),"{}")]'.format(msg)))
 
-class TestAdminEditProfile(SeleniumTestBase):
+class TestEditProfile(SeleniumTestBase):
     ''' Test class for editing profiles as an admin '''
 
     def setUp(self):
         # call parent setUp method in SeleniumTestBase class
-        super(TestAdminEditProfile, self).setUp()
+        super(TestEditProfile, self).setUp()
         # create a user object from test factory
         self.test_user_password = 'password123'
         # you can manually pass in different parameters to the factory if you
@@ -478,6 +478,18 @@ class TestAdminEditProfile(SeleniumTestBase):
             EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'Admin Settings'))
         )
         admin_settings_link.click()
+
+    def navigate_to_user_settings(self):
+        ''' Navigate to settings as a regular user '''
+        
+        # Login 
+        self.login_user(self.test_nonadmin_user.email, self.test_user_password)
+
+        # click on settings link to navigate to settings page
+        settings_link = self.wait().until(
+            EC.presence_of_element_located((By.LINK_TEXT, 'Settings'))
+        )
+        settings_link.click()
 
     def navigate_to_other_users_settings(self):
         ''' navigate to other users admin settings page for reuse in tests '''
@@ -529,3 +541,20 @@ class TestAdminEditProfile(SeleniumTestBase):
         with self.assertRaises(NoSuchElementException):
             self.driver.find_element_by_css_selector(
             'select[name="role"] option[value="1"][selected=""]')
+
+    @screenshot_exceptions
+    def test_admin_settings_has_correct_heading(self):
+        self.navigate_to_admin_settings()
+
+        heading = 'Admin Settings'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//h1[contains(text(),"{}")]'.format(heading)))
+
+    @screenshot_exceptions
+    def test_user_settings_has_correct_heading(self):
+        self.navigate_to_user_settings()
+         
+        heading = 'Settings'
+        self.assertTrue(self.driver.find_element_by_xpath(
+            '//h1[contains(text(),"{}")]'.format(heading)))    
+
