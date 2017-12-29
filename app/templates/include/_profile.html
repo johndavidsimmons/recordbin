@@ -21,7 +21,7 @@
 
         <!-- Badges -->
         <p>
-            <span class="label label-primary">{{ user_records_count }} Records</span>
+            <span class="label label-primary">{{ user_records_count }} Record{% if user_records_count != 1 %}s{% endif %}</span>
             <span class="label label-info pointer" data-toggle="modal" data-target=".follower-modal">
             {% if followers_count > 0 %}
                 {{ followers_count - 1}}

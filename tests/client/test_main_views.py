@@ -206,7 +206,7 @@ class TestAddRecord(SeleniumTestBase):
 
         # Make sure the user's record count goes up in 2 places
         # profile
-        element = self.driver.find_element_by_xpath("//span[contains(@class,'label-primary') and text() = '1 Records']")
+        element = self.driver.find_element_by_xpath("//span[contains(@class,'label-primary') and text() = '1 Record']")
         self.assertTrue(
             element.is_displayed()
         )
@@ -548,7 +548,130 @@ class TestFilterRecordTable(SeleniumTestBase):
     #     # self.driver.find_element_by_id('dfds')
     #     # self.driver.execute_script('''''')
         
+class TestProfileBadges(SeleniumTestBase):
+    ''' 
+    Test the elements of the users profile badges 
+    - Number of records 0, 1, (2+ done on line)
+    - Number of followers
+    - Number of users followed
+    '''
 
+    def setUp(self):
+        super(TestProfileBadges, self).setUp()
+        self.test_user_password = 'password123'
+        self.test_user = UserFactory(password=self.test_user_password)
+        Size.insert_sizes()
+        Format.insert_formats()
 
+    @screenshot_exceptions
+    def test_badge_correct_zero_records(self):
+        self.login_user(self.test_user.email, self.test_user_password)
 
+        element = self.driver.find_element_by_xpath("//span[contains(@class,'label-primary') and text() = '0 Records']")
+        self.assertTrue(
+            element.is_displayed()
+        )
 
+    @screenshot_exceptions
+    def test_badge_correct_2plus_records(self):
+        self.login_user(self.test_user.email, self.test_user_password)
+
+        # Add 2 records
+        add_link = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'add-button'))
+        )
+
+        if add_link.is_displayed():
+            add_link.click()
+
+        # complete all new record form fields and click add button
+        artist = 'Mumford & Sons'
+        artist_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'artist'))
+        )
+        artist_field.send_keys(artist)
+
+        title = 'Babel'
+        title_field = self.driver.find_element_by_id('title')
+        title_field.send_keys(title)
+
+        color = "Black"
+        color_field = self.driver.find_element_by_id('color')
+        color_field.send_keys(color)
+
+        # selecting option in dropdown menu by referencing 'select' parent
+        select_size = self.driver.find_element_by_xpath(
+            '//select[@name="size"]/option[@value="1"]')
+        select_size.click()
+
+        select_year = self.driver.find_element_by_xpath(
+            '//select[@name="year"]/option[@value="2000"]')
+        select_year.click()
+
+        # mail_checkbox = self.driver.find_element_by_id('incoming')
+        # mail_checkbox.click()
+
+        # image_uploader = self.driver.find_element_by_id('addFileElem')
+        # image_uploader.send_keys(os.getcwd() + '/image.png')
+
+        notes = "test notes"
+        notes_field = self.driver.find_element_by_id('notes')
+        notes_field.send_keys(notes)
+
+        # submit form for adding new record
+        add_button = self.driver.find_element_by_css_selector("button[name='submit']")
+        add_button.click()
+
+        time.sleep(2)
+
+        add_link = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'add-button'))
+        )
+
+        if add_link.is_displayed():
+            add_link.click()
+
+        # complete all new record form fields and click add button
+        artist = 'Mumford & Sons'
+        artist_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'artist'))
+        )
+        artist_field.send_keys(artist)
+
+        title = 'Babel2'
+        title_field = self.driver.find_element_by_id('title')
+        title_field.send_keys(title)
+
+        color = "Black"
+        color_field = self.driver.find_element_by_id('color')
+        color_field.send_keys(color)
+
+        # selecting option in dropdown menu by referencing 'select' parent
+        select_size = self.driver.find_element_by_xpath(
+            '//select[@name="size"]/option[@value="1"]')
+        select_size.click()
+
+        select_year = self.driver.find_element_by_xpath(
+            '//select[@name="year"]/option[@value="2000"]')
+        select_year.click()
+
+        # mail_checkbox = self.driver.find_element_by_id('incoming')
+        # mail_checkbox.click()
+
+        # image_uploader = self.driver.find_element_by_id('addFileElem')
+        # image_uploader.send_keys(os.getcwd() + '/image.png')
+
+        notes = "test notes"
+        notes_field = self.driver.find_element_by_id('notes')
+        notes_field.send_keys(notes)
+
+        # submit form for adding new record
+        add_button = self.driver.find_element_by_css_selector("button[name='submit']")
+        add_button.click()
+
+        time.sleep(2)
+
+        element = self.driver.find_element_by_xpath("//span[contains(@class,'label-primary') and text() = '2 Records']")
+        self.assertTrue(
+            element.is_displayed()
+        )
