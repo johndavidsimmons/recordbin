@@ -60,6 +60,13 @@ class TestMainPages(SeleniumTestBase):
         self.assertTrue(
             self.driver.find_element_by_xpath('//h1[contains(text(),"About Record Bin")]'))
 
+        # verify the donation addresses exist
+        btc_address_path = '//p[contains(text(), "1C9LEF29xQFtkrvV3yaSANJbXASUfyLT7b")]'
+        self.assertTrue(self.driver.find_element_by_xpath(btc_address_path))
+
+        eth_address_path = '//p[contains(text(), "0x3c7f2cff83eae95b964c475cd368ba872a458083")]'
+        self.assertTrue(self.driver.find_element_by_xpath(eth_address_path))
+
     @screenshot_exceptions
     def test_all_users_page(self):
         ''' verify existance of basic elements on all users page '''
