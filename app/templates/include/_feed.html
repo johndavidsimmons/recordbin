@@ -12,35 +12,64 @@
             type: "GET",
 
             success: function(data) {
-                var dataArray = Object.values(data)
-                var newestRecord = dataArray[0]
-                var newestRecordId = dataArray[0].id;
-                var newRecordElement = $('#feed .media')[0];
-                var newRecordElementId = newRecordElement ? newRecordElement.id : "";
-                var lastRecordElement = $('#feed .media')[$('#feed .media').length - 1];
-                var lastRecordElementId = lastRecordElement ? lastRecordElement.id : "";
+                var dataArray = Object.values(data);
+
+                if (dataArray.length) {
+                    var newestRecord = dataArray[0];
+                    var newestRecordId = dataArray[0].id;
+                    var newRecordElement = $('#feed .media')[0];
+                    var newRecordElementId = newRecordElement ? newRecordElement.id : "";
+                    var lastRecordElement = $('#feed .media')[$('#feed .media').length - 1];
+                    var lastRecordElementId = lastRecordElement ? lastRecordElement.id : "";
 
 
-                // Do this first time
-                if ( newRecordElement == undefined && lastRecordElement == undefined ) {
+                    // Do this first time
+                    if ( newRecordElement == undefined && lastRecordElement == undefined ) {
 
-                    for (var i = 0; i < dataArray.length; i++) {
-                        var dateOptions = { year : "2-digit", day : "numeric", month : "numeric"}
-                        var d = new Date(dataArray[i]['timestamp']).toLocaleDateString('en-US', dateOptions);
+                        for (var i = 0; i < dataArray.length; i++) {
+                            var dateOptions = { year : "2-digit", day : "numeric", month : "numeric"}
+                            var d = new Date(dataArray[i]['timestamp']).toLocaleDateString('en-US', dateOptions);
+                            var feedusername = dataArray[i]["user"]
 
-                        var html_string = '<div id=' + dataArray[i]["id"] + ' class="media"><div class="media-left"><img style="height:25px;" src="' + dataArray[i]['gravatar']+'" class="media-object media-top"></div><div class="media-body"><p class="media-heading"><a href=/'+ dataArray[i]["user"] + '>' + dataArray[i]["user"] + '</a> <i>added</i><strong> ' + dataArray[i]["artist"] + '</strong> - <strong>' + dataArray[i]["title"] + ' </strong><i>on</i> ' + d +'</p></div></div>'
 
-                        if (i < 3) {
+                            var html_string = '<div id=' + 
+                            dataArray[i]["id"] + 
+                            ' class="media">' +
+                            '<div class="media-left">' +
+                            '<img style="height:25px;" src="' + 
+                            dataArray[i]['gravatar']+
+                            '" class="media-object media-top">' +
+                            '</div><div class="media-body">'+
+                            '<p class="media-heading">';
 
-                            $("#feed").append(html_string);
+                            if (feedusername == "you") {
+                                html_string += dataArray[i]["user"];
+                            } else {
+                                html_string += 
+                                '<a href=/'+ dataArray[i]["user"] + '>'+ 
+                                dataArray[i]["user"] + 
+                                 '</a>'
+                            }
+                            html_string +=
+                             ' <i>added</i><strong> ' + 
+                             dataArray[i]["artist"] + 
+                             '</strong> - <strong>' + 
+                             dataArray[i]["title"] + 
+                             ' </strong><i>on</i> ' + 
+                             d +'</p></div></div>'
 
-                        } else {
+                            if (i < 3) {
 
-                            html_string = html_string.substr(0, 5) + 'style="display:none;"' + html_string.substr(5);
-                            $("#feed").append(html_string)
-                        }
-                       } 
-                } 
+                                $("#feed").append(html_string);
+
+                            } else {
+
+                                html_string = html_string.substr(0, 5) + 'style="display:none;"' + html_string.substr(5);
+                                $("#feed").append(html_string)
+                            }
+                           } 
+                    } 
+                }                
             }
         });
     }

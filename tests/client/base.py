@@ -118,3 +118,35 @@ class SeleniumTestBase(LiveServerTestCase):
         login_button.click()
 
         time.sleep(2)
+
+    def add_record(self, artist, title, color):
+
+        # click add record button
+        add_button = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'add-button'))
+        )
+        add_button.click()
+
+        # fill out artist form
+        artist_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'artist'))
+        )
+        artist_field.send_keys(artist)
+
+        # fill out title form
+        title_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'title'))
+        )
+        title_field.send_keys(title)
+
+        # fill out color form
+        color_field = self.wait().until(
+            EC.presence_of_element_located((By.ID, 'color'))
+        )
+        color_field.send_keys(color)
+
+        # click "add"
+        submit_button = self.wait().until(
+            EC.presence_of_element_located((By.NAME, 'submit'))
+        )
+        submit_button.click()
