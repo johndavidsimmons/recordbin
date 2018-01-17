@@ -110,6 +110,7 @@ class FlaskClientTestCase(unittest.TestCase):
     def test_login_and_logout(self):
         response = self.login(email="profile_john@example.com", password="yolo")
         assert '<h4 class="media-heading">profile_john</h4>' in response.data
+        assert '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.2.0/ekko-lightbox.min.css">' in response.data
         response = self.logout()
         assert "You have logged out" in response.data
 
@@ -318,6 +319,7 @@ class FlaskClientTestCase(unittest.TestCase):
         assert response.status_code == 200
         stripped_response = re.sub(r'\s+', '', response.data)
         assert '<liclass="active"><ahref="/">Home</a></li>' in stripped_response
+        assert '<linkrel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.2.0/ekko-lightbox.min.css">' not in stripped_response
 
     def test_register_page_status(self):
         response = self.client.get(url_for('auth.register'))
