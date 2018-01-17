@@ -7,22 +7,23 @@ var fileSelect = document.getElementById("fileSelect"),
 var addFileSelect = document.getElementById("addFileSelect"),
   addFileElem = document.getElementById("addFileElem");   
 
-// Disable navigation on file upload button click - edit
-fileSelect.addEventListener("click", function(e) {
-  if (fileElem) {
-    fileElem.click();
-  }
-  e.preventDefault(); 
-}, false);
+if (fileSelect) {
+  // Disable navigation on file upload button click - edit
+  fileSelect.addEventListener("click", function(e) {
+    if (fileElem) {
+      fileElem.click();
+    }
+    e.preventDefault(); 
+  }, false);
 
-// Disable navigation on file upload button click - add
-addFileSelect.addEventListener("click", function(e) {
-  if (addFileElem) {
-    addFileElem.click();
-  }
-  e.preventDefault(); 
-}, false);
-
+  // Disable navigation on file upload button click - add
+  addFileSelect.addEventListener("click", function(e) {
+    if (addFileElem) {
+      addFileElem.click();
+    }
+    e.preventDefault(); 
+  }, false);
+}
 
 function uploadingButtonStates(fileSelect, saveButton, iconSpan) {
 
