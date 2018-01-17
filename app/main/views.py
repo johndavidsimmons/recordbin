@@ -335,7 +335,7 @@ def download(username):
 		cw = csv.writer(si)
 		cw.writerow(head_column)
 
-		sorted_list = sorted(user.owned_records(), key=lambda x: (x[2], x[0].year, x[1], x[0].name))
+		sorted_list = sorted(user.owned_records(), key=lambda x: (x[2], x[1], x[0].year, x[0].name))
 		for row in sorted_list:
 			title, artist, size, format, mail = row
 			cw.writerow([
