@@ -116,7 +116,7 @@ class FlaskClientTestCase(unittest.TestCase):
 
     def test_nonexistent_user_login(self):
         response = self.login(email="fakeuser@example.com", password="yolo")
-        assert "invalid username or password" in response.data
+        assert "Invalid username or password" in response.data
 
     def test_login_fields_required(self):
         response = self.login(email="", password="")
@@ -129,14 +129,14 @@ class FlaskClientTestCase(unittest.TestCase):
 
     def test_invalid_password(self):
         response = self.login(email="profile_john@example.com", password="yolo1")
-        assert "invalid username or password" in response.data
+        assert "Invalid username or password" in response.data
 
     # Add a record #
     def test_add_record(self):
         # Login
         self.login(email="profile_john@example.com", password="yolo")
         response = self.add_record(username="profile_john", mail=0)
-        assert "Black Sabbath - Master of Reality added" in response.data
+        assert "Black Sabbath - Master of Reality Added!" in response.data
 
     def test_add_record_as_different_user(self):
         self.login(email="profile_john@example.com", password="yolo")

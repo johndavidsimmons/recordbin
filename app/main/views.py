@@ -13,6 +13,7 @@ from datetime import datetime
 from ..auth.forms import LoginForm
 import urlparse
 from ..email import send_email
+from string import Template
 
 
 @main.route('/users', methods=['GET', 'POST'])
@@ -49,7 +50,7 @@ def index():
 		if user is not None and user.verify_password(form.password.data):
 			login_user(user, remember=form.remember_me.data)
 			return redirect(request.args.get('next') or url_for("main.user", username=user.username))
-		flash('invalid username or password', 'error')		
+		flash('Invalid username or password', 'error')		
 	return render_template('index.html', form=form)
 
 
@@ -105,7 +106,11 @@ def user(username):
 			else:
 				flash('You already own this', 'error')
 				return redirect(url_for('.user', username=current_user.username))
-			flash('{} - {} added'.format(artist.encode('utf-8'), title.encode('utf-8')), 'success')
+			record_addition_success_msg = Template("$artist - $title Added!")
+			flash(record_addition_success_msg.substitute(
+				artist=artist.encode('utf-8'),
+				title=title.encode('utf-8')), 
+				'success')
 			return redirect(url_for('.user', username=current_user.username))
 
 		elif request.form.get('edit_id') and edit_form.validate_on_submit():
@@ -158,7 +163,11 @@ def user(username):
 
 				db.session.commit()
 
-				flash('{} - {} Updated!'.format(artist.encode('utf-8'), title.encode('utf-8')), 'success')
+				record_update_success_msg = Template("$artist - $title Updated!")
+				flash(record_update_success_msg.substitute(
+					artist=artist.encode('utf-8'),
+					title=title.encode('utf-8')), 
+					'success')
 				return redirect(url_for('.user', username=current_user.username))		
 
 	else:
@@ -313,8 +322,11 @@ def delete_record(hashed_id):
 		if image:
 			image.delete_from_table()
 		record.delete_from_table()
-		
-		flash("{} - {} Deleted!".format(artist.encode('utf-8'), title.encode('utf-8')), 'success')
+		record_deletion_success_msg = Template("$artist - $title Deleted!")
+		flash(record_deletion_success_msg.substitute(
+			artist=artist.encode('utf-8'),
+			title=title.encode('utf-8')), 
+			'success')
 		return redirect(url_for('.user', username=current_user.username))
 	else:
 		flash("You dont own that", 'error')

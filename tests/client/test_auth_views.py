@@ -45,7 +45,7 @@ class TestLoginLogout(SeleniumTestBase):
         ''' test login of non-existent user through login form '''
         self.login_user('idontexist@test.com', 'test')
 
-        msg = 'invalid username or password'
+        msg = 'Invalid username or password'
         self.assertTrue(
             self.driver.find_element_by_xpath(
                 '//strong[contains(text(),"{}")]'.format(msg))
@@ -85,7 +85,7 @@ class TestLoginLogout(SeleniumTestBase):
         # test invalid password
         self.login_user(self.test_user.email, '1')
 
-        msg = 'invalid username or password'
+        msg = 'Invalid username or password'
         self.assertTrue(
             self.driver.find_element_by_xpath(
                 '//strong[contains(text(),"{}")]'.format(msg))

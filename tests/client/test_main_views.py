@@ -168,7 +168,7 @@ class TestAddRecord(SeleniumTestBase):
         )
 
         # check for message that record was added
-        msg = '{} - {} added'.format(artist, title)
+        msg = '{} - {} Added!'.format(artist, title)
         self.assertTrue(
             self.driver.find_element_by_xpath(
                 '//strong[contains(text(),"{}")]'.format(msg))
