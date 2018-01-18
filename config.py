@@ -9,7 +9,7 @@ class Config:
 	SQLALCHEMY_RECORD_QUERIES = True
 	MAIL_SERVER = os.environ.get('MAIL_SERVER')
 	MAIL_PORT = 587
-	MAIL_USE_TLS = True
+	MAIL_USE_TLS = False
 	MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 	RECORDBIN_MAIL_SUBJECT_PREFIX = '[RecordBin]'
