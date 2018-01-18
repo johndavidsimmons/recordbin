@@ -14,9 +14,14 @@ var visible = 0;
   for (i = 0; i < tr.length; i++) {
     artist_td = tr[i].getElementsByTagName("td")[0];
     title_td = tr[i].getElementsByTagName("td")[1];
+    color_td = tr[i].getElementsByTagName("td")[3];
+    year_td = tr[i].getElementsByTagName("td")[4];
 
     if (artist_td || title_td) {
-      if (artist_td.innerHTML.toUpperCase().indexOf(filter) > -1 || title_td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+      if (artist_td.innerHTML.toUpperCase().indexOf(filter) > -1 || 
+        title_td.innerHTML.toUpperCase().indexOf(filter) > -1 ||
+        color_td.innerHTML.toUpperCase().indexOf(filter) > -1 ||
+        year_td.innerHTML.toString().indexOf(filter) > -1) {
         
       	var parentTable = tr[i].closest(".panel-default")
       	var inMailTable = tr[i].closest("#mail"); //null
