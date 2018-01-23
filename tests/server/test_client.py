@@ -326,6 +326,8 @@ class FlaskClientTestCase(unittest.TestCase):
         assert response.status_code == 200
         stripped_response = re.sub(r'\s+', '', response.data)
         assert '<liclass="active"><ahref="/auth/register">Register</a></li>' in stripped_response
+        assert '<smallclass="form-texttext-muted">Passwordsmustbeatleast8characters</small>' in stripped_response
+        assert '<smallclass="form-texttext-muted">Usernamescanonlycontainlettersandnumbers</small>' in stripped_response
 
     def test_password_reset_page_status(self):
         response = self.client.get(url_for('auth.password_reset_request'))

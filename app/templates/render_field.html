@@ -22,6 +22,9 @@
   {% endfor %}
 {% endif %}
 {% else %}
+  {% if kwargs['helper_text'] %}
+    <p><small class="form-text text-muted">{{kwargs['helper_text']}}</small></p>
+  {% endif %}
 	{{field(**kwargs)}}
 {% endif %}
 {% if field.errors %}

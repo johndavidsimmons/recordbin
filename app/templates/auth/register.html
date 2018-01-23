@@ -14,8 +14,8 @@
 	    <div class="form-group">
 		{{ form.csrf_token }}
 	    {{ render_field(form.email, class="form-control push-bottom") }}
-	    {{ render_field(form.username, class="form-control push-bottom") }}
-	    {{ render_field(form.password, class="form-control push-bottom") }}
+	    {{ render_field(form.username, class="form-control push-bottom", helper_text="Usernames can only contain letters and numbers") }}
+	    {{ render_field(form.password, class="form-control push-bottom", helper_text="Passwords must be at least 8 characters") }}
 	    {{ render_field(form.password2, class="form-control push-bottom") }}
 	    </div>
 	    <button type="submit" name="submit" class="btn btn-primary btn-lg margin-push btn-block">Register</button>
