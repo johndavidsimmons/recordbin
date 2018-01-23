@@ -163,7 +163,7 @@ class TestRegister(SeleniumTestBase):
         self.assertIn(url_for('main.index'), self.driver.current_url)
 
         # verify confirmation message of successful registration
-        msg = 'A confirmation email has been sent to you by email'
+        msg = 'A confirmation email has been sent to newuser@test.com.'
         self.assertTrue(
             self.driver.find_element_by_xpath(
                 '//strong[contains(text(),"{}")]'.format(msg))

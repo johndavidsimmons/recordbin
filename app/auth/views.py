@@ -53,7 +53,7 @@ def register():
 			user.email,
 			'Confirm Your Account',
 			'auth/email/confirm', user=user, token=token)
-		flash('A confirmation email has been sent to you by email.', '')
+		flash('A confirmation email has been sent to {}.'.format(user.email), '')
 		return redirect(url_for('auth.login'))
 
 	if current_user.is_anonymous:

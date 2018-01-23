@@ -212,7 +212,7 @@ class FlaskClientTestCase(unittest.TestCase):
         assert "Register" in response.data
         response = self.register(
             email="test@example.com", username="test", password="testtest", password2="testtest")
-        assert "A confirmation email has been sent to you by email." in response.data
+        assert "A confirmation email has been sent to test@example.com." in response.data
 
         response = self.login(email="test@example.com", password="testtest")
         assert "Need another confirmation email?" in response.data
