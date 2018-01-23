@@ -5,6 +5,7 @@ from app.models import User, Follow, Role, Title, Artist, Permission, Size, Form
 from flask_script import Manager
 from flask_script import Shell
 from flask.ext.migrate import Migrate, MigrateCommand
+from flask_sslify import SSLify
 
 COV = None
 
@@ -23,6 +24,7 @@ if os.path.exists('.env'):
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
+sslify = SSLify(app, permanent=True)
 
 
 def make_shell_context():
