@@ -24,7 +24,7 @@ if os.path.exists('.env'):
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
-sslify = SSLify(app, permanent=True)
+# sslify = SSLify(app, permanent=True)
 
 
 def make_shell_context():
